@@ -1,1 +1,997 @@
 
+
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101426">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Piiloreitti 0.4</title>
+<style>
+:root {
+  color-scheme:dark;
+  --bg:#0c1020;
+  --panel:#1b2238;
+  --tile:#303a55;
+  --accent:#9686ff;
+  --green:#4fe0b0;
+  --red:#ff8299;
+  --muted:#aeb7d1;
+}
+* {box-sizing:border-box}
+body {
+  margin:0;
+  min-height:100vh;
+  padding:18px 12px;
+  display:grid;
+  place-items:center;
+  background:radial-gradient(ellipse at top,#292650,var(--bg) 75%);
+  color:#f6f7ff;
+  font-family:system-ui,sans-serif;
+}
+.app {width:100%;max-width:480px}
+header {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:16px;
+}
+h1 {margin:0;font-size:28px}
+h1 span {color:var(--accent)}
+.tag {
+  background:#34305c;
+  color:#d8d2ff;
+  border-radius:20px;
+  padding:8px 11px;
+  font-size:12px;
+}
+.panel {
+  background:var(--panel);
+  border:1px solid #414964;
+  border-radius:22px;
+  padding:clamp(12px,4vw,20px);
+}
+.date {
+  font-size:13px;
+  color:var(--muted);
+  margin:0 0 14px;
+}
+.levels {
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:7px;
+}
+.level {
+  padding:11px 3px;
+  background:#2a314b;
+  color:var(--muted);
+  border:1px solid transparent;
+  border-radius:11px;
+  font-size:12px;
+  font-weight:750;
+  cursor:pointer;
+}
+.level.active {
+  color:white;
+  background:#3d3766;
+  border-color:var(--accent);
+}
+button:disabled {cursor:default;opacity:.45}
+.description {
+  font-size:13px;
+  color:var(--muted);
+  line-height:1.5;
+  margin:16px 0;
+}
+.stats {
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:8px;
+  margin-bottom:13px;
+}
+.stat {
+  background:#12192c;
+  border-radius:12px;
+  padding:12px 5px;
+  text-align:center;
+}
+.stat small {
+  display:block;
+  font-size:11px;
+  color:var(--muted);
+  margin-bottom:5px;
+}
+.stat strong {font-size:23px}
+.scoreline {
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  font-size:12px;
+  color:var(--muted);
+  margin-bottom:13px;
+}
+.board {
+  display:grid;
+  grid-template-columns:repeat(var(--size),minmax(0,1fr));
+  gap:clamp(3px,1vw,6px);
+  width:100%;
+}
+.tile {
+  width:100%;
+  aspect-ratio:1;
+  min-width:0;
+  padding:0;
+  border:1px solid #47516e;
+  border-radius:clamp(4px,1.3vw,9px);
+  background:var(--tile);
+  color:white;
+  font-size:clamp(11px,3.2vw,22px);
+  font-weight:800;
+  cursor:pointer;
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+  user-select:none;
+}
+.tile:disabled {opacity:1}
+.tile.start {
+  background:#237d70;
+  border-color:#57ddba;
+}
+.tile.finish {
+  background:#514488;
+  border-color:#ad9fff;
+}
+.tile.good {
+  background:#176d59;
+  border-color:var(--green);
+}
+.tile.bad {
+  background:#713747;
+  border-color:var(--red);
+}
+.tile.current {
+  outline:2px solid var(--green);
+  outline-offset:1px;
+}
+.tile.correct-pop {animation:correct .32s ease}
+.tile.wrong-pop {animation:wrong .35s ease}
+@keyframes correct {
+  0% {transform:scale(.85);filter:brightness(2)}
+  60% {transform:scale(1.08)}
+  100% {transform:scale(1);filter:brightness(1)}
+}
+@keyframes wrong {
+  0%,100% {transform:translateX(0)}
+  25% {transform:translateX(-3px)}
+  75% {transform:translateX(3px)}
+}
+@media(prefers-reduced-motion:reduce) {
+  *,*::before,*::after {
+    animation:none!important;
+    transition:none!important;
+  }
+}
+button:focus-visible {
+  outline:3px solid white;
+  outline-offset:2px;
+}
+#message {
+  min-height:59px;
+  padding:14px 2px 0;
+  font-size:13px;
+  line-height:1.5;
+}
+.goodText {color:var(--green)}
+.badText {color:var(--red)}
+.actions {
+  display:grid;
+  gap:9px;
+  margin-top:8px;
+}
+.action {
+  padding:14px;
+  border:0;
+  border-radius:12px;
+  font-size:14px;
+  font-weight:750;
+  cursor:pointer;
+}
+.primary {background:var(--accent);color:#fff}
+.secondary {background:#303852;color:#fff}
+.sound {
+  background:transparent;
+  border:1px solid #4b5372;
+  color:#d8ddf3;
+  border-radius:10px;
+  padding:9px;
+  font-size:12px;
+  cursor:pointer;
+}
+.summary {
+  margin-top:18px;
+  padding:17px;
+  background:#12192c;
+  border:1px solid #384260;
+  border-radius:16px;
+}
+.summary h2 {font-size:20px;margin:0 0 12px}
+.result-row {
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  padding:11px 0;
+  border-bottom:1px solid #333c57;
+  font-size:13px;
+}
+.result-row span {color:var(--muted)}
+.grade {
+  font-size:42px;
+  font-weight:850;
+  color:var(--green);
+  text-align:center;
+  margin:15px 0 4px;
+}
+.grade-note {
+  font-size:12px;
+  color:var(--muted);
+  text-align:center;
+  margin-bottom:18px;
+}
+.hidden {display:none!important}
+footer {
+  color:var(--muted);
+  text-align:center;
+  font-size:12px;
+  margin-top:16px;
+}
+</style>
+</head>
+<body>
+<main class="app">
+  <header>
+    <h1>Piilo<span>reitti.</span></h1>
+    <span class="tag">VERSIO 0.4</span>
+  </header>
+
+  <section class="panel">
+    <p class="date" id="dateLabel"></p>
+
+    <div class="levels">
+      <button class="level" data-level="0">1 · 6×6</button>
+      <button class="level" data-level="1">2 · 8×8</button>
+      <button class="level" data-level="2">3 · 10×10</button>
+    </div>
+
+    <p class="description">
+      Löydä piilotettu reitti A:sta M:ään.
+      Liiku vain eteenpäin viereisiin laattoihin.
+      Jokainen arvaus lasketaan.
+    </p>
+
+    <div class="stats">
+      <div class="stat">
+        <small>Tason klikit</small>
+        <strong id="clicks">0</strong>
+      </div>
+      <div class="stat">
+        <small>Päivän klikit</small>
+        <strong id="total">0</strong>
+      </div>
+      <div class="stat">
+        <small>Peliputki 🔥</small>
+        <strong id="streak">0</strong>
+      </div>
+    </div>
+
+    <div class="scoreline">
+      <span id="levelLabel">Taso 1/3</span>
+      <span id="optimalLabel">Optimi: –</span>
+    </div>
+
+    <div id="board" class="board"
+         role="group" aria-label="Piiloreitin pelilauta"></div>
+
+    <p id="message" aria-live="polite"></p>
+
+    <div class="actions">
+      <button id="next" class="action primary" disabled>
+        Seuraava taso →
+      </button>
+      <button id="reset" class="action secondary">
+        Palaa lähtölaattaan
+      </button>
+      <button id="sound" class="sound" type="button">
+        🔊 Äänet päällä
+      </button>
+    </div>
+
+    <section id="summary" class="summary hidden">
+      <h2>🏆 Päivän tulokset</h2>
+      <div id="results"></div>
+      <div id="grade" class="grade"></div>
+      <div id="gradeNote" class="grade-note"></div>
+      <div class="actions">
+        <button id="share" class="action primary">
+          Jaa päivän tulos
+        </button>
+        <button id="copy" class="action secondary">
+          Kopioi tulos
+        </button>
+      </div>
+    </section>
+  </section>
+
+  <footer>
+    Kolme haastetta päivässä · Tallennus automaattinen
+  </footer>
+</main>
+
+<script>
+"use strict";
+
+// ---------- ASETUKSET ----------
+const CONFIG = [
+  {size:6,steps:10,name:"Helppo"},
+  {size:8,steps:18,name:"Keskitaso"},
+  {size:10,steps:26,name:"Vaikea"}
+];
+
+const GAME_KEY="piiloreitti_v04";
+const STREAK_KEY="piiloreitti_streak_v04";
+const SOUND_KEY="piiloreitti_sound_v04";
+
+const $=id=>document.getElementById(id);
+const levelButtons=[...document.querySelectorAll(".level")];
+
+function dateKey() {
+  const d=new Date();
+  return [
+    d.getFullYear(),
+    String(d.getMonth()+1).padStart(2,"0"),
+    String(d.getDate()).padStart(2,"0")
+  ].join("-");
+}
+
+function previousDate(date) {
+  const [y,m,d]=date.split("-").map(Number);
+  const x=new Date(Date.UTC(y,m-1,d));
+  x.setUTCDate(x.getUTCDate()-1);
+  return x.toISOString().slice(0,10);
+}
+
+function read(key) {
+  try {
+    return JSON.parse(localStorage.getItem(key));
+  } catch(e) {
+    return null;
+  }
+}
+
+function write(key,value) {
+  try {
+    localStorage.setItem(key,JSON.stringify(value));
+    return true;
+  } catch(e) {
+    console.warn("Tallennus epäonnistui",e);
+    return false;
+  }
+}
+
+// ---------- PÄIVÄN SATUNNAISLUVUT ----------
+function hash(text) {
+  let h=2166136261;
+  for(const ch of text) {
+    h^=ch.charCodeAt(0);
+    h=Math.imul(h,16777619);
+  }
+  return h>>>0;
+}
+
+function rng(seed) {
+  let s=seed>>>0;
+  return ()=>{
+    s=(s+0x6D2B79F5)>>>0;
+    let t=s;
+    t=Math.imul(t^(t>>>15),t|1);
+    t^=t+Math.imul(t^(t>>>7),t|61);
+    return ((t^(t>>>14))>>>0)/4294967296;
+  };
+}
+
+function neighbors(id,size) {
+  const r=Math.floor(id/size);
+  const c=id%size;
+  const out=[];
+  if(r>0) out.push(id-size);
+  if(r<size-1) out.push(id+size);
+  if(c>0) out.push(id-1);
+  if(c<size-1) out.push(id+1);
+  return out;
+}
+
+// ---------- PIILOREITIN LUONTI ----------
+// Tavoitepituudet ovat parillisia.
+// Reitti ei käy samassa laatassa kahdesti.
+// Kaikilla saman päivän pelaajilla on sama reitti.
+function generateRoute(date,level) {
+  const {size,steps}=CONFIG[level];
+  const goal=size*size-1;
+  const random=rng(hash("Piiloreitti04|"+date+"|"+level));
+  const path=[0];
+  const used=new Set([0]);
+  let attempts=0;
+  const LIMIT=250000;
+
+  function distance(id) {
+    return (size-1-Math.floor(id/size))+
+           (size-1-id%size);
+  }
+
+  function search(current) {
+    attempts++;
+    if(attempts>LIMIT) return false;
+
+    const taken=path.length-1;
+    if(current===goal) return taken===steps;
+    if(taken>=steps) return false;
+
+    const options=neighbors(current,size)
+      .filter(n=>!used.has(n));
+
+    for(let i=options.length-1;i>0;i--) {
+      const j=Math.floor(random()*(i+1));
+      [options[i],options[j]]=[options[j],options[i]];
+    }
+
+    for(const n of options) {
+      const remaining=steps-taken-1;
+      const dist=distance(n);
+
+      if(dist>remaining) continue;
+      if((remaining-dist)%2!==0) continue;
+      if(n===goal && remaining!==0) continue;
+
+      path.push(n);
+      used.add(n);
+
+      if(search(n)) return true;
+
+      used.delete(n);
+      path.pop();
+    }
+    return false;
+  }
+
+  if(search(0)) return [...path];
+
+  // Varareitti, jos pitkä reitti ei löydy.
+  // Varmistetaan aina pelattava sokkelo.
+  const fallback=[0];
+  let current=0;
+  for(let i=0;i<size-1;i++) {
+    current++;
+    fallback.push(current);
+  }
+  for(let i=0;i<size-1;i++) {
+    current+=size;
+    fallback.push(current);
+  }
+  return fallback;
+}
+
+// ---------- TALLENNUS ----------
+function emptyLevel() {
+  return {
+    visited:[0],
+    wrongByStep:{},
+    clicks:0,
+    completed:false
+  };
+}
+
+function newGame(date) {
+  return {
+    date,
+    activeLevel:0,
+    levels:CONFIG.map(()=>emptyLevel())
+  };
+}
+
+function loadGame() {
+  const saved=read(GAME_KEY);
+  const today=dateKey();
+
+  if(saved &&
+     saved.date===today &&
+     Array.isArray(saved.levels) &&
+     saved.levels.length===3 &&
+     Number.isInteger(saved.activeLevel) &&
+     saved.activeLevel>=0 &&
+     saved.activeLevel<3 &&
+     saved.levels.every(s=>
+       Array.isArray(s.visited) &&
+       s.visited[0]===0 &&
+       s.wrongByStep &&
+       typeof s.wrongByStep==="object" &&
+       Number.isSafeInteger(s.clicks) &&
+       s.clicks>=0 &&
+       typeof s.completed==="boolean"
+     )) return saved;
+
+  return newGame(today);
+}
+
+function loadStreak() {
+  const s=read(STREAK_KEY);
+  if(s &&
+     typeof s.lastDate==="string" &&
+     Number.isInteger(s.count) &&
+     s.count>=0) return s;
+
+  return {lastDate:"",count:0};
+}
+
+let game=loadGame();
+let streakData=loadStreak();
+let routes=[];
+let soundEnabled=read(SOUND_KEY)!==false;
+let lastAnimation=null;
+let audioContext=null;
+
+function setupRoutes() {
+  routes=CONFIG.map((_,i)=>
+    generateRoute(game.date,i)
+  );
+}
+
+function state() {
+  return game.levels[game.activeLevel];
+}
+
+function save() {
+  if(!write(GAME_KEY,game)) {
+    $("message").textContent=
+      "Tallennus ei onnistunut tässä selaimessa.";
+  }
+}
+
+function totalClicks() {
+  return game.levels.reduce((sum,s)=>sum+s.clicks,0);
+}
+
+function optimalTotal() {
+  return routes.reduce((sum,r)=>sum+r.length-1,0);
+}
+
+function allCompleted() {
+  return game.levels.every(s=>s.completed);
+}
+
+function streakCount() {
+  if(streakData.lastDate===game.date ||
+     streakData.lastDate===previousDate(game.date)) {
+    return streakData.count;
+  }
+  return 0;
+}
+
+function completeDay() {
+  if(!allCompleted()) return;
+  if(streakData.lastDate===game.date) return;
+
+  const consecutive=
+    streakData.lastDate===previousDate(game.date);
+
+  streakData.count=consecutive
+    ? streakData.count+1 : 1;
+  streakData.lastDate=game.date;
+  write(STREAK_KEY,streakData);
+}
+
+function ensureToday() {
+  if(game.date===dateKey()) return false;
+  game=newGame(dateKey());
+  setupRoutes();
+  save();
+  lastAnimation=null;
+  return true;
+}
+
+// ---------- ÄÄNET ----------
+function playSound(type) {
+  if(!soundEnabled) return;
+
+  try {
+    const AudioCtx=window.AudioContext ||
+                   window.webkitAudioContext;
+    if(!AudioCtx) return;
+
+    if(!audioContext) audioContext=new AudioCtx();
+    if(audioContext.state==="suspended") {
+      audioContext.resume();
+    }
+
+    const now=audioContext.currentTime;
+    const oscillator=audioContext.createOscillator();
+    const gain=audioContext.createGain();
+
+    oscillator.connect(gain);
+    gain.connect(audioContext.destination);
+
+    oscillator.type="sine";
+
+    const frequency=
+      type==="correct"?660:
+      type==="wrong"?190:880;
+
+    oscillator.frequency.setValueAtTime(frequency,now);
+
+    if(type==="complete") {
+      oscillator.frequency.setValueAtTime(880,now);
+      oscillator.frequency.setValueAtTime(1100,now+.11);
+    }
+
+    gain.gain.setValueAtTime(.0001,now);
+    gain.gain.exponentialRampToValueAtTime(.09,now+.015);
+    gain.gain.exponentialRampToValueAtTime(.0001,now+.19);
+
+    oscillator.start(now);
+    oscillator.stop(now+.21);
+  } catch(e) {
+    console.warn("Ääntä ei voitu toistaa",e);
+  }
+}
+
+function updateSoundButton() {
+  $("sound").textContent=soundEnabled
+    ?"🔊 Äänet päällä"
+    :"🔇 Äänet pois";
+  $("sound").setAttribute("aria-pressed",String(soundEnabled));
+}
+
+$("sound").addEventListener("click",()=>{
+  soundEnabled=!soundEnabled;
+  write(SOUND_KEY,soundEnabled);
+  updateSoundButton();
+});
+
+// ---------- PISTEYTYS ----------
+function gradeInfo() {
+  const opt=optimalTotal();
+  const extra=totalClicks()-opt;
+  const ratio=extra/opt;
+
+  if(ratio===0) return ["S","Täydellinen reitti!"];
+  if(ratio<=.25) return ["A","Erinomainen suoritus"];
+  if(ratio<=.5) return ["B","Hyvä suoritus"];
+  if(ratio<=1) return ["C","Selvisit haasteesta"];
+  return ["D","Huomenna uusi mahdollisuus"];
+}
+
+function shareText() {
+  const lines=[
+    "🧩 PIILOREITTI",
+    "📅 "+game.date,
+    ""
+  ];
+
+  game.levels.forEach((s,i)=>{
+    lines.push(
+      `Taso ${i+1} (${CONFIG[i].size}×${CONFIG[i].size}): `+
+      `${s.clicks}/${routes[i].length-1}`
+    );
+  });
+
+  const [grade]=gradeInfo();
+  lines.push("");
+  lines.push(
+    `🏆 Yhteensä: ${totalClicks()}/${optimalTotal()}`
+  );
+  lines.push(`⭐ Arvosana: ${grade}`);
+  lines.push(`🔥 Peliputki: ${streakCount()} päivää`);
+  lines.push("Pystytkö parempaan?");
+
+  return lines.join("\n");
+}
+
+async function copyResult() {
+  if(!allCompleted()) return;
+
+  try {
+    await navigator.clipboard.writeText(shareText());
+    $("message").className="goodText";
+    $("message").textContent="Tulos kopioitu!";
+  } catch(e) {
+    window.prompt("Kopioi tulos:",shareText());
+  }
+}
+
+$("copy").addEventListener("click",copyResult);
+
+$("share").addEventListener("click",async()=>{
+  if(!allCompleted()) return;
+
+  if(navigator.share) {
+    try {
+      await navigator.share({
+        title:"Piiloreitti – päivän tulos",
+        text:shareText()
+      });
+    } catch(e) {
+      if(e.name!=="AbortError") await copyResult();
+    }
+  } else {
+    await copyResult();
+  }
+});
+
+// ---------- PELILAUDAN PIIRTÄMINEN ----------
+function render() {
+  const level=game.activeLevel;
+  const config=CONFIG[level];
+  const s=state();
+  const current=s.visited[s.visited.length-1];
+  const step=s.visited.length-1;
+  const wrongHere=s.wrongByStep[step] || [];
+  const goal=config.size*config.size-1;
+
+  $("dateLabel").textContent=
+    "Päivän haaste · "+
+    game.date.split("-").reverse().join(".");
+
+  $("clicks").textContent=s.clicks;
+  $("total").textContent=totalClicks();
+  $("streak").textContent=streakCount();
+  $("levelLabel").textContent=
+    `Taso ${level+1}/3 · ${config.size}×${config.size}`;
+  $("optimalLabel").textContent=
+    `Optimi: ${routes[level].length-1}`;
+
+  levelButtons.forEach((b,i)=>{
+    b.classList.toggle("active",i===level);
+    b.disabled=i>0 && !game.levels[i-1].completed;
+    b.textContent=
+      `${i+1} · ${CONFIG[i].size}×${CONFIG[i].size}`+
+      (game.levels[i].completed?" ✓":"");
+  });
+
+  const board=$("board");
+  board.innerHTML="";
+  board.style.setProperty("--size",config.size);
+
+  for(let id=0;id<config.size*config.size;id++) {
+    const b=document.createElement("button");
+    b.type="button";
+    b.className="tile";
+
+    const visited=s.visited.includes(id);
+    const wrong=wrongHere.includes(id);
+
+    if(id===0) {
+      b.textContent="A";
+      b.classList.add("start");
+    } else if(id===goal) {
+      b.textContent="M";
+      b.classList.add("finish");
+    } else if(visited) {
+      b.textContent="✓";
+      b.classList.add("good");
+    } else if(wrong) {
+      b.textContent="×";
+      b.classList.add("bad");
+    } else {
+      b.textContent="?";
+    }
+
+    if(id===current && !s.completed) {
+      b.classList.add("current");
+    }
+
+    if(lastAnimation &&
+       lastAnimation.level===level &&
+       lastAnimation.id===id) {
+      b.classList.add(
+        lastAnimation.type==="correct"
+        ?"correct-pop":"wrong-pop"
+      );
+    }
+
+    b.setAttribute("aria-label",
+      id===0?"Aloitus":
+      id===goal?"Maali":
+      wrong?"Väärä laatta":
+      visited?"Oikea laatta":
+      `Laatta ${id+1}`
+    );
+
+    b.disabled=
+      s.completed ||
+      visited ||
+      wrong ||
+      !neighbors(current,config.size).includes(id);
+
+    b.addEventListener("click",()=>chooseTile(id));
+    board.appendChild(b);
+  }
+
+  $("next").disabled=!s.completed || level===2;
+  $("next").textContent=
+    level===2?"Kaikki tasot valmiit":
+    "Seuraava taso →";
+  $("reset").disabled=s.completed;
+
+  $("message").className="";
+  $("message").textContent=s.completed
+    ?`Taso valmis! ${s.clicks} klikkausta. `+
+     `Optimi ${routes[level].length-1}.`
+    :"Valitse seuraava viereinen laatta.";
+
+  if(s.completed) {
+    $("message").className="goodText";
+  }
+
+  const completed=allCompleted();
+  $("summary").classList.toggle("hidden",!completed);
+
+  if(completed) {
+    const results=$("results");
+    results.innerHTML="";
+
+    game.levels.forEach((s,i)=>{
+      const row=document.createElement("div");
+      row.className="result-row";
+
+      const name=document.createElement("span");
+      name.textContent=
+        `Taso ${i+1} · ${CONFIG[i].size}×${CONFIG[i].size}`;
+
+      const value=document.createElement("strong");
+      value.textContent=
+        `${s.clicks} / ${routes[i].length-1}`;
+
+      row.append(name,value);
+      results.appendChild(row);
+    });
+
+    const total=document.createElement("div");
+    total.className="result-row";
+
+    const label=document.createElement("span");
+    label.textContent="Yhteensä";
+
+    const value=document.createElement("strong");
+    value.textContent=
+      `${totalClicks()} / ${optimalTotal()}`;
+
+    total.append(label,value);
+    results.appendChild(total);
+
+    const [grade,note]=gradeInfo();
+    $("grade").textContent=grade;
+    $("gradeNote").textContent=
+      note+" · Peliputki "+streakCount()+" päivää";
+  }
+}
+
+// ---------- PELAAMINEN ----------
+function chooseTile(id) {
+  if(ensureToday()) {
+    render();
+    return;
+  }
+
+  const s=state();
+  if(s.completed) return;
+
+  const level=game.activeLevel;
+  const size=CONFIG[level].size;
+  const current=s.visited[s.visited.length-1];
+  const step=s.visited.length-1;
+  const wrongHere=s.wrongByStep[step] || [];
+
+  if(!neighbors(current,size).includes(id)) return;
+  if(s.visited.includes(id)) return;
+  if(wrongHere.includes(id)) return;
+
+  s.clicks++;
+
+  const expected=routes[level][step+1];
+
+  if(id===expected) {
+    s.visited.push(id);
+    lastAnimation={level,id,type:"correct"};
+
+    if(id===size*size-1) {
+      s.completed=true;
+      if(allCompleted()) completeDay();
+      playSound("complete");
+    } else {
+      playSound("correct");
+    }
+
+    save();
+    render();
+
+    if(!s.completed) {
+      $("message").className="goodText";
+      $("message").textContent="Oikein! Jatka reittiä.";
+    }
+  } else {
+    if(!s.wrongByStep[step]) {
+      s.wrongByStep[step]=[];
+    }
+    s.wrongByStep[step].push(id);
+
+    lastAnimation={level,id,type:"wrong"};
+    playSound("wrong");
+
+    save();
+    render();
+
+    $("message").className="badText";
+    $("message").textContent=
+      "Väärä laatta! Jäät paikallesi. Kokeile toista.";
+  }
+}
+
+// ---------- PAINIKKEET ----------
+levelButtons.forEach((b,i)=>{
+  b.addEventListener("click",()=>{
+    if(ensureToday()) {
+      render();
+      return;
+    }
+    if(i===0 || game.levels[i-1].completed) {
+      game.activeLevel=i;
+      lastAnimation=null;
+      save();
+      render();
+    }
+  });
+});
+
+$("next").addEventListener("click",()=>{
+  if(ensureToday()) {
+    render();
+    return;
+  }
+  if(state().completed && game.activeLevel<2) {
+    game.activeLevel++;
+    lastAnimation=null;
+    save();
+    render();
+  }
+});
+
+$("reset").addEventListener("click",()=>{
+  if(ensureToday()) {
+    render();
+    return;
+  }
+  if(state().completed) return;
+
+  // Pisteet ja väärät arvaukset säilyvät.
+  state().visited=[0];
+  lastAnimation=null;
+  save();
+  render();
+});
+
+document.addEventListener("visibilitychange",()=>{
+  if(!document.hidden && ensureToday()) render();
+});
+
+window.addEventListener("focus",()=>{
+  if(ensureToday()) render();
+});
+
+// ---------- KÄYNNISTYS ----------
+setupRoutes();
+if(allCompleted()) completeDay();
+updateSoundButton();
+render();
+</script>
+</body>
+</html>
