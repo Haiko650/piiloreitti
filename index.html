@@ -22,7 +22,7 @@
 <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
 <meta content="#16153a" name="theme-color"/>
 <meta content="yes" name="mobile-web-app-capable"/>
-<title>Pathle 1.3.2 – Button Fix</title>
+<title>Pathle 1.3.1 – Illustrated Ocean Menu</title>
 <style>
 :root{color-scheme:dark;--bg:#16153a;--panel:#262250;--tile:#484177;--line:#625b98;--text:#fffaff;--muted:#c8c3eb;--green:#45d6a0;--red:#ff6685;--accent:#a66aff;--gold:#ffd166}
 *{box-sizing:border-box}html{min-height:100%}body{margin:0;min-height:100dvh;background:radial-gradient(ellipse at 50% -15%,#6046a5 0%,#2c245c 38%,var(--bg) 75%);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}main{max-width:500px;margin:auto;padding:18px 13px 42px;position:relative}h1{margin:0;font-size:clamp(40px,10vw,56px);letter-spacing:-2.5px;line-height:1.08;text-shadow:0 3px 22px #b474ff66}h2{font-size:19px;margin:0 0 12px}p{line-height:1.5}.tag{color:var(--gold);font-weight:800;margin:4px 0 17px;letter-spacing:.03em}.panel{background:linear-gradient(160deg,#302a65,#211e48);border:1px solid #6252a0;border-radius:22px;padding:16px;margin:12px 0;box-shadow:0 12px 28px #0b092c55,inset 0 1px #ffffff18}.muted{color:var(--muted)}.tiny{font-size:13px}.top{display:flex;align-items:center;justify-content:space-between;gap:10px}.date{font-size:12px;color:#e3d8ff;background:#423772;border-radius:100px;padding:7px 10px;white-space:nowrap}.tabs,.actions{display:flex;gap:8px;flex-wrap:wrap}button{font:inherit;cursor:pointer;border:0;border-radius:13px;padding:12px 10px;font-weight:800;color:var(--text);background:#49417b;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;transition:background-color .16s,box-shadow .16s,transform .16s}button:active:not(:disabled){transform:scale(.96)}button:disabled{opacity:.5;cursor:default}.tabs button{flex:1;min-width:0;font-size:12px;padding:13px 3px;background:#484077}.tabs button.active{background:linear-gradient(135deg,#b477ff,#8855ed);box-shadow:0 3px 0 #5c349e,0 0 18px #b477ff55}.actions button{flex:1;min-width:90px}.primary{background:linear-gradient(135deg,#ffe18b,#ffba54);color:#422b48;box-shadow:0 3px 0 #bd773b}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}.stat{background:#1d1a42;border:1px solid #4e437b;border-radius:14px;padding:11px 5px;text-align:center}.stat b{display:block;font-size:23px;color:#fff}.stat:nth-child(2) b{color:var(--gold)}.stat:nth-child(3) b{color:#bba0ff}.stat span{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}.board{display:grid;grid-template-columns:repeat(var(--size),minmax(0,1fr));gap:clamp(2px,.7vw,5px);width:100%;margin:15px auto;padding:clamp(5px,1.7vw,10px);border-radius:16px;background:#19173d;border:1px solid #494079;touch-action:manipulation;isolation:isolate}.tile{width:100%;aspect-ratio:1;min-width:0;padding:0;border:1px solid #776eae;border-bottom:3px solid #302b59;border-radius:clamp(4px,1.3vw,9px);background:linear-gradient(150deg,#56508c,#423b70);color:#fff;font-size:clamp(11px,3.2vw,22px);font-weight:900;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;position:relative;transition:background .13s,border-color .13s,box-shadow .13s}.tile:disabled{opacity:1;cursor:default}.tile.visited{background:linear-gradient(145deg,#71f3c0,#31b98b);border-color:#9bffdb;border-bottom-color:#16825f;color:#0d493b;box-shadow:0 0 11px #45d6a04a}.tile.current{outline:2px solid #fff;outline-offset:-3px;box-shadow:0 0 0 2px #fdf2ff80,0 0 17px #45d6a0a0;z-index:1}.tile.wrong{background:linear-gradient(140deg,#ff8ba4,#f45178);border-color:#ffc3d0;border-bottom-color:#ae3056;color:#661d39;box-shadow:0 0 9px #ff66854d}.tile.goal:not(.visited){background:linear-gradient(145deg,#ffe89a,#ffc34f);border-color:#fff0c2;border-bottom-color:#b88027;color:#513819;box-shadow:0 0 13px #ffd16670}.tile.possible{border-color:#e6d4ff;box-shadow:inset 0 0 0 1px #c6aaff50}.tile.correct-pop{animation:pop .4s cubic-bezier(.16,1.5,.4,1),glow .5s ease-out}.tile.wrong-pop{animation:shake .38s ease-out,wrongflash .4s ease-out}@keyframes pop{0%{transform:scale(.76)}55%{transform:scale(1.19)}100%{transform:scale(1)}}@keyframes glow{40%{filter:brightness(1.65)}}@keyframes shake{15%,55%{transform:translateX(-3px) rotate(-4deg)}35%,75%{transform:translateX(3px) rotate(4deg)}}@keyframes wrongflash{40%{filter:brightness(1.5)}}.message{min-height:44px;color:#e0d9ff;font-size:14px}.summary{border:1px solid #e9ba63;background:linear-gradient(145deg,#514071,#302753);border-radius:16px;padding:15px;margin-top:12px;box-shadow:0 0 22px #ffca6530}.summary h2{color:#ffe49d}.summary p{margin:6px 0}.hidden{display:none}.help{font-size:14px;color:var(--muted)}footer{text-align:center;font-size:12px;color:var(--muted);margin-top:24px}.celebration{pointer-events:none;position:fixed;inset:0;z-index:10;overflow:hidden}.confetti{position:absolute;top:-25px;left:var(--x);width:var(--w);height:var(--h);border-radius:3px;background:var(--c);opacity:0;animation:confetti-fall var(--d) ease-in var(--delay) forwards;box-shadow:0 0 7px var(--c)}@keyframes confetti-fall{0%{transform:translate3d(0,-20px,0) rotate(0);opacity:1}85%{opacity:1}100%{transform:translate3d(var(--drift),110dvh,0) rotate(var(--spin));opacity:0}}.victory-banner{position:fixed;z-index:11;pointer-events:none;left:50%;top:22%;transform:translate(-50%,-30%) scale(.6);padding:16px 26px;border:2px solid #ffe19a;border-radius:20px;background:#372b6aef;color:#ffe79f;font-weight:1000;font-size:clamp(22px,7vw,38px);text-align:center;white-space:nowrap;text-shadow:0 0 20px #ffd166a0;box-shadow:0 0 38px #ffce7888;opacity:0;animation:victory 1.8s ease-out forwards}@keyframes victory{12%{transform:translate(-50%,0) scale(1.1);opacity:1}35%,65%{transform:translate(-50%,0) scale(1);opacity:1}100%{transform:translate(-50%,-45%) scale(.9);opacity:0}}@media(max-width:370px){main{padding:12px 9px 30px}.panel{padding:11px}.board{gap:2px;padding:5px}.tabs button{font-size:12px}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.celebration,.victory-banner{display:none}}
@@ -575,44 +575,169 @@ body .restored-haiko .shades-gold{opacity:0!important;animation:none!important}
 @media(max-height:600px){#welcomeScreen{gap:2px!important}#welcomeScreen .adventureCard{padding:5px 8px 6px}#welcomeScreen .menuPractice,#welcomeScreen .menuHideout{min-height:37px}#welcomeScreen .illustratedHero{min-height:130px}}
 @media(prefers-reduced-motion:reduce){#welcomeScreen .heroBubble,#welcomeScreen .illustratedHero:before,#hideoutScreen .hideoutStage:before{animation:none!important}}
 
-/* PATHLE 1.3.2 FIX — only the home-menu buttons. All 1.3.1 content and layout preserved. */
-#welcomeScreen .menuButton {
-  position:relative;
-  border-radius:999px;
-  border:2px solid rgba(255,255,255,.78);
-  box-shadow:0 4px 0 rgba(3,33,73,.62),0 8px 15px rgba(0,16,48,.46),inset 0 2px 2px rgba(255,255,255,.48);
-  overflow:hidden;
-  transition:transform .14s ease,filter .14s ease;
+/* PATHLE 1.3.2 — APPROVED GLOSSY CAPSULE BUTTONS — direct overrides of older menu styles.
+   This block modifies only the welcome screen's menu/button appearance. */
+#welcomeScreen .adventureCard {
+  width: min(100%, 408px) !important;
+  margin-inline:auto !important;
+  padding: 3px 4px 2px !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  backdrop-filter:none !important;
+  gap:2px !important;
 }
-#welcomeScreen .menuButton::before{
-  content:"";position:absolute;pointer-events:none;top:3px;left:12%;right:12%;height:35%;
-  border-radius:100%;background:linear-gradient(rgba(255,255,255,.24),transparent);z-index:0;
+#welcomeScreen .adventureCardTop {
+  min-height:0!important;
+  margin:0!important;
+  padding:0 15px!important;
+  background:linear-gradient(90deg,transparent,#063973aa,transparent)!important;
+  border:0!important;
 }
-#welcomeScreen .menuButton > *{position:relative;z-index:1}
-#welcomeScreen .menuButton:active:not(:disabled){transform:translateY(2px) scale(.99);filter:brightness(1.07)}
-#welcomeScreen .menuDaily{
-  color:#56300c;
-  border-color:#fff1af;
-  background:linear-gradient(180deg,#fff6a0 0%,#ffe45c 29%,#ffb732 78%,#f69b24 100%);
-  box-shadow:0 4px 0 #b86c17,0 8px 17px #001b4a80,inset 0 2px 2px #fffada;
+#welcomeScreen .adventureCardTop .chapterLabel {font-size:10px!important;letter-spacing:.09em!important;color:#e2faff!important}
+#welcomeScreen .adventureCardTop .journeyQuick{font-size:10px!important;padding:2px 10px!important;border-radius:99px!important}
+#welcomeScreen .chapterCard {
+  background:linear-gradient(180deg,#0e4380bd,#052f66ce)!important;
+  border:1px solid #85ddf387!important;
+  border-radius:14px!important;
+  padding:3px 10px 4px!important;
+  margin:0 2px 6px!important;
+  box-shadow:0 5px 15px #03224f54!important;
 }
-#welcomeScreen .menuDaily strong,#welcomeScreen .menuDaily small,#welcomeScreen .menuDaily .chevron{color:#57300d}
-#welcomeScreen .menuPractice{
-  color:#fff;border-color:#e6bfff;
-  background:linear-gradient(180deg,#c480ff,#a563f6 31%,#7546ea 83%,#5b31c9);
-  box-shadow:0 4px 0 #4826a1,0 7px 13px #001b4a88,inset 0 2px 2px #f3daff9a;
+#welcomeScreen .chapterCard .top{margin:0!important;min-height:0!important;align-items:center!important}
+#welcomeScreen .chapterCard .top small{display:none!important}
+#welcomeScreen .chapterCard .top br{display:none!important}
+#welcomeScreen .chapterCard .top strong{font-size:10px!important;line-height:1.1!important}
+#welcomeScreen .chapterProgress{display:none!important}
+#welcomeScreen .chapterCard .weekDots{margin:2px 0 0!important;gap:6px!important;min-height:15px!important}
+#welcomeScreen .chapterCard .weekDots>*{width:19px!important;height:19px!important;font-size:10px!important}
+#welcomeScreen .chapterCard>small{display:none!important}
+#welcomeScreen .chapterCard .mysteryLine{font-size:9px!important;line-height:1!important;margin:2px 0 0!important;padding:0!important}
+#welcomeScreen .menuButton,
+#welcomeScreen #playDaily,
+#welcomeScreen #playPractice,
+#welcomeScreen #openHideout {
+  display:flex!important;
+  position:relative!important;
+  box-sizing:border-box!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  width:calc(100% - 20px)!important;
+  margin:0 10px!important;
+  padding:5px 15px!important;
+  border-radius:999px!important;
+  border-style:solid!important;
+  border-width:2px!important;
+  text-align:left!important;
+  overflow:hidden!important;
+  isolation:isolate!important;
+  cursor:pointer!important;
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .14s ease,filter .14s ease,box-shadow .14s ease!important;
 }
-#welcomeScreen .menuHideout{
-  color:#fff;border-color:#a8faff;
-  background:linear-gradient(180deg,#65f0ee,#0bd0de 31%,#079bc9 82%,#0873a5);
-  box-shadow:0 4px 0 #08618b,0 7px 13px #001b4a88,inset 0 2px 2px #e0ffff88;
+#welcomeScreen .menuButton:before {
+  content:""!important;
+  position:absolute!important;
+  pointer-events:none!important;
+  left:8px!important;right:8px!important;top:3px!important;
+  height:43%!important;
+  border-radius:999px 999px 55% 55%!important;
+  background:linear-gradient(180deg,#ffffff86,#ffffff12)!important;
+  opacity:.70!important;
+  z-index:0!important;
 }
-#welcomeScreen .homeQuickTools button{
-  border-radius:999px;
-  border-color:rgba(179,227,255,.75);
-  background:linear-gradient(180deg,rgba(27,77,132,.88),rgba(9,32,80,.94));
-  box-shadow:0 2px 0 #092548,0 4px 8px #00102a66,inset 0 1px #ffffff49;
+#welcomeScreen .menuButton>* {position:relative!important;z-index:1!important}
+#welcomeScreen .menuButton .menuIcon {
+  display:grid!important;place-items:center!important;
+  flex:0 0 48px!important;
+  width:48px!important;height:45px!important;
+  font-size:27px!important;text-align:center!important;
+  margin-right:5px!important;
+  filter:drop-shadow(0 2px 2px #091c4b77)!important;
 }
+#welcomeScreen .menuButton .menuIcon svg {width:43px!important;height:43px!important}
+#welcomeScreen .menuButton>span:nth-child(2){flex:1 1 auto!important;min-width:0!important}
+#welcomeScreen .menuButton strong {
+  display:block!important;
+  font-family:system-ui,-apple-system,"Trebuchet MS",sans-serif!important;
+  font-size:clamp(19px,5.4vw,25px)!important;
+  line-height:1.08!important;
+  letter-spacing:-.035em!important;
+  font-weight:1000!important;
+  white-space:nowrap!important;
+  text-shadow:0 2px 2px #102b5860!important;
+}
+#welcomeScreen .menuButton small{display:block!important;font-size:10px!important;line-height:1.15!important;margin-top:3px!important;letter-spacing:0!important;font-weight:850!important;opacity:.96!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+#welcomeScreen .menuButton .chevron {
+  margin-left:4px!important;flex:0 0 auto!important;
+  font-size:31px!important;line-height:1!important;font-weight:900!important;
+  text-shadow:0 2px 2px #0005!important;
+}
+#welcomeScreen #playDaily {
+  min-height:68px!important;
+  background:linear-gradient(180deg,#fff8a5 0%,#ffe24f 34%,#ffbd24 73%,#ff9417 100%)!important;
+  color:#5b2c0a!important;
+  border-color:#fff6bd!important;
+  box-shadow:0 4px 0 #b85b17,0 9px 19px #001e52b8,inset 0 1px 0 #fffef1!important;
+}
+#welcomeScreen #playDaily strong{font-size:clamp(21px,6vw,27px)!important;text-shadow:0 1px 1px #ffe7a8!important}
+#welcomeScreen #playDaily small{color:#6d4315!important}
+#welcomeScreen #playPractice,
+#welcomeScreen #openHideout {
+  min-height:53px!important;
+  padding-block:3px!important;
+  margin-top:7px!important;
+  color:#fff!important;
+}
+#welcomeScreen #playPractice{
+  background:linear-gradient(180deg,#dc99ff 0%,#ac63fb 28%,#8542ef 62%,#5925d0 100%)!important;
+  border-color:#e6b4ff!important;
+  box-shadow:0 4px 0 #40159e,0 9px 15px #001941ae,inset 0 1px 0 #ffe5ff!important;
+}
+#welcomeScreen #openHideout{
+  background:linear-gradient(180deg,#82fcff 0%,#25e0ed 30%,#06a8d4 64%,#0079b5 100%)!important;
+  border-color:#c7ffff!important;
+  box-shadow:0 4px 0 #076294,0 9px 15px #001941ae,inset 0 1px 0 #eaffff!important;
+}
+#welcomeScreen #playPractice small,
+#welcomeScreen #openHideout small{display:none!important}
+#welcomeScreen #playPractice .menuIcon,
+#welcomeScreen #openHideout .menuIcon{height:40px!important}
+#welcomeScreen .menuButton:active {transform:translateY(3px)!important;filter:brightness(1.08)!important}
+#welcomeScreen .menuButton:focus-visible{outline:3px solid #fff!important;outline-offset:3px!important}
+#welcomeScreen .homeQuickTools {
+  gap:7px!important;
+  justify-content:center!important;
+  margin-top:9px!important;
+}
+#welcomeScreen .homeQuickTools button {
+  width:auto!important;min-width:0!important;
+  min-height:38px!important;
+  display:flex!important;flex-direction:row!important;align-items:center!important;
+  gap:5px!important;padding:3px 10px!important;
+  border-radius:999px!important;
+  border:1px solid #a2eaff!important;
+  background:linear-gradient(180deg,#214f86f5,#092656f5)!important;
+  box-shadow:0 3px 0 #071b43,0 6px 12px #001d3d80!important;
+}
+#welcomeScreen .homeQuickTools button>span{font-size:18px!important;margin:0!important}
+#welcomeScreen .homeQuickTools button small{font-size:10px!important;white-space:nowrap!important}
+@media(max-height:660px){
+  #welcomeScreen .adventureCardTop{display:none!important}
+  #welcomeScreen .chapterCard{padding:2px 7px!important;margin-bottom:3px!important}
+  #welcomeScreen .chapterCard .weekDots>*{height:15px!important;width:15px!important}
+  #welcomeScreen #playDaily{min-height:55px!important}
+  #welcomeScreen #playPractice,#welcomeScreen #openHideout{min-height:43px!important;margin-top:3px!important}
+  #welcomeScreen .menuButton .menuIcon{height:34px!important;width:35px!important;flex-basis:35px!important}
+  #welcomeScreen .menuButton .menuIcon svg{height:33px!important;width:33px!important}
+  #welcomeScreen .menuButton strong{font-size:17px!important}
+  #welcomeScreen #playDaily strong{font-size:19px!important}
+  #welcomeScreen .menuButton small{font-size:9px!important}
+  #welcomeScreen .homeQuickTools{margin-top:3px!important}
+  #welcomeScreen .homeQuickTools button{min-height:30px!important;padding:2px 7px!important}
+}
+@media(prefers-reduced-motion:reduce){#welcomeScreen .menuButton{transition:none!important}}
 
 </style>
 </head>
@@ -627,8 +752,8 @@ body .restored-haiko .shades-gold{opacity:0!important;animation:none!important}
 <div aria-hidden="true" class="heroBubble b3"></div>
 <div aria-hidden="true" class="heroBubble b4"></div>
 </div><div class="homeStage"><div aria-hidden="true" class="sea-light-rays"></div><div aria-hidden="true" class="sea-floor"><span class="reef-cluster r1">🪸</span><span class="reef-cluster r2">🪸</span><span class="reef-cluster r3">🌿</span></div><span aria-hidden="true" class="home-fish fish-one">🐠</span><span aria-hidden="true" class="home-fish fish-two">🐟</span><span aria-hidden="true" class="home-bubble hb1"></span><span aria-hidden="true" class="home-bubble hb2"></span><span aria-hidden="true" class="home-bubble hb3"></span><span aria-hidden="true" class="home-bubble hb4"></span><div aria-label="Haiko the Shark, smiling and showing a thumbs-up" class="haiko-avatar restored-haiko home-haiko" role="img"><div aria-hidden="true" class="haiko-scene-item"></div><div aria-hidden="true" class="haiko-shades shades-purple"></div><div aria-hidden="true" class="haiko-shades shades-gold"></div><div aria-hidden="true" class="haiko-accessory-slot slot-hat"></div><div aria-hidden="true" class="haiko-accessory-slot slot-hand"></div></div><span class="goldenBadge" hidden="" id="goldenBadge"></span></div>
-<div class="adventureCard" id="adventureCard"><div class="adventureCardTop"><div class="chapterLabel">CHAPTER 1 · CORAL REEF</div><button aria-label="View your journey map" class="journeyQuick" id="journeyQuick" title="Journey map" type="button">Map ›</button></div><div class="chapterCard" id="chapterCard"><div class="top"><div><small>CURRENT CHAPTER</small><br/><strong id="homeChapter">Chapter 1 · Coral Reef</strong></div><strong id="homeDay">Day 1 / 7</strong></div><div class="chapterProgress"><div id="homeBar"></div></div><div aria-label="Seven adventure days" class="weekDots" id="homeWeekDots"></div><small>Complete seven adventure days to discover a secret.</small><div class="mysteryLine" id="mysteryLine"><span aria-hidden="true">🎁</span><span>Mystery treasure on Day 7</span></div></div><button class="menuButton menuDaily" id="playDaily" type="button"><span aria-hidden="true" class="menuIcon"><svg fill="none" height="38" viewbox="0 0 44 44" width="38"><rect fill="#4A2A73" height="32" rx="7" stroke="#FFF0B8" stroke-width="2.5" width="36" x="4" y="7"></rect><path d="M4 17h36" stroke="#FFF0B8" stroke-width="3"></path><path d="M14 4v10M30 4v10" stroke="#4A2A73" stroke-linecap="round" stroke-width="4"></path><path d="m14 28 5 5 11-12" stroke="#4AF6A9" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"></path></svg></span><span><strong id="dailyButtonTitle">Daily Adventure</strong><small id="dailyButtonHint">3 levels · 3 tries each · Best score wins</small></span><span class="chevron">›</span></button><button class="menuJourney visuallyHiddenControl" id="journeyButton" type="button">View 7-day map ↗</button></div>
-<button class="menuButton menuPractice" id="playPractice" type="button"><span class="menuIcon">⚡</span><span><strong>Practice Mode</strong><small>A new random path every run</small></span><span class="chevron">›</span></button><button class="menuButton menuHideout" id="openHideout" type="button"><span aria-hidden="true" class="menuIcon">⌂</span><span><strong>Haiko’s Hideout</strong><small>See your ocean treasures</small></span><span class="chevron">›</span></button>
+<div class="adventureCard" id="adventureCard"><div class="adventureCardTop"><div class="chapterLabel">CHAPTER 1 · CORAL REEF</div><button aria-label="View your journey map" class="journeyQuick" id="journeyQuick" title="Journey map" type="button">Map ›</button></div><div class="chapterCard" id="chapterCard"><div class="top"><div><small>CURRENT CHAPTER</small><br/><strong id="homeChapter">Chapter 1 · Coral Reef</strong></div><strong id="homeDay">Day 1 / 7</strong></div><div class="chapterProgress"><div id="homeBar"></div></div><div aria-label="Seven adventure days" class="weekDots" id="homeWeekDots"></div><small>Complete seven adventure days to discover a secret.</small><div class="mysteryLine" id="mysteryLine"><span aria-hidden="true">🎁</span><span>Mystery treasure on Day 7</span></div></div><button class="menuButton menuDaily" id="playDaily" type="button"><span aria-hidden="true" class="menuIcon"><svg viewBox="0 0 52 52" width="44" height="44" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="pathleIconSea" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#67EDFF"/><stop offset="1" stop-color="#0573C4"/></linearGradient></defs><circle cx="26" cy="26" r="24" fill="url(#pathleIconSea)" stroke="#FDF9CE" stroke-width="2.5"/><path d="M5 38L16 20L24 32L35 14L49 38Z" fill="#246C9B"/><path d="M5 39Q14 32 23 39T49 39V48H5Z" fill="#36D9B1"/><path d="M14 41V30M14 34L10 30M14 35L18 30M40 44V31M40 36L36 33M40 36L45 31" stroke="#FF9D9A" stroke-width="3" stroke-linecap="round"/><circle cx="35" cy="11" r="5" fill="#FFF2A9"/></svg></span><span><strong id="dailyButtonTitle">Daily Adventure</strong><small id="dailyButtonHint">3 levels · 3 tries each · Best score wins</small></span><span class="chevron">›</span></button><button class="menuJourney visuallyHiddenControl" id="journeyButton" type="button">View 7-day map ↗</button></div>
+<button class="menuButton menuPractice" id="playPractice" type="button"><span aria-hidden="true" class="menuIcon">🧭</span><span><strong>Practice Mode</strong><small>A new random path every run</small></span><span class="chevron">›</span></button><button class="menuButton menuHideout" id="openHideout" type="button"><span aria-hidden="true" class="menuIcon">🗝️</span><span><strong>Haiko’s Hideout</strong><small>See your ocean treasures</small></span><span class="chevron">›</span></button>
 <div class="homeFooter visuallyHiddenControl" id="homeProgress">A new chapter awaits beyond the reef.</div><nav aria-label="Quick settings" class="homeQuickTools"><button aria-label="How to Play" id="homeGuideBtn" type="button"><span aria-hidden="true">?</span><small>Help</small></button><button aria-label="Toggle menu music" id="homeMusicBtn" type="button"><span aria-hidden="true">♫</span><small id="homeMusicState">Music on</small></button><button aria-label="Toggle underwater ambience" id="homeAmbientBtn" type="button"><span aria-hidden="true">≋</span><small id="homeAmbientState">Sea on</small></button></nav><div class="devPanel" hidden="" id="devPanel"><strong>🔧 Developer Test Mode</strong><div class="tiny">Explore any of the 7 adventure days without affecting official scores, rewards or daily limits.</div><div class="devRow"><select aria-label="Select developer test day" id="devDaySelect"><option value="1">Day 1 · Welcome</option><option value="2">Day 2 · Pearls</option><option value="3">Day 3 · Coral</option><option value="4">Day 4 · Pearl Trail</option><option value="5">Day 5 · Islands</option><option value="6">Day 6 · Passage</option><option value="7">Day 7 · Treasure</option></select><button id="launchDev" type="button">Test day ▶</button></div></div>
 </section><section aria-label="Haiko’s Hideout treasure room" class="screen" hidden="" id="hideoutScreen">
 <div class="hideoutRoomBg"></div>
