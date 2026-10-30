@@ -739,6 +739,25 @@ body .restored-haiko .shades-gold{opacity:0!important;animation:none!important}
 }
 @media(prefers-reduced-motion:reduce){#welcomeScreen .menuButton{transition:none!important}}
 
+
+/* PATHLE 1.3.3: Removes only the dark-blue menu background and
+   card backing. Uses the EXISTING seabed illustration. */
+#welcomeScreen {
+  background-image: url("images/home-background.webp") !important;
+  background-size: cover !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+}
+#welcomeScreen::after { background: none !important; }
+#welcomeScreen .ambientOcean { background-image: none !important; }
+#welcomeScreen .illustratedHero { box-shadow: none !important; }
+#welcomeScreen .adventureCardTop { background: transparent !important; }
+#welcomeScreen .chapterCard {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
 </style>
 </head>
 <body>
