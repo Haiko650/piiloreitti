@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+
+<!DOCTYPE html>
+
+<!DOCTYPE html>
+
+<!DOCTYPE html>
+
+<!DOCTYPE html>
+
+<!DOCTYPE html>
+
+<!DOCTYPE html>
+
+<!DOCTYPE html>
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
+<meta content="#16153a" name="theme-color"/>
+<meta content="yes" name="mobile-web-app-capable"/>
+<title>Pathle 1.3.1 – Illustrated Ocean Menu</title>
+<link rel="stylesheet" href="css/styles.css"/>
+</head>
+<body>
+<main>
+<section aria-label="Pathle main menu" class="screen" id="welcomeScreen"><div aria-hidden="true" class="ambientOcean"><div class="sunRays"></div><div class="oceanPlant plantLeft">🪸</div><div class="oceanPlant plantRight">🪸</div><div class="oceanBubbles"></div></div>
+<div class="welcomeTop"><div class="topTools"><label class="devControl" title="Enable developer test tools">DEV<span class="switch"><input aria-label="Developer test mode" id="devToggle" type="checkbox"/><span class="switchKnob"></span></span></label><button aria-label="Settings" class="gear" id="homeSettings" title="Settings" type="button"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M9.7 2.9h4.6l.6 2.2c.55.2 1.1.5 1.6.9l2.15-.75 2.3 4-1.7 1.5c.08.45.12.88.12 1.25s-.04.8-.12 1.25l1.7 1.5-2.3 4-2.15-.75c-.5.4-1.05.7-1.6.9l-.6 2.2H9.7l-.6-2.2c-.55-.2-1.1-.5-1.6-.9l-2.15.75-2.3-4 1.7-1.5c-.08-.45-.12-.88-.12-1.25s.04-.8.12-1.25l-1.7-1.5 2.3-4 2.15.75c.5-.4 1.05-.7 1.6-.9z"></path><circle cx="12" cy="12" r="3.2"></circle></svg></button></div></div>
+<div class="homeBrand"><h1><span class="pathleLogoText">Pathle</span><span aria-hidden="true" class="pathleLogoWave"></span></h1><p class="tag">OCEAN JOURNEY</p></div><div aria-hidden="true" class="illustratedHero"></div><div class="homeStage"><div aria-hidden="true" class="sea-light-rays"></div><div aria-hidden="true" class="sea-floor"><span class="reef-cluster r1">🪸</span><span class="reef-cluster r2">🪸</span><span class="reef-cluster r3">🌿</span></div><span aria-hidden="true" class="home-fish fish-one">🐠</span><span aria-hidden="true" class="home-fish fish-two">🐟</span><span aria-hidden="true" class="home-bubble hb1"></span><span aria-hidden="true" class="home-bubble hb2"></span><span aria-hidden="true" class="home-bubble hb3"></span><span aria-hidden="true" class="home-bubble hb4"></span><div aria-label="Haiko the Shark, smiling and showing a thumbs-up" class="haiko-avatar restored-haiko home-haiko" role="img"><div aria-hidden="true" class="haiko-scene-item"></div><div aria-hidden="true" class="haiko-shades shades-purple"></div><div aria-hidden="true" class="haiko-shades shades-gold"></div><div aria-hidden="true" class="haiko-accessory-slot slot-hat"></div><div aria-hidden="true" class="haiko-accessory-slot slot-hand"></div></div><span class="goldenBadge" hidden="" id="goldenBadge"></span></div>
+<div class="adventureCard" id="adventureCard"><div class="adventureCardTop"><div class="chapterLabel">CHAPTER 1 · CORAL REEF</div><button aria-label="View your journey map" class="journeyQuick" id="journeyQuick" title="Journey map" type="button">Map ›</button></div><div class="chapterCard" id="chapterCard"><div class="top"><div><small>CURRENT CHAPTER</small><br/><strong id="homeChapter">Chapter 1 · Coral Reef</strong></div><strong id="homeDay">Day 1 / 7</strong></div><div class="chapterProgress"><div id="homeBar"></div></div><div aria-label="Seven adventure days" class="weekDots" id="homeWeekDots"></div><small>Complete seven adventure days to discover a secret.</small><div class="mysteryLine" id="mysteryLine"><span aria-hidden="true">🎁</span><span>Mystery treasure on Day 7</span></div></div><button class="menuButton menuDaily" id="playDaily" type="button"><span aria-hidden="true" class="menuIcon"><svg viewBox="0 0 52 52" width="44" height="44" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="pathleIconSea" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#67EDFF"/><stop offset="1" stop-color="#0573C4"/></linearGradient></defs><circle cx="26" cy="26" r="24" fill="url(#pathleIconSea)" stroke="#FDF9CE" stroke-width="2.5"/><path d="M5 38L16 20L24 32L35 14L49 38Z" fill="#246C9B"/><path d="M5 39Q14 32 23 39T49 39V48H5Z" fill="#36D9B1"/><path d="M14 41V30M14 34L10 30M14 35L18 30M40 44V31M40 36L36 33M40 36L45 31" stroke="#FF9D9A" stroke-width="3" stroke-linecap="round"/><circle cx="35" cy="11" r="5" fill="#FFF2A9"/></svg></span><span><strong id="dailyButtonTitle">Daily Adventure</strong><small id="dailyButtonHint">3 levels · 3 tries each · Best score wins</small></span><span class="chevron">›</span></button><button class="menuJourney visuallyHiddenControl" id="journeyButton" type="button">View 7-day map ↗</button></div>
+<button class="menuButton menuPractice" id="playPractice" type="button"><span aria-hidden="true" class="menuIcon">🧭</span><span><strong>Practice Mode</strong><small>A new random path every run</small></span><span class="chevron">›</span></button><button class="menuButton menuHideout" id="openHideout" type="button"><span aria-hidden="true" class="menuIcon">🗝️</span><span><strong>Haiko’s Hideout</strong><small>See your ocean treasures</small></span><span class="chevron">›</span></button>
+<div class="homeFooter visuallyHiddenControl" id="homeProgress">A new chapter awaits beyond the reef.</div><nav aria-label="Quick settings" class="homeQuickTools"><button aria-label="How to Play" id="homeGuideBtn" type="button"><span aria-hidden="true">?</span><small>Help</small></button><button aria-label="Toggle menu music" id="homeMusicBtn" type="button"><span aria-hidden="true">♫</span><small id="homeMusicState">Music on</small></button><button aria-label="Toggle underwater ambience" id="homeAmbientBtn" type="button"><span aria-hidden="true">≋</span><small id="homeAmbientState">Sea on</small></button></nav><div class="devPanel" hidden="" id="devPanel"><strong>🔧 Developer Test Mode</strong><div class="tiny">Explore any of the 7 adventure days without affecting official scores, rewards or daily limits.</div><div class="devRow"><select aria-label="Select developer test day" id="devDaySelect"><option value="1">Day 1 · Welcome</option><option value="2">Day 2 · Pearls</option><option value="3">Day 3 · Coral</option><option value="4">Day 4 · Pearl Trail</option><option value="5">Day 5 · Islands</option><option value="6">Day 6 · Passage</option><option value="7">Day 7 · Treasure</option></select><button id="launchDev" type="button">Test day ▶</button></div></div>
+</section><section aria-label="Haiko’s Hideout treasure room" class="screen" hidden="" id="hideoutScreen">
+<div class="hideoutRoomBg"></div>
+<header class="hideoutHeader"><button aria-label="Return to main menu" class="navIcon" id="hideoutBack" type="button">←</button><div><h1>Haiko’s Hideout</h1><p>OCEAN TREASURES</p></div><div class="hideoutCounter" id="hideoutCounter">0 / 1</div></header>
+<div aria-label="Haiko's coral cave and treasure displays" class="hideoutStage"><svg aria-hidden="true" class="hideoutPainting" preserveaspectratio="xMidYMid slice" viewbox="0 0 360 550">
+<defs><lineargradient id="caveSky" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#55ecfa"></stop><stop offset=".32" stop-color="#137fc3"></stop><stop offset=".78" stop-color="#073d82"></stop><stop offset="1" stop-color="#0b2353"></stop></lineargradient>
+<lineargradient id="rock" x1="0" x2=".8" y1="0" y2="1"><stop stop-color="#154979"></stop><stop offset=".5" stop-color="#162d62"></stop><stop offset="1" stop-color="#100c42"></stop></lineargradient>
+<radialgradient id="lightPool"><stop stop-color="#b5fff4" stop-opacity=".62"></stop><stop offset="1" stop-color="#b5fff4" stop-opacity="0"></stop></radialgradient>
+<lineargradient id="wood" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#ffcb77"></stop><stop offset=".5" stop-color="#a96334"></stop><stop offset="1" stop-color="#482953"></stop></lineargradient>
+<lineargradient id="reef" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#ffb782"></stop><stop offset=".5" stop-color="#ed678e"></stop><stop offset="1" stop-color="#8843ca"></stop></lineargradient></defs>
+<rect fill="url(#caveSky)" height="550" width="360"></rect><ellipse cx="179" cy="140" fill="url(#lightPool)" rx="170" ry="175"></ellipse>
+<path d="M60 0L118 0L60 322Z M135 0L175 0L220 367Z M222 0L257 0L315 293Z" fill="#d6ffff" opacity=".1"></path>
+<g fill="#7de9ff" opacity=".17"><path d="M105 166l20-47 25 7-15 40z"></path><path d="M235 202l22-52 30-13-4 65z"></path><path d="M188 244l15-35 19 0 8 37z"></path></g>
+<path d="M0 0H360V86Q330 63 311 94L291 35Q270 123 236 78Q209 42 174 95Q150 115 117 69L91 118Q68 42 35 94L0 144Z" fill="url(#rock)"></path>
+<path d="M0 0H63Q61 170 15 259L0 321Z M360 0H319Q317 151 354 274L360 325Z" fill="#12234f" opacity=".84"></path>
+<path d="M0 480Q57 455 119 483T246 487Q305 461 360 483V550H0Z" fill="#083266"></path><path d="M0 506Q65 486 135 515T360 504V550H0Z" fill="#0a204c"></path>
+<g fill="none" stroke="url(#reef)" stroke-linecap="round" stroke-width="12"><path d="M7 501Q22 470 24 429L11 409M24 467L50 443V418M35 464L54 482"></path><path d="M343 513V443L318 411M343 475L360 452M345 492L323 479"></path></g>
+<g fill="#ffb65a"><circle cx="33" cy="488" r="6"></circle><circle cx="337" cy="498" r="8"></circle></g>
+<g fill="none" opacity=".55" stroke="#b0fbff" stroke-width="2"><circle cx="34" cy="174" r="6"></circle><circle cx="305" cy="225" r="8"></circle><circle cx="247" cy="101" r="4"></circle><circle cx="86" cy="268" r="4"></circle><circle cx="290" cy="347" r="6"></circle></g>
+<!-- two empty wooden treasure shelves -->
+<g><rect fill="url(#wood)" height="13" rx="5" stroke="#ffe1a1" stroke-width="2" width="132" x="214" y="285"></rect><path d="M231 298l-7 18h12l16-18M327 298l-8 18h12l13-18" fill="#70446c"></path>
+<rect fill="url(#wood)" height="14" rx="5" stroke="#ffe1a1" stroke-width="2" width="131" x="217" y="397"></rect><path d="M229 411l-8 17h12l16-17M321 411l-8 17h12l15-17" fill="#70446c"></path>
+</g>
+<g fill="#fdd285"><path d="M221 340q7-20 18 0q-10 12-18 0z"></path><circle cx="331" cy="340" r="4"></circle></g>
+</svg><div aria-label="Haiko the Shark" class="hideoutMascot"><div aria-label="Haiko the Shark smiling" class="haiko-avatar restored-haiko hideout-haiko" role="img"><div class="haiko-shades shades-purple"></div><div class="haiko-shades shades-gold"></div></div></div>
+<div aria-live="polite" class="hideoutDisplay"><div class="displayHalo"></div><div aria-hidden="true" class="shellStand"><svg viewbox="0 0 150 96"><defs><lineargradient id="shellG" x2=".7" y2="1"><stop stop-color="#ffefb5"></stop><stop offset=".42" stop-color="#ffb6b0"></stop><stop offset="1" stop-color="#a965cb"></stop></lineargradient></defs><path d="M8 53Q12 10 75 6Q138 10 142 53Q136 88 75 87Q13 88 8 53Z" fill="url(#shellG)" stroke="#ffe9bd" stroke-width="4"></path><path d="M76 8L75 85 M27 23L60 83 M124 23L92 83 M9 55L55 85 M140 55L97 85" opacity=".65" stroke="#ffe4cb" stroke-width="3"></path></svg></div>
+<div aria-label="Luminous Pearl earned" class="luminousPearl" hidden="" id="hideoutPearl"><div class="pearlSpark p1"></div><div class="pearlSpark p2"></div><div class="pearlOrb"></div></div><div class="lockedTreasure" id="lockedTreasure">?</div></div>
+<div class="hideoutShelfLabel">CHAPTER 1 TREASURE</div></div>
+<div class="hideoutBottom"><div class="hideoutStory"><strong>Your ocean home</strong><span id="hideoutStoryText">Explore the reef to discover your first treasure!</span></div>
+<div class="hideoutInventory"><div aria-label="Mystery reward, locked" class="collectible locked" id="pearlCollectionTile"><span class="collectibleIcon" id="collectibleIcon">?</span><div><strong id="collectibleName">Mystery treasure</strong><small id="collectibleDetail">Unlock by completing Chapter 1</small></div><span class="collectibleState" id="collectibleState">Locked</span></div><div class="collectible future"><span class="collectibleIcon">✦</span><div><strong>More treasures</strong><small>Coming in future chapters</small></div></div></div>
+<button class="hideoutDone" id="hideoutDone" type="button">Return to adventure</button></div>
+</section>
+<section aria-label="Ocean Journey map" class="screen" hidden="" id="journeyScreen"><div class="journeyHeader"><button aria-label="Back to menu" class="navIcon" id="journeyBack" type="button">←</button><div><h1>Ocean Journey</h1><p class="tag" style="margin:4px 0">CHAPTER 1 · CORAL REEF</p></div></div><section class="panel"><div class="top"><h2 style="margin:0">Haiko's first adventure</h2><strong id="journeyChapterStatus">0 / 7</strong></div><p class="help">One adventure day per real day. Complete all three levels to advance. Missed days never erase your journey.</p><div class="journeyMap" id="journeyDays"></div></section><section class="panel"><h2>Chapter treasure</h2><div class="journeyReward" id="journeyReward">🎁 Mystery treasure · Complete Day 7 to reveal it</div><p class="help" id="journeyNext"></p><p class="tiny muted">Only Chapter 1 is playable in this development version.</p></section></section><section class="screen" hidden="" id="gameScreen"><div aria-hidden="true" class="ambientOcean gameOcean"><div class="sunRays"></div><div class="oceanPlant plantLeft">🪸</div><div class="oceanPlant plantRight">🪸</div></div>
+<header class="gameHeader"><div class="gameTop"><button aria-label="Return to main menu" class="navIcon" id="homeBack" title="Main menu" type="button">←</button><div class="brand"><div aria-label="Haiko the Shark, smiling and showing a thumbs-up" class="haiko-avatar restored-haiko brand-haiko" role="img"><div aria-hidden="true" class="haiko-scene-item"></div><div aria-hidden="true" class="haiko-shades shades-purple"></div><div aria-hidden="true" class="haiko-shades shades-gold"></div><div aria-hidden="true" class="haiko-accessory-slot slot-hat"></div><div aria-hidden="true" class="haiko-accessory-slot slot-hand"></div></div><h1>Pathle<span style="color:var(--gold)">.</span></h1></div><button aria-label="Settings" class="gear" id="gameSettings" title="Settings" type="button"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M9.7 2.9h4.6l.6 2.2c.55.2 1.1.5 1.6.9l2.15-.75 2.3 4-1.7 1.5c.08.45.12.88.12 1.25s-.04.8-.12 1.25l1.7 1.5-2.3 4-2.15-.75c-.5.4-1.05.7-1.6.9l-.6 2.2H9.7l-.6-2.2c-.55-.2-1.1-.5-1.6-.9l-2.15.75-2.3-4 1.7-1.5c-.08-.45-.12-.88-.12-1.25s.04-.8.12-1.25l-1.7-1.5 2.3-4 2.15.75c.5-.4 1.05-.7 1.6-.9z"></path><circle cx="12" cy="12" r="3.2"></circle></svg></button></div><p class="gameHeadSub"><span id="gameTitle">DAILY CHALLENGE</span> · <span id="dateLabel"></span></p></header>
+<section class="panel" id="playPanel"><div class="practice-note hidden" id="practiceNote">PRACTICE MODE · Every new run creates a new random route. Daily scores stay safe.</div><h2 id="puzzleHeading">Coral Reef</h2><p class="storyHint" id="levelHint"></p><div class="tabs" id="tabs"></div><div class="stats"><div class="stat"><b id="clicks">0</b><span>This run</span></div><div class="stat"><b id="best">—</b><span>Your best</span></div><div class="stat"><b id="optimal">0</b><span>Perfect</span></div><div class="stat"><b id="grade">—</b><span>Best grade</span></div></div><div aria-live="polite" class="attempt-info" id="attemptInfo"></div><div aria-label="Pathle puzzle grid" class="board" id="board"></div><p class="message" id="message" role="status"></p><div class="actions"><button id="reset">Retry level</button><button class="primary" id="next">Next level</button></div></section>
+<section class="panel"><h2>How to play</h2><p class="help">Start at the <strong>blue shark fin</strong> and find a hidden route to the <strong>golden treasure X</strong>. Tap an adjacent unvisited tile to move. Correct tiles turn green; a wrong tap turns red, costs one tap, and leaves you in place.</p><p class="help">Every visible <strong>pearl</strong> is a clue on the correct route. <strong>Coral obstacles</strong> cannot be entered. In the Daily Adventure, play Easy → Medium → Hard, with up to three completed tries per level. The route, pearls and obstacles stay the same during those tries, and your best tap count wins.</p><p class="tiny muted">Complete all three levels to advance Haiko one adventure day. Only one adventure day is available per calendar day. Practice Mode gives unlimited random boards. Your progress is saved on this device.</p></section>
+<section class="panel"><div class="top"><h2 id="progressHeading" style="margin:0">Daily progress</h2><strong id="streak">🔥 0-day streak</strong></div><div class="help" id="progress" style="margin-top:10px"></div><div class="summary hidden" id="summary"></div><div class="actions" style="margin-top:12px"><button class="primary" id="share">Share results</button></div></section>
+<footer>Pathle 1.3.1 · Coral Reef</footer>
+</section>
+<div class="modalBackdrop" hidden="" id="settingsModal"><section aria-labelledby="settingsTitle" aria-modal="true" class="modalCard" role="dialog"><div class="modalHeader"><h2 id="settingsTitle">⚙️ Settings</h2><button aria-label="Close settings" class="modalClose" id="closeSettings" type="button">×</button></div><label class="soundControl" for="soundSwitch"><span><strong>🔊 Sound effects</strong><small>Steps, pearls, Shark Rush and fanfares</small></span><span class="switch"><input aria-label="Sound effects" id="soundSwitch" type="checkbox"/><span class="switchKnob"></span></span></label><label class="soundControl" for="musicSwitch"><span><strong>🎵 Menu music</strong><small>Gentle original melody on the home screen</small></span><span class="switch"><input aria-label="Menu music" id="musicSwitch" type="checkbox"/><span class="switchKnob"></span></span></label><label class="soundControl" for="ambientSwitch"><span><strong>🌊 Underwater ambience</strong><small>Soft ocean sounds while solving puzzles</small></span><span class="switch"><input aria-label="Underwater ambience" id="ambientSwitch" type="checkbox"/><span class="switchKnob"></span></span></label><button class="guideSettingsButton" id="howPlaySettings" type="button">🦈 How to Play <span aria-hidden="true">›</span></button><p class="tiny muted">You can change this anytime from the gear icon.</p><button class="primary" id="doneSettings" style="width:100%;margin-top:14px" type="button">Done</button></section></div>
+<div class="modalBackdrop" hidden="" id="storyModal"><div aria-hidden="true" class="guideScrim"></div><svg aria-hidden="true" class="guidePointer" hidden="" id="guidePointer" xmlns="http://www.w3.org/2000/svg"><defs><marker id="guideArrowhead" markerheight="7" markerwidth="7" orient="auto" refx="5" refy="3"><path d="M0 0 L6 3 L0 6 Z" fill="#FFE383"></path></marker></defs><path fill="none" id="guidePointerPath" marker-end="url(#guideArrowhead)" stroke="#FFE383" stroke-dasharray="7 6" stroke-linecap="round" stroke-width="3.4"></path></svg><div aria-hidden="true" class="guideFocus" hidden="" id="guideFocus"></div><section aria-labelledby="storyHeading" aria-modal="true" class="haiko-guide-scene" role="dialog"><div class="guideCast"><div aria-label="Haiko the Shark, smiling and showing a thumbs-up" class="haiko-avatar restored-haiko floating-haiko" role="img"><div aria-hidden="true" class="haiko-scene-item"></div><div aria-hidden="true" class="haiko-shades shades-purple"></div><div aria-hidden="true" class="haiko-shades shades-gold"></div><div aria-hidden="true" class="haiko-accessory-slot slot-hat"></div><div aria-hidden="true" class="haiko-accessory-slot slot-hand"></div></div></div><div class="guideSpeechArea"><div class="guideSpeechHead"><span>HAIKO SAYS...</span><button aria-label="Skip tutorial" id="storySkip" type="button">Skip ×</button></div><div class="guideSpeech"><h2 id="storyHeading">Hey, explorer!</h2><p id="storyText"></p><div class="guideSpeechNav"><button aria-label="Previous page" id="storyPrev" type="button">←</button><div aria-label="Guide steps" id="storyDots"></div><button aria-label="Next page" id="storyNext" type="button">→</button></div></div></div></section></div><div class="modalBackdrop" hidden="" id="resultModal"><section aria-labelledby="resultTitle" aria-modal="true" class="modalCard" role="dialog"><div aria-label="Haiko the Shark, smiling and showing a thumbs-up" class="haiko-avatar restored-haiko result-haiko" role="img"><div aria-hidden="true" class="haiko-scene-item"></div><div aria-hidden="true" class="haiko-shades shades-purple"></div><div aria-hidden="true" class="haiko-shades shades-gold"></div><div aria-hidden="true" class="haiko-accessory-slot slot-hat"></div><div aria-hidden="true" class="haiko-accessory-slot slot-hand"></div></div><h2 id="resultTitle">Level Complete!</h2><p class="modalSubtitle" id="resultSubtitle">Well played!</p><div class="recordTag" hidden="" id="recordTag">⭐ New personal best!</div><div class="resultScore"><div class="resultMetric"><span>This run</span><strong id="resultTaps">0</strong></div><div class="resultMetric best"><span>Best score</span><strong id="resultBest">0</strong></div></div><p class="tiny muted" id="resultAttemptsLabel">TRIES USED</p><div aria-hidden="true" class="resultFins" id="resultFins"></div><p class="resultRemaining" id="resultRemaining"></p><p class="modalWarning" hidden="" id="resultWarning"></p><p class="modalWarning" hidden="" id="rewardNote">🎁 A mystery treasure awaits! Return to the menu to open it.</p><div class="resultActions"><button class="secondary" id="resultRetry" type="button">↻ Try again</button><button class="primary" id="resultNext" type="button">Next level →</button><button id="resultHome" type="button">⌂ Main menu</button><button class="secondary" hidden="" id="resultShare" type="button">⇧ Share results</button></div></section></div><div class="modalBackdrop" hidden="" id="rewardModal"><section aria-labelledby="rewardTitle" aria-modal="true" class="chestScene" role="dialog"><div class="chestIntro"><div class="chestEyebrow">CHAPTER 1 • TREASURE REEF</div><h2 id="rewardTitle">A mysterious chest!</h2><p id="rewardDescription">Haiko has discovered something mysterious...</p></div><button aria-label="Open treasure chest" class="treasureChest" id="openChest" type="button"><svg aria-hidden="true" viewbox="0 0 300 260"><defs><lineargradient id="woodG" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#BC6D2B"></stop><stop offset="1" stop-color="#64311C"></stop></lineargradient><lineargradient id="goldG" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#FFF2A3"></stop><stop offset=".5" stop-color="#FFBF36"></stop><stop offset="1" stop-color="#BA6818"></stop></lineargradient></defs><g class="chest-body"><rect fill="url(#woodG)" height="109" rx="20" stroke="#71361D" stroke-width="7" width="216" x="42" y="121"></rect><path d="M43 146H258M43 199H258" stroke="#E99439" stroke-width="7"></path><path d="M74 124V227M226 124V227" stroke="url(#goldG)" stroke-width="16"></path><rect fill="url(#goldG)" height="63" rx="9" stroke="#9C561C" stroke-width="4" width="43" x="129" y="126"></rect><circle cx="150" cy="151" fill="#6B411F" r="11"></circle><path d="M150 155v16" stroke="#6B411F" stroke-width="8"></path></g><g class="chest-lid"><path d="M37 127Q28 39 150 36 Q273 39 263 127Z" fill="url(#woodG)" stroke="#7A351B" stroke-width="8"></path><path d="M57 123Q53 62 150 58Q245 62 242 123" fill="none" stroke="url(#goldG)" stroke-width="17"></path><path d="M41 120H258" stroke="url(#goldG)" stroke-width="15"></path><path d="M92 59l7 65M207 59l-7 65" stroke="#F8BB49" stroke-width="12"></path></g><g class="chest-sparkles" fill="#FFF1A5"><path d="M15 54l9 21 20 8-20 9-9 20-9-20-19-9 19-8z"></path><path d="M282 25l7 16 15 7-15 7-7 17-7-17-15-7 15-7z"></path></g></svg><span class="chestPrompt">Tap to open!</span></button><div class="chestReveal" hidden="" id="chestReveal"><div class="prizePearlScene"><span aria-hidden="true" class="prizeRays"></span><span aria-hidden="true" class="prizeShell">✧</span><span aria-label="Beautiful glowing luminous pearl" class="prizePearl" role="img"></span><div aria-hidden="true" class="prizeSparkles">✦ ✧ ✦</div></div><h3>Luminous Pearl!</h3><p>Haiko’s first ocean treasure. Visit the Hideout to see it glow!</p></div><button class="primary chestDone" hidden="" id="rewardClose" type="button">Amazing!</button></section></div>
+</main>
+<script>(()=>{'use strict';
+const CONFIG=[{size:6,steps:10,name:'Easy'},{size:8,steps:18,name:'Medium'},{size:10,steps:26,name:'Hard'}];
+const STORE='pathle_ocean_adventure_v1',SOUND='pathle_sound_v05',OLD_SOUND='piiloreitti_sound_v04';
+const INTRO=['Welcome to Coral Reef','Pearl Discovery','Coral Gates','Pearl Trail','Reef Islands','Hidden Passage','Treasure Reef'];
+const HINTS=['Haiko is ready to explore.','Pearls mark a route to treasure.','Coral grows along the reef.','Follow the pearl trail.','Reef islands reveal new passages.','A winding hidden passage.','A mystery treasure lies ahead.'];
+const PEARLS=[[0,0,0],[1,2,3],[1,2,3],[1,2,4],[1,2,3],[1,2,4],[1,2,4]];
+const BLOCK_COUNTS=[[0,0,0],[0,0,0],[4,8,13],[5,9,14],[7,14,21],[8,16,25],[9,18,28]];
+const el=id=>document.getElementById(id);
+const today=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+const load=k=>{try{return JSON.parse(localStorage.getItem(k))}catch{return null}};
+const save=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}};
+const hash=s=>{let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0};
+const rng=seed=>()=>{seed+=0x6D2B79F5;let t=seed;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return((t^(t>>>14))>>>0)/4294967296};
+const shuffle=(a,r)=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const neighbors=(id,n)=>{const x=id%n,y=Math.floor(id/n),a=[];if(x>0)a.push(id-1);if(x<n-1)a.push(id+1);if(y>0)a.push(id-n);if(y<n-1)a.push(id+n);return a};
+function makeRoute(seed,level){
+ const {size:n,steps}=CONFIG[level],goal=n*n-1,random=rng(hash(seed)),path=[0],seen=new Set([0]);let count=0;
+ function dfs(pos){if(++count>220000)return false;if(path.length===steps+1)return pos===goal;
+  const choices=shuffle(neighbors(pos,n).filter(x=>!seen.has(x)),random);
+  for(const next of choices){const left=steps-path.length,dist=n-1-next%n+n-1-Math.floor(next/n);if(dist>left||((left-dist)&1))continue;seen.add(next);path.push(next);if(dfs(next))return true;path.pop();seen.delete(next)}return false}
+ if(dfs(0))return path;
+ const fallback=[0];for(let x=1;x<n;x++)fallback.push(x);for(let y=1;y<n;y++)fallback.push(y*n+n-1);return fallback;
+}
+function makeBoard(day,level,seed){
+ const n=CONFIG[level].size,random=rng(hash('pathle-board-v1|'+seed+'|'+day+'|'+level)),path=makeRoute('pathle-route-v1|'+seed+'|'+day+'|'+level,level);
+ const pearlCount=PEARLS[day-1][level],inside=path.slice(1,-1),pearls=[];
+ // Spread visible clues along the actual path; no need to guess whether a pearl is a trap.
+ for(let j=0;j<pearlCount;j++){
+  const middle=Math.max(0,Math.min(inside.length-1,Math.floor((j+1)*inside.length/(pearlCount+1))));
+  let offset=Math.floor(random()*3)-1,at=Math.max(0,Math.min(inside.length-1,middle+offset));
+  while(pearls.includes(inside[at])&&at<inside.length-1)at++;
+  while(pearls.includes(inside[at])&&at>0)at--;
+  if(!pearls.includes(inside[at]))pearls.push(inside[at]);
+ }
+ pearls.sort((a,b)=>path.indexOf(a)-path.indexOf(b));
+ // Place clusters of obstacles, never on the true route or on a pearl.
+ const pathSet=new Set(path),available=Array.from({length:n*n},(_,i)=>i).filter(i=>!pathSet.has(i));
+ const amount=Math.min(available.length,BLOCK_COUNTS[day-1][level]);
+ const blocked=new Set();let guard=0;
+ while(blocked.size<amount&&guard++<1000){
+  let candidate;
+  if(blocked.size&&random()<(day>=5?.75:.42)){
+   const bases=Array.from(blocked);const base=bases[Math.floor(random()*bases.length)];
+   const opts=neighbors(base,n).filter(i=>!pathSet.has(i)&&!blocked.has(i));
+   candidate=opts.length?opts[Math.floor(random()*opts.length)]:undefined;
+  }
+  if(candidate===undefined)candidate=available[Math.floor(random()*available.length)];
+  if(candidate!==undefined)blocked.add(candidate);
+ }
+ return {path,pearls,blocks:Array.from(blocked).sort((a,b)=>a-b)};
+}
+const blank=()=>({visited:[0],wrongByStep:{},clicks:0,completed:false,attemptsUsed:0,bestClicks:null,attemptScores:[]});
+const blankRun=(day,date,seed)=>({date,day,activeLevel:0,levels:CONFIG.map(blank),boards:CONFIG.map((_,i)=>makeBoard(day,i,seed))});
+const freshAdventure=()=>({version:1,completedDays:0,lastCompleteDate:'',history:[],active:null});
+function validBoard(b,i){const n=CONFIG[i].size;return b&&Array.isArray(b.path)&&b.path.length>=2&&b.path[0]===0&&b.path.at(-1)===n*n-1&&new Set(b.path).size===b.path.length&&b.path.every((v,j)=>Number.isInteger(v)&&v>=0&&v<n*n&&(j===0||neighbors(v,n).includes(b.path[j-1])))&&Array.isArray(b.pearls)&&b.pearls.every(v=>b.path.includes(v)&&v!==0&&v!==n*n-1)&&Array.isArray(b.blocks)&&b.blocks.every(v=>Number.isInteger(v)&&v>=0&&v<n*n&&!b.path.includes(v))}
+function validRun(r){return r&&typeof r.date==='string'&&Number.isInteger(r.day)&&r.day>=1&&r.day<=7&&Number.isInteger(r.activeLevel)&&r.activeLevel>=0&&r.activeLevel<3&&Array.isArray(r.boards)&&r.boards.length===3&&r.boards.every(validBoard)&&Array.isArray(r.levels)&&r.levels.length===3&&r.levels.every((s,i)=>s&&Number.isInteger(s.attemptsUsed)&&s.attemptsUsed>=0&&s.attemptsUsed<=3&&Array.isArray(s.attemptScores)&&s.attemptScores.length===s.attemptsUsed&&s.attemptScores.every(v=>Number.isSafeInteger(v)&&v>=r.boards[i].path.length-1)&&Array.isArray(s.visited)&&s.visited.length>0&&s.visited.every((v,j)=>v===r.boards[i].path[j])&&s.clicks>=0&&s.wrongByStep&&typeof s.wrongByStep==='object'&&typeof s.completed==='boolean'&&(s.bestClicks===null||s.bestClicks===Math.min(...s.attemptScores)))}
+let adventure=load(STORE);
+if(!adventure||adventure.version!==1||!Number.isInteger(adventure.completedDays)||adventure.completedDays<0||adventure.completedDays>7||typeof adventure.lastCompleteDate!=='string'||!Array.isArray(adventure.history)||adventure.active&&!validRun(adventure.active))adventure=freshAdventure();
+function persist(){if(mode==='daily')save(STORE,adventure)}
+function canPlayToday(){return adventure.completedDays<7&&adventure.lastCompleteDate!==today()}
+function ensureRun(){if(!canPlayToday())return null;const date=today(),day=adventure.completedDays+1;
+ if(!adventure.active||adventure.active.date!==date||adventure.active.day!==day)adventure.active=blankRun(day,date,`official|${date}|${day}`);
+ save(STORE,adventure);return adventure.active;
+}
+let sound=load(SOUND);if(typeof sound!=='boolean'){sound=load(OLD_SOUND);if(typeof sound!=='boolean')sound=true}
+let mode='daily',game=null,screen='home',devEnabled=false,devDay=1,devGame=null;
+const GUIDE_STORE='pathle_haiko_guides_v12',REWARD_SEEN='pathle_gold_glasses_seen_v11',EQUIP_STORE='pathle_haiko_equipment_v12',CHEST_STORE='pathle_chapter1_chest_v12',MUSIC_KEY='pathle_music_v12',AMBIENT_KEY='pathle_ambient_v12';
+let equipment=load(EQUIP_STORE)||{glasses:load(REWARD_SEEN)?'gold':'purple'};
+// Per-season reward inventory. The original Haiko has fully replaced image variants for glasses,
+// while head/hand items and furniture get independent visual layers. Future seasons reset only cosmetics.
+const COSMETIC_SEASONS={ocean:{chapterCount:52, name:'Ocean Adventure'},space:{chapterCount:52,name:'Space Adventure'}};
+const COSMETIC_CATALOG={gold_glasses:{season:'ocean',slot:'glasses',appearance:'gold'},captains_chair:{season:'ocean',slot:'sceneItem',appearance:'chair'}};
+const SEASON_STORE='pathle_cosmetic_season_v121';
+const COSMETIC_INVENTORY='pathle_cosmetic_inventory_v121';
+let activeSeason=load(SEASON_STORE)||'ocean';
+let ownedCosmetics=load(COSMETIC_INVENTORY)||[];
+if(equipment.glasses==='gold'&&!ownedCosmetics.includes('gold_glasses')){ownedCosmetics.push('gold_glasses');save(COSMETIC_INVENTORY,ownedCosmetics)}
+// Call this ONLY when a later complete adventure season is released, never on chapter change.
+function beginCosmeticSeason(id){if(!COSMETIC_SEASONS[id]||id===activeSeason)return;activeSeason=id;save(SEASON_STORE,id);ownedCosmetics=[];save(COSMETIC_INVENTORY,ownedCosmetics);equipment={glasses:'purple',sceneItem:null,hat:null,handItem:null};save(EQUIP_STORE,equipment);equipGold()}
+function equipCosmetic(itemId){const c=COSMETIC_CATALOG[itemId];if(!c||c.season!==activeSeason||!ownedCosmetics.includes(itemId))return false;equipment={...equipment,[c.slot]:c.appearance};save(EQUIP_STORE,equipment);equipGold();return true}
+let chestState=load(CHEST_STORE)||{opened:!!load(REWARD_SEEN)};let musicOn=load(MUSIC_KEY);if(typeof musicOn!=='boolean')musicOn=true;let ambientOn=load(AMBIENT_KEY);if(typeof ambientOn!=='boolean')ambientOn=true;
+// Pathle 1.3 collectible model. Chapter content is data, not hardcoded in the puzzle engine.
+const COLLECTION_STORE='pathle_season_collections_v13';
+const CHAPTER_CONTENT={
+ ocean:[{id:'coral-reef',number:1,title:'Coral Reef',days:7,rewardId:'luminous_pearl',world:'ocean',theme:'coral-reef'}],
+ space:[]
+};
+const COLLECTIBLE_DEFS={luminous_pearl:{id:'luminous_pearl',title:'Luminous Pearl',season:'ocean',chapter:1,placement:'shell-pedestal'}};
+let collection=load(COLLECTION_STORE);
+if(!collection||collection.version!==1||!collection.seasons||typeof collection.seasons!=='object')collection={version:1,seasons:{ocean:[],space:[]}};
+if(!Array.isArray(collection.seasons.ocean))collection.seasons.ocean=[];
+if(!Array.isArray(collection.seasons.space))collection.seasons.space=[];
+function hasTreasure(id){const item=COLLECTIBLE_DEFS[id];return !!item&&Array.isArray(collection.seasons[item.season])&&collection.seasons[item.season].includes(id)}
+function grantTreasure(id){const item=COLLECTIBLE_DEFS[id];if(!item)return false;let owned=collection.seasons[item.season]||(collection.seasons[item.season]=[]);if(!owned.includes(id)){owned.push(id);save(COLLECTION_STORE,collection)}return true}
+// Players who opened the original Day 7 chest keep their earned chapter reward.
+if(adventure.completedDays>=7&&chestState.opened&&!hasTreasure('luminous_pearl'))grantTreasure('luminous_pearl');
+// Old gold glasses are retired, never shown on Haiko or leaked as a mystery reward.
+
+const guideFlags=load(GUIDE_STORE)||{};
+let storyPages=[],storyIndex=0,storyDone=null,resizePending=false;
+const guideIntro=[
+ {heading:'Hey, explorer!',text:'I’m Haiko! This beautiful reef is full of secret paths and treasure. Ready to explore with me?',target:'start'},
+ {heading:'Follow my fin!',text:'See my fin? That’s our start! Tap neighboring tiles to reach the golden X. Green means go; red means try another route!',target:'goal'},
+ {heading:'Three chances!',text:'We get three tries per level. Remember our route, beat your best score, and let’s find a new treasure every day!',target:'start'}
+];
+const guidePearl=[{heading:'Ooh! A shiny pearl!',text:'I want to collect that pearl! Every pearl is on our hidden path. Let’s find a way to swim right through it!',target:'pearl'}];
+const guideCoral=[{heading:'Watch out, coral!',text:'That reef is getting thicker! We can’t swim through coral. Let’s navigate around it to reach our treasure!',target:'coral'}];
+
+let practiceNonce=0;
+const makePracticeBoard=(i,old)=>{
+ let b;for(let j=0;j<24;j++){
+  let salt;if(window.crypto?.getRandomValues){const arr=new Uint32Array(2);crypto.getRandomValues(arr);salt=Array.from(arr).join('-')}else salt=`${Date.now()}-${Math.random()}`;
+  const d=2+Math.floor(Math.random()*6);b=makeBoard(d,i,`practice-${++practiceNonce}-${salt}`);
+  if(!old||b.path.join()!=old.path.join())break;
+ }return b;
+};
+const newPractice=()=>({activeLevel:0,levels:CONFIG.map(blank),boards:CONFIG.map((_,i)=>makePracticeBoard(i))});
+const allDone=()=>game&&game.levels.every(s=>mode==='practice'?s.completed:s.bestClicks!==null);
+const bestTotal=()=>game.levels.reduce((s,l)=>s+(mode==='practice'?l.clicks:(l.bestClicks||0)),0);
+const optimalTotal=()=>game.boards.reduce((s,b)=>s+b.path.length-1,0);
+const grade=(t,opt)=>{if(t<=opt)return'S';const r=(t-opt)/opt;return r<=.25?'A':r<=.5?'B':r<=1?'C':'D'};
+const finSVG='<svg class="fin-icon" viewBox="0 0 100 100" aria-hidden="true"><path d="M10 78Q30 67 39 68Q41 35 78 13Q64 44 79 67Q84 74 91 78Z" fill="#128bd7" stroke="#d6f8ff" stroke-width="5" stroke-linejoin="round"/><path d="M37 62Q45 30 72 23" stroke="#67dcff" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M11 85Q26 78 41 85T73 85T93 85" stroke="#f5ffff" stroke-width="5" fill="none" stroke-linecap="round"/></svg>';
+const treasureSVG='<svg class="treasure-icon" viewBox="0 0 100 100" aria-hidden="true"><path d="M22 19Q46 49 78 81M78 20Q48 53 23 82" stroke="#693722" stroke-width="24" stroke-linecap="round" fill="none"/><path d="M22 19Q46 49 78 81M78 20Q48 53 23 82" stroke="#ffd76b" stroke-width="15" stroke-linecap="round" fill="none"/><path d="M21 18Q49 49 80 80M78 20Q48 53 22 83" stroke="#fff1c3" stroke-width="4" stroke-linecap="round" fill="none"/><path d="M11 11l8 4M83 89l8-5" stroke="#f7c459" stroke-width="3" stroke-linecap="round"/></svg>';
+const pearlSVG='<svg class="pearl-icon" viewBox="0 0 100 100" aria-hidden="true"><path d="M15 60Q19 89 50 90Q84 88 85 59L72 49L50 58L26 49Z" fill="#9b62ef" stroke="#e5c1ff" stroke-width="5"/><circle cx="50" cy="45" r="27" fill="#f8fcff" stroke="#91eaff" stroke-width="6"/><circle cx="41" cy="35" r="9" fill="#fff" opacity=".9"/><circle cx="60" cy="56" r="5" fill="#a7edff"/></svg>';
+const coralSVG='<svg class="coral-icon" viewBox="0 0 100 100" aria-hidden="true"><path d="M48 86V27M48 58L26 40V20M48 49L71 30V14M48 74L74 65V45M48 75L28 71V57" fill="none" stroke="#f36d8f" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 90H86" stroke="#677cab" stroke-width="10" stroke-linecap="round"/></svg>';
+// Haiko's base artwork and glasses are independent, reusable SVG layers.
+let audio=null,musicClock=null,bubbleClock=null,waterSrc=null,waterGain=null;
+let menuNoteIndex=0;
+function ensureAudio(){try{if(!audio)audio=new(window.AudioContext||window.webkitAudioContext)();if(audio.state==='suspended')audio.resume().catch(()=>{});return audio}catch{return null}}
+function tone(freq,at,len,volume=.025,kind='sine'){
+ const ctx=ensureAudio();if(!ctx||!ctx.createOscillator)return;
+ const o=ctx.createOscillator(),g=ctx.createGain();o.type=kind;o.frequency.setValueAtTime(freq,at);
+ g.gain.setValueAtTime(.0001,at);g.gain.linearRampToValueAtTime(volume,at+.025);g.gain.exponentialRampToValueAtTime(.0001,at+len);
+ o.connect(g);g.connect(ctx.destination);o.start(at);o.stop(at+len+.025);
+}
+function beep(ok){if(!sound)return;const a=ensureAudio();if(!a)return;const t=a.currentTime+.015;tone(ok?680:210,t,.16,.051,ok?'sine':'triangle')}
+function levelChime(){if(!sound)return;const a=ensureAudio();if(!a)return;let t=a.currentTime+.035;[659.26,783.99,1046.5].forEach((f,i)=>tone(f,t+i*.17,i===2?.48:.22,.040,'triangle'))}
+function heroFanfare(){if(!sound)return;const a=ensureAudio();if(!a)return;const t=a.currentTime+.05;
+ // Original five-second Shark Hero victory cue: bright arpeggio, triumphant bass and sparkling finish.
+ const phrases=[[392,0,.24],[493.88,.22,.24],[587.33,.44,.28],[783.99,.72,.43],[698.46,1.14,.21],[783.99,1.37,.22],[987.77,1.63,.25],[1174.66,1.92,.52],[1046.5,2.50,.23],[1174.66,2.76,.24],[1318.51,3.02,.27],[1567.98,3.32,.52],[1760,3.91,.85]];
+ for(const [f,x,d] of phrases){tone(f,t+x,d,.045,'triangle');if(x>=1.92)tone(f/2,t+x,d*.9,.021,'sine')}
+ for(const [f,x] of [[196,0],[261.63,.72],[293.66,1.92],[392,3.32]])tone(f,t+x,.55,.024,'sine');
+ [3.85,4.12,4.39,4.66].forEach((x,i)=>tone(1760*Math.pow(2,i/7),t+x,.32,.009,'sine'));
+}
+function stopWater(){if(waterSrc){try{waterSrc.stop()}catch{}waterSrc.disconnect();waterSrc=null}if(waterGain){waterGain.disconnect();waterGain=null}}
+function startWater(){if(waterSrc||!ambientOn||screen!=='game'||document.hidden)return;const ctx=ensureAudio();if(!ctx)return;
+ try{const secs=2,len=Math.round(ctx.sampleRate*secs),buffer=ctx.createBuffer(1,len,ctx.sampleRate),data=buffer.getChannelData(0);let last=0;for(let i=0;i<len;i++){const w=Math.random()*2-1;last=(last+.02*w)/1.02;data[i]=last*4}
+ const src=ctx.createBufferSource(),low=ctx.createBiquadFilter(),gain=ctx.createGain();src.buffer=buffer;src.loop=true;low.type='lowpass';low.frequency.value=310;gain.gain.value=.012;src.connect(low);low.connect(gain);gain.connect(ctx.destination);src.start();waterSrc=src;waterGain=gain;}catch{stopWater()}}
+function bubbleSound(){if(!ambientOn||screen!=='game'||document.hidden||!audio)return;let a=audio,t=a.currentTime+.015;if(Math.random()<.65){tone(300+Math.random()*160,t,.12,.005,'sine')}}
+function menuMelody(){if(!musicOn||screen!=='home'||document.hidden||!audio)return;const a=audio;const seq=[392,493.88,587.33,493.88,349.23,392,523.25,0,293.66,349.23,440,392,329.63,293.66,261.63,0];const f=seq[menuNoteIndex++%seq.length];if(f)tone(f,a.currentTime+.025,.43,.012,'sine')}
+function updateAudioScene(){if(musicClock){clearInterval(musicClock);musicClock=null}if(bubbleClock){clearInterval(bubbleClock);bubbleClock=null}stopWater();if(!audio||document.hidden)return;
+ if(screen==='home'&&musicOn){menuNoteIndex=0;menuMelody();musicClock=setInterval(menuMelody,510)}
+ if(screen==='game'&&ambientOn){startWater();bubbleClock=setInterval(bubbleSound,2300)}
+}
+function activateAudio(){ensureAudio();updateAudioScene()}
+let flash=null,flashTimer,celebrationTimer,resultTimer,rushToken=0;
+function clearRush(){rushToken++;document.querySelectorAll('.rush-fin').forEach(x=>x.remove());document.querySelectorAll('.rush-lit,.fin-departed').forEach(x=>x.classList.remove('rush-lit','fin-departed'))}
+function cancelEffects(){clearRush();clearTimeout(resultTimer);clearTimeout(flashTimer);clearTimeout(celebrationTimer);el('celebration').replaceChildren();el('resultModal').hidden=true;el('rewardModal').hidden=true;flash=null}
+function rush(path,finalVictory,data){
+ clearRush();clearTimeout(flashTimer);flash=null;const token=rushToken,reduce=matchMedia('(prefers-reduced-motion: reduce)').matches,board=el('board');
+ if(reduce){afterRush(finalVictory,data);return}
+ const tiles=Array.from(board.children),origin=tiles[0];origin?.classList.add('fin-departed');
+ const fin=document.createElement('div');fin.className='rush-fin';fin.innerHTML=finSVG;document.body.append(fin);
+ const duration=Math.max(900,Math.min(1900,path.length*65)),start=performance.now();let last=-1;
+ function frame(now){if(token!==rushToken){fin.remove();return}const p=Math.min(1,(now-start)/duration),at=p*(path.length-1),idx=Math.min(path.length-2,Math.floor(at)),f=at-idx;
+  const a=tiles[path[idx]]?.getBoundingClientRect(),b=tiles[path[idx+1]]?.getBoundingClientRect();if(!a||!b){fin.remove();afterRush(finalVictory,data);return}
+  fin.style.left=(a.left+a.width/2)*(1-f)+(b.left+b.width/2)*f+'px';fin.style.top=(a.top+a.height/2)*(1-f)+(b.top+b.height/2)*f+'px';
+  if(idx!==last){for(let j=Math.max(0,idx-2);j<=idx;j++)tiles[path[j]]?.classList.add('rush-lit');if(idx>3)tiles[path[idx-3]]?.classList.remove('rush-lit');last=idx}
+  if(p<1)requestAnimationFrame(frame);else{fin.remove();origin?.classList.remove('fin-departed');tiles.forEach(t=>t.classList.remove('rush-lit'));if(token===rushToken)afterRush(finalVictory,data)}
+ }requestAnimationFrame(frame);
+}
+function celebrate(isFinal){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const layer=el('celebration');layer.replaceChildren();const colors=['#ffd166','#45d6a0','#ff6685','#b477ff','#65d9ff','#ffffff'];for(let j=0;j<(isFinal?100:45);j++){const piece=document.createElement('i');piece.className='confetti';piece.style.setProperty('--x',Math.random()*100+'%');piece.style.setProperty('--w',(5+Math.random()*7)+'px');piece.style.setProperty('--h',(8+Math.random()*11)+'px');piece.style.setProperty('--c',colors[j%colors.length]);piece.style.setProperty('--d',(1.8+Math.random()*1.5)+'s');piece.style.setProperty('--delay',Math.random()*.5+'s');piece.style.setProperty('--drift',(Math.random()*180-90)+'px');piece.style.setProperty('--spin',(Math.random()*1100-550)+'deg');layer.append(piece)}
+ const banner=document.createElement('div');banner.className='victory-banner';banner.textContent=isFinal?'DAILY VICTORY! ✨':'LEVEL COMPLETE! ★';layer.append(banner);
+ if(isFinal){const face=document.createElement('div');face.className='victory-mascot';face.append(el('welcomeScreen').querySelector('.home-haiko').cloneNode(true));layer.append(face)}clearTimeout(celebrationTimer);celebrationTimer=setTimeout(()=>layer.replaceChildren(),4100)}
+function afterRush(finalVictory,data){celebrate(finalVictory);if(finalVictory)heroFanfare();else levelChime();clearTimeout(resultTimer);const delay=matchMedia('(prefers-reduced-motion: reduce)').matches?40:(finalVictory?4550:2500);resultTimer=setTimeout(()=>{if(screen==='game'&&mode===data.mode&&game.activeLevel===data.level&&game.levels[data.level].completed){el('celebration').replaceChildren();showResult(data)}},delay)}
+function showResult(data){const isDaily=mode==='daily'||mode==='dev';el('resultTitle').textContent=data.finalVictory?'Daily Victory!':'Level Complete!';el('resultSubtitle').textContent=`${CONFIG[data.level].name} · ${mode==='practice'?'Practice run':`Attempt ${data.used} of 3`}`;el('resultTaps').textContent=data.taps;el('resultBest').textContent=data.best;el('recordTag').hidden=!isDaily||!data.record;el('resultAttemptsLabel').textContent=isDaily?'YOUR THREE CHANCES':'PRACTICE MODE';const fins=el('resultFins');fins.replaceChildren();for(let j=0;j<(isDaily?3:1);j++){const x=document.createElement('span');x.className='fin'+(j<(isDaily?data.used:1)?' used':'');fins.append(x)}
+ el('resultRemaining').textContent=isDaily?(data.remaining===0?'All 3 chances used · Best score saved!':`${data.remaining} ${data.remaining===1?'attempt':'attempts'} remaining`):'Unlimited practice · A new route every run';
+ el('resultRetry').hidden=isDaily&&data.remaining===0;el('resultRetry').textContent=mode==='practice'?'↻ New random route':'↻ Try again';
+ const next=el('resultNext');next.hidden=data.level===2&&!(mode==='dev'&&devDay<7);next.textContent=data.level===2?'Next test day →':`Next: ${CONFIG[data.level+1].name} →`;
+ el('resultWarning').hidden=!isDaily||data.level===2||data.remaining===0;el('resultWarning').textContent=`Continuing gives up ${data.remaining} remaining ${data.remaining===1?'attempt':'attempts'} on this level.`;
+ el('resultHome').textContent=data.reward?'🎁 Open treasure & menu':'⌂ Main menu';el('resultShare').hidden=mode!=='daily'||!data.finalVictory;
+ el('resultModal').hidden=false;
+ if(data.reward){el('resultNext').hidden=true;el('rewardNote').hidden=false}else el('rewardNote').hidden=true;
+}
+function equipGold(){document.body.classList.remove('gold-unlocked');document.body.dataset.sceneItem='none';document.body.dataset.chapter='coral-reef';}
+let chestTimer=null,rewardPreview=false;
+function showReward(){rewardPreview=mode==='dev';clearTimeout(chestTimer);
+ const m=el('rewardModal'),chest=el('openChest'),reveal=el('chestReveal');m.hidden=false;
+ chest.hidden=false;chest.classList.remove('opening');reveal.hidden=true;el('rewardClose').hidden=true;
+ el('rewardTitle').textContent='A mysterious chest!';el('rewardDescription').textContent=rewardPreview?'DEV preview — rewards will not be saved.':'Haiko found a treasure. What could be inside?';
+}
+function unlockChest(){const chest=el('openChest');if(el('rewardModal').hidden||chest.hidden||chest.classList.contains('opening'))return;
+ chest.classList.add('opening');if(sound){const a=ensureAudio();if(a){let t=a.currentTime+.03;[261.63,329.63,440,659.25].forEach((f,i)=>tone(f,t+i*.16,.44,.035,'triangle'))}}
+ chestTimer=setTimeout(()=>{if(el('rewardModal').hidden)return;chest.hidden=true;el('chestReveal').hidden=false;el('rewardTitle').textContent='Treasure discovered!';el('rewardDescription').textContent=rewardPreview?'DEV preview only — no official reward is granted.':'Luminous Pearl! Your first treasure is ready for Haiko’s Hideout.';
+ // Reward is committed when the treasure is opened, never by closing an animation.
+ if(!rewardPreview&&adventure.completedDays>=7){chestState={opened:true};save(CHEST_STORE,chestState);grantTreasure('luminous_pearl');equipGold()}
+ if(sound){const a=ensureAudio();if(a){let t=a.currentTime+.15;[783.99,1046.5,1318.51,1567.98].forEach((f,i)=>tone(f,t+i*.19,.55,.036,'sine'))}}
+ el('rewardClose').hidden=false;
+ },780);
+}
+function openStory(pages,onDone){storyPages=pages;storyIndex=0;storyDone=onDone||null;paintStory();el('storyModal').hidden=false;requestAnimationFrame(positionStoryFocus)}
+function paintStory(){const a=storyPages[storyIndex];if(!a)return;el('storyHeading').textContent=a.heading;el('storyText').textContent=a.text;const dots=el('storyDots');dots.replaceChildren();storyPages.forEach((_,i)=>{const dot=document.createElement('span');dot.className=i===storyIndex?'active':'';dots.append(dot)});el('storyPrev').disabled=storyIndex===0;el('storyNext').textContent=storyIndex===storyPages.length-1?'✓':'→';requestAnimationFrame(positionStoryFocus)}
+function positionStoryFocus(){
+ const focus=el('guideFocus'),pointer=el('guidePointer'),scene=el('storyModal').querySelector('.haiko-guide-scene');
+ if(el('storyModal').hidden||screen!=='game'||!game){focus.hidden=true;pointer.hidden=true;return}
+ const target=storyPages[storyIndex]?.target,b=game.boards[game.activeLevel],tiles=el('board').children;
+ let i;if(target==='start')i=0;else if(target==='goal')i=tiles.length-1;else if(target==='pearl')i=b.pearls[0];else if(target==='coral')i=b.blocks[0];
+ if(i===undefined||!tiles[i]){focus.hidden=true;pointer.hidden=true;return}
+ const r=tiles[i].getBoundingClientRect();if(r.width<4){focus.hidden=true;pointer.hidden=true;return}
+ // Float the guide above or below the clue, never obscure the highlighted tile.
+ const sh=scene.getBoundingClientRect().height||135;
+ const topPos=5,bottomPos=Math.max(5,innerHeight-sh-9);
+ const margin=17;
+ const overlap=pos=>Math.max(0,Math.min(pos+sh+margin,r.bottom)-Math.max(pos-margin,r.top));
+ const preferred=(r.top+r.bottom)/2<innerHeight*.52?bottomPos:topPos;
+ let pos=preferred;
+ if(overlap(pos)>0){const other=pos===topPos?bottomPos:topPos;if(overlap(other)<overlap(pos))pos=other}
+ scene.style.top=Math.max(5,Math.round(pos))+'px';
+ focus.hidden=false;
+ focus.style.left=r.left-2+'px';focus.style.top=r.top-2+'px';focus.style.width=r.width+4+'px';focus.style.height=r.height+4+'px';
+ focus.innerHTML=tiles[i].innerHTML;focus.style.background=getComputedStyle(tiles[i]).backgroundColor;
+ const cast=scene.querySelector('.guideCast').getBoundingClientRect();
+ const tx=r.left+r.width/2,ty=r.top+r.height/2;
+ const sx=cast.left+cast.width*.75,sy=cast.top+cast.height*.66;
+ pointer.setAttribute('viewBox',`0 0 ${innerWidth} ${innerHeight}`);pointer.style.width=innerWidth+'px';pointer.style.height=innerHeight+'px';
+ const mx=(sx+tx)/2,my=(sy+ty)/2-(sy<ty?15:-15);
+ el('guidePointerPath').setAttribute('d',`M ${sx} ${sy} Q ${mx} ${my} ${tx} ${ty}`);pointer.hidden=false;
+}
+function closeStory(){el('storyModal').hidden=true;el('guideFocus').hidden=true;el('guidePointer').hidden=true;const fn=storyDone;storyDone=null;if(fn)fn()}
+function tutorialWhenNeeded(){if(mode!=='daily'&&mode!=='dev')return;
+ const queue=[];
+ if(mode==='daily'&&!guideFlags.intro)queue.push({pages:guideIntro,key:'intro'});
+ if(game.day===2&&(mode==='dev'||!guideFlags.pearls))queue.push({pages:guidePearl,key:'pearls'});
+ if(game.day===3&&(mode==='dev'||!guideFlags.coral))queue.push({pages:guideCoral,key:'coral'});
+ let n=0;function next(){if(n>=queue.length)return;const item=queue[n++];openStory(item.pages,()=>{if(mode==='daily'){guideFlags[item.key]=true;save(GUIDE_STORE,guideFlags)}next()})}next();
+}
+function sizeBoard(){if(screen!=='game'||!game)return;
+ const board=el('board'),panel=el('playPanel');if(!board||!panel)return;
+ const styles=getComputedStyle(panel),padX=parseFloat(styles.paddingLeft)+parseFloat(styles.paddingRight),padY=parseFloat(styles.paddingTop)+parseFloat(styles.paddingBottom);
+ let other=0;for(const child of panel.children){if(child===board)continue;const css=getComputedStyle(child);if(css.display==='none'||css.position==='absolute')continue;other+=child.offsetHeight+(parseFloat(css.marginTop)||0)+(parseFloat(css.marginBottom)||0)}
+ const space=Math.floor(panel.clientHeight-padY-other-12),wide=Math.floor(panel.clientWidth-padX);
+ const desired=Math.max(50,Math.min(space,wide));board.style.setProperty('--board-px',desired+'px');
+}
+function requestSizeBoard(){if(resizePending)return;resizePending=true;requestAnimationFrame(()=>{resizePending=false;sizeBoard()})}
+
+function renderHome(){const done=adventure.completedDays,locked=adventure.lastCompleteDate===today()||done>=7;
+ el('homeChapter').textContent=`Chapter 1 · Coral Reef`;
+ el('homeDay').textContent=done>=7?'7 / 7 completed':`Day ${done+1} / 7`;
+ el('homeBar').style.width=(done/7*100)+'%';
+ el('homeProgress').textContent=done>=7?'Chapter 1 complete! Chapter 2 coming soon.':locked?'Today’s adventure complete! See you tomorrow.':`${done} of 7 adventure days completed`;el('mysteryLine').textContent=done>=7?(chestState.opened?'✦ Treasure added to Hideout':'🎁 Treasure chest waiting to be opened'):'🎁 Mystery reward · Day 7';const dots=el('homeWeekDots');dots.replaceChildren();for(let day=1;day<=7;day++){const dot=document.createElement('span');dot.className=day<=done?'complete':day===done+1?'next':'locked';dot.setAttribute('aria-label',`Adventure day ${day}${day<=done?' completed':''}`);dot.textContent=String(day);dots.append(dot)}equipGold();
+ el('playDaily').disabled=locked&&!(done>=7&&!chestState.opened);el('dailyButtonTitle').textContent=done>=7&&!chestState.opened?'Open your treasure':done>=7?'Chapter Complete':locked?'Today Complete!':'Daily Adventure';
+ el('dailyButtonHint').textContent=done>=7?'Chapter 2 is in development':locked?'Come back tomorrow':'3 levels · 3 chances each · Best score wins';
+ el('devPanel').hidden=!devEnabled;el('devToggle').checked=devEnabled;el('devDaySelect').value=String(devDay);
+ el('goldenBadge').hidden=true;el('homeMusicState').textContent=musicOn?'Music on':'Music off';el('homeAmbientState').textContent=ambientOn?'Sea on':'Sea off';
+}
+function renderJourney(){const done=adventure.completedDays,days=el('journeyDays');days.replaceChildren();
+ INTRO.forEach((label,i)=>{const row=document.createElement('div');row.className='journeyDay'+(i<done?' done':i===done?' next':'');const sym=document.createElement('div');sym.className='journeyDayIcon';sym.textContent=i<done?'✓':i===6?'🎁':i===done?'🦈':'🔒';const t=document.createElement('div');const strong=document.createElement('strong');strong.textContent=`Day ${i+1} · ${label}`;const small=document.createElement('small');small.textContent=i<done?'Completed':i===done?'Your next adventure':'Coming up';t.append(strong,small);row.append(sym,t);days.append(row)});
+ el('journeyChapterStatus').textContent=`${done} / 7 days completed`;
+ el('journeyReward').textContent=done>=7?(hasTreasure('luminous_pearl')?'✨ Chapter 1 treasure earned! Visit Haiko’s Hideout.':'🎁 A treasure chest awaits!'):'🎁 A mystery awaits at the end of Day 7';
+ el('journeyNext').textContent=done>=7?'Chapter 2 · Coming soon':'Next: '+INTRO[done];
+}
+function renderHideout(){
+ const earned=hasTreasure('luminous_pearl');
+ el('hideoutPearl').hidden=!earned;el('lockedTreasure').hidden=earned;
+ el('hideoutCounter').textContent=`${earned?1:0} / 1`;
+ el('hideoutStoryText').textContent=earned?'Your Luminous Pearl brightens the reef. More treasures await in future chapters!':'Finish Chapter 1 to discover your first treasure!';
+ el('pearlCollectionTile').classList.toggle('locked',!earned);
+ el('pearlCollectionTile').classList.toggle('earned',earned);
+ el('collectibleIcon').textContent=earned?'✦':'?';
+ el('collectibleName').textContent=earned?'Luminous Pearl':'Mystery treasure';
+ el('collectibleDetail').textContent=earned?'Chapter 1 · Coral Reef':'Complete Chapter 1 to reveal';
+ el('collectibleState').textContent=earned?'Collected':'Locked';
+ el('pearlCollectionTile').setAttribute('aria-label',earned?'Luminous Pearl, collected':'Mystery treasure, locked');
+}
+function showScreen(s){screen=s;document.body.classList.toggle('game-active',s==='game');['welcomeScreen','gameScreen','journeyScreen','hideoutScreen'].forEach(id=>el(id).hidden=(id!==({home:'welcomeScreen',game:'gameScreen',journey:'journeyScreen',hideout:'hideoutScreen'}[s])));if(s==='home')renderHome();if(s==='journey')renderJourney();if(s==='hideout')renderHideout();window.scrollTo(0,0);if(s==='game')requestSizeBoard();updateAudioScene()}
+function toHome(){cancelEffects();if(mode==='daily')persist();showScreen('home')}
+function startGame(which){cancelEffects();if(which==='daily'){
+  if(!canPlayToday()){showScreen('home');return}
+  mode='daily';game=ensureRun();
+ }else if(which==='dev'){
+  if(!devEnabled)return;
+  mode='dev';devGame=blankRun(devDay,'DEV',`dev|${devDay}`);game=devGame;
+ }else{
+  mode='practice';game=newPractice();
+ }
+ render();showScreen('game');activateAudio();tutorialWhenNeeded();
+}
+function settingsOpen(){activateAudio();el('soundSwitch').checked=sound;el('musicSwitch').checked=musicOn;el('ambientSwitch').checked=ambientOn;el('settingsModal').hidden=false}
+function settingsClose(){el('settingsModal').hidden=true}
+function choose(id){if(!game)return;if(mode==='daily'&&today()!==game.date){alert('A new day has begun. Return to the menu to start today’s adventure.');toHome();return}
+ const idx=game.activeLevel,s=game.levels[idx],b=game.boards[idx],step=s.visited.length-1,here=s.visited[step];
+ if(s.completed||b.blocks.includes(id)||!neighbors(here,CONFIG[idx].size).includes(id)||s.visited.includes(id)||(s.wrongByStep[step]||[]).includes(id))return;
+ s.clicks++;const right=id===b.path[step+1];
+ if(right){s.visited.push(id);if(id===CONFIG[idx].size**2-1){
+  s.completed=true;const oldBest=s.bestClicks;
+  if(mode!=='practice'){s.attemptsUsed++;s.attemptScores.push(s.clicks);s.bestClicks=Math.min(...s.attemptScores)}
+  const finale=idx===2&&allDone(),reward=finale&&game.day===7&&mode!=='practice';
+  if(finale&&mode==='daily'&&adventure.lastCompleteDate!==game.date){
+   adventure.completedDays++;
+   adventure.lastCompleteDate=game.date;
+   adventure.history.push({date:game.date,day:game.day,best:game.levels.map(x=>x.bestClicks),tries:game.levels.map(x=>x.attemptsUsed)});
+   // The final board stays visible for review until the user goes home.
+  }
+  const data={mode,level:idx,used:mode==='practice'?1:s.attemptsUsed,remaining:mode==='practice'?null:3-s.attemptsUsed,taps:s.clicks,best:mode==='practice'?s.clicks:s.bestClicks,record:mode!=='practice'&&(oldBest===null||s.clicks<oldBest),finalVictory:finale,reward};
+  const token=rushToken,path=b.path.slice();setTimeout(()=>{if(mode===data.mode&&game.activeLevel===idx&&s.completed&&token===rushToken)rush(path,finale,data)},75);
+ }}else{(s.wrongByStep[step]??=[]).push(id)}
+ flash={id,right};beep(right);persist();render();clearTimeout(flashTimer);flashTimer=setTimeout(()=>{flash=null;if(screen==='game')render()},290);
+}
+function render(){if(!game)return;const idx=game.activeLevel,cfg=CONFIG[idx],s=game.levels[idx],b=game.boards[idx],step=s.visited.length-1,here=s.visited[step],isDaily=mode!=='practice';
+ el('gameTitle').textContent=mode==='daily'?'DAILY ADVENTURE':mode==='dev'?'DEV · TEST ADVENTURE':'PRACTICE MODE';
+ el('dateLabel').textContent=mode==='daily'?`Day ${game.day}/7 · ${game.date}`:mode==='dev'?`Chapter 1 · Day ${devDay}/7`:'Random reef paths';
+ el('practiceNote').classList.toggle('hidden',mode==='daily');el('practiceNote').textContent=mode==='dev'?'⚠ DEV TEST – This practice adventure does not change your official progress.':'PRACTICE MODE – Unlimited random paths. Your official progress is safe.';
+ el('puzzleHeading').textContent=mode==='practice'?'Practice puzzles':`Day ${game.day} · ${INTRO[game.day-1]}`;
+ el('levelHint').textContent='';
+ const tabs=el('tabs');tabs.replaceChildren();CONFIG.forEach((conf,j)=>{const t=document.createElement('button');const completed=isDaily?game.levels[j].bestClicks!==null:game.levels[j].completed;t.type='button';t.textContent=`${j+1}. ${conf.name}${completed?' ✓':''}`;t.className=[j===idx?'active':'',completed?'finished':'',isDaily&&j!==idx?'locked':''].filter(Boolean).join(' ');t.disabled=isDaily;t.setAttribute('aria-pressed',String(j===idx));if(!isDaily)t.onclick=()=>{cancelEffects();game.activeLevel=j;game.levels[j]=blank();game.boards[j]=makePracticeBoard(j,game.boards[j]);render()};tabs.append(t)});
+ const best=isDaily?s.bestClicks:(s.completed?s.clicks:null);
+ el('clicks').textContent=s.clicks;el('best').textContent=best===null?'—':best;el('optimal').textContent=b.path.length-1;el('grade').textContent=best===null?'—':grade(best,b.path.length-1);
+ el('attemptInfo').classList.toggle('hidden',!isDaily);
+ if(isDaily)el('attemptInfo').textContent=s.completed?`Completed attempts: ${s.attemptsUsed}/3 · ${3-s.attemptsUsed} left · Best ${s.bestClicks} taps`:`Attempt ${Math.min(3,s.attemptsUsed+1)} of 3 · ${s.attemptsUsed} finished`;
+ const board=el('board');board.style.setProperty('--size',cfg.size);board.replaceChildren();const adjacent=neighbors(here,cfg.size);
+ for(let id=0;id<cfg.size*cfg.size;id++){
+  const t=document.createElement('button');t.type='button';t.className='tile';const visited=s.visited.includes(id),wrong=(s.wrongByStep[step]||[]).includes(id),obstacle=b.blocks.includes(id),pearl=b.pearls.includes(id),possible=!s.completed&&!obstacle&&adjacent.includes(id)&&!visited&&!wrong;
+  if(obstacle)t.classList.add('obstacle');if(visited)t.classList.add('visited');if(id===here)t.classList.add('current');if(wrong)t.classList.add('wrong');if(id===cfg.size*cfg.size-1)t.classList.add('goal');if(pearl)t.classList.add('pearl-tile');if(possible)t.classList.add('possible');if(flash?.id===id)t.classList.add(flash.right?'correct-pop':'wrong-pop');
+  if(id===0)t.innerHTML=finSVG;else if(id===cfg.size*cfg.size-1)t.innerHTML=treasureSVG;else if(obstacle)t.innerHTML=coralSVG;else if(wrong)t.textContent='×';else if(visited)t.textContent='✓';else if(pearl)t.innerHTML=pearlSVG;
+  t.disabled=!possible;t.setAttribute('aria-label',`Row ${Math.floor(id/cfg.size)+1} column ${id%cfg.size+1}${id===0?' shark fin start':''}${id===cfg.size*cfg.size-1?' treasure X finish':''}${obstacle?' obstacle':''}${pearl?' pearl clue':''}${visited?' visited':''}${wrong?' incorrect':''}`);
+  t.onclick=()=>choose(id);board.append(t);
+ }
+ requestSizeBoard();if(!el('storyModal').hidden)requestAnimationFrame(positionStoryFocus);
+ if(s.completed)el('message').textContent=`Level complete! This run: ${s.clicks} taps. ${isDaily?`Best: ${s.bestClicks}.`:''}`;
+ else if(flash&&!flash.right)el('message').textContent='Not this tile. Try another adjacent tile.';
+ else el('message').textContent=`Follow the route from the shark fin to the treasure X. ${step} of ${b.path.length-1} steps completed.`;
+ el('next').disabled=!s.completed||idx===2;el('next').textContent=idx===2?'Final level':'Next level →';el('reset').disabled=isDaily?(!s.completed||s.attemptsUsed>=3):false;el('reset').textContent=isDaily?'Retry level':'New random route';
+ el('progressHeading').textContent=mode==='daily'?'Adventure progress':mode==='dev'?'Test day progress':'Practice progress';
+ el('streak').textContent=mode==='daily'?`🗺️ Day ${game.day}/7`:mode==='dev'?'🔧 DEV TEST':'🎮 Unlimited';
+ el('progress').textContent=isDaily?`Best taps — ${game.levels.map((l,j)=>`${CONFIG[j].name}: ${l.bestClicks??'—'}`).join(' · ')}. ${game.levels.filter(l=>l.bestClicks!==null).length}/3 complete.`:`${game.levels.filter(l=>l.completed).length}/3 practice levels completed.`;
+ const summary=el('summary');summary.classList.toggle('hidden',!allDone());if(allDone()){
+  summary.replaceChildren();const h=document.createElement('h2');h.textContent=mode==='practice'?'Practice complete!':mode==='dev'?'DEV Day Complete!':'Daily Victory!';summary.append(h);
+  const d=document.createElement('p');d.textContent=`Total best: ${bestTotal()} taps · Perfect: ${optimalTotal()} · Grade ${grade(bestTotal(),optimalTotal())}`;summary.append(d);
+  if(mode==='daily'){const x=document.createElement('p');x.textContent=game.day===7?'🎁 Chapter 1 complete · Treasure discovered!':`🦈 Haiko advanced to Day ${game.day+1}. Come back tomorrow!`;summary.append(x)}
+ }
+ el('share').disabled=mode!=='daily'||!allDone();
+}
+function shareText(){return [`Pathle · Haiko's Ocean Adventure`,`Chapter 1 · Day ${game.day} · ${game.date}`,`Best of 3 attempts`,...game.levels.map((s,i)=>`${CONFIG[i].name}: ${s.bestClicks} taps (${s.attemptsUsed}/3 tries)`),`Total: ${bestTotal()} taps · Grade ${grade(bestTotal(),optimalTotal())}`].join('\n')}
+function resetLevel(){cancelEffects();const i=game.activeLevel,s=game.levels[i];if(mode==='practice'){game.levels[i]=blank();game.boards[i]=makePracticeBoard(i,game.boards[i])}else{if(!s.completed||s.attemptsUsed>=3)return;s.visited=[0];s.wrongByStep={};s.clicks=0;s.completed=false}persist();render()}
+function nextLevel(){const i=game.activeLevel,s=game.levels[i];if(i===2){if(mode==='dev'&&allDone()&&devDay<7){devDay++;el('devDaySelect').value=String(devDay);startGame('dev')}return}if(!s.completed)return;
+ if(mode!=='practice'&&s.attemptsUsed<3){const left=3-s.attemptsUsed;if(!confirm(`Continue to ${CONFIG[i+1].name}? You have ${left} ${left===1?'try':'tries'} left on ${CONFIG[i].name}. You cannot return today.`))return}
+ cancelEffects();game.activeLevel++;if(mode==='practice'){game.levels[game.activeLevel]=blank();game.boards[game.activeLevel]=makePracticeBoard(game.activeLevel,game.boards[game.activeLevel])}persist();render()}
+el('homeSettings').onclick=settingsOpen;el('gameSettings').onclick=settingsOpen;
+el('journeyQuick').onclick=()=>showScreen('journey');el('openHideout').onclick=()=>showScreen('hideout');el('hideoutBack').onclick=()=>showScreen('home');el('hideoutDone').onclick=()=>showScreen('home');el('homeGuideBtn').onclick=()=>openStory(guideIntro);el('homeMusicBtn').onclick=()=>{musicOn=!musicOn;save(MUSIC_KEY,musicOn);activateAudio();renderHome()};el('homeAmbientBtn').onclick=()=>{ambientOn=!ambientOn;save(AMBIENT_KEY,ambientOn);activateAudio();renderHome()};
+el('storyPrev').onclick=()=>{if(storyIndex>0){storyIndex--;paintStory()}};
+el('storyNext').onclick=()=>{if(storyIndex<storyPages.length-1){storyIndex++;paintStory()}else closeStory()};
+el('storySkip').onclick=closeStory;
+el('howPlaySettings').onclick=()=>{settingsClose();openStory(guideIntro)};
+el('resultShare').onclick=()=>el('share').click();
+window.addEventListener('resize',()=>{requestSizeBoard();positionStoryFocus()});
+el('closeSettings').onclick=settingsClose;el('doneSettings').onclick=settingsClose;el('settingsModal').onclick=e=>{if(e.target===el('settingsModal'))settingsClose()};el('soundSwitch').onchange=e=>{sound=e.target.checked;save(SOUND,sound)};el('musicSwitch').onchange=e=>{musicOn=e.target.checked;save(MUSIC_KEY,musicOn);activateAudio()};el('ambientSwitch').onchange=e=>{ambientOn=e.target.checked;save(AMBIENT_KEY,ambientOn);activateAudio()};
+el('devToggle').onchange=e=>{devEnabled=e.target.checked;renderHome()};el('devDaySelect').onchange=e=>{devDay=Number(e.target.value)};el('launchDev').onclick=()=>startGame('dev');
+el('playDaily').onclick=()=>{if(adventure.completedDays>=7&&!chestState.opened){mode='daily';showReward()}else startGame('daily')};el('playPractice').onclick=()=>startGame('practice');el('journeyButton').onclick=()=>showScreen('journey');el('journeyBack').onclick=()=>showScreen('home');el('homeBack').onclick=toHome;
+el('reset').onclick=resetLevel;el('next').onclick=nextLevel;el('resultHome').onclick=()=>{const wasReward=(mode==='dev'||mode==='daily')&&game.day===7&&allDone()&&(mode==='dev'||!chestState.opened);toHome();if(wasReward)showReward()};el('resultRetry').onclick=resetLevel;el('resultNext').onclick=nextLevel;
+el('resultModal').onclick=e=>{if(e.target===el('resultModal'))el('resultModal').hidden=true};el('openChest').onclick=unlockChest;el('rewardClose').onclick=()=>{clearTimeout(chestTimer);el('rewardModal').hidden=true;equipGold();showScreen(rewardPreview?'home':'hideout')};
+el('share').onclick=async()=>{if(mode!=='daily'||!allDone())return;const text=shareText();try{if(navigator.share){await navigator.share({title:'Pathle',text});return}if(navigator.clipboard){await navigator.clipboard.writeText(text);alert('Results copied!');return}}catch(e){if(e.name==='AbortError')return}prompt('Copy:',text)};
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!el('storyModal').hidden)closeStory();else if(!el('settingsModal').hidden)settingsClose();else if(!el('rewardModal').hidden){if(el('openChest').hidden){el('rewardModal').hidden=true;renderHome()}}else if(!el('resultModal').hidden)el('resultModal').hidden=true}});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){if(screen==='home')renderHome();else if(mode==='daily'&&game&&game.date!==today())toHome()}updateAudioScene()});
+save(STORE,adventure);save(COLLECTION_STORE,collection);showScreen('home');
+})();
+</script>
+<div aria-hidden="true" class="celebration" id="celebration"></div></body>
+</html>
