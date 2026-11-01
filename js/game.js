@@ -1,4 +1,50 @@
-(()=>{'use strict';
+(async()=>{'use strict';
+
+/* Pathle 5B.2A — BOOTSTRAP ONLY.
+   Load / initialize the versioned IndexedDB save *before* wiring up the game.
+   Existing localStorage reads/writes remain the active gameplay persistence until 5B.2B.
+   The loaded save stays in memory for the next integration step; it does not yet
+   override live game progress. Do not silently erase an invalid database save. */
+const pathleBootScreen=document.getElementById('welcomeScreen');
+if(pathleBootScreen)pathleBootScreen.inert=true;
+let pathleInitialSave=null;
+try{
+  if(!window.PathleStorage||!window.PathleSaveSchema)throw new Error('Pathle save scripts did not load');
+  const stored=await window.PathleStorage.load();
+  if(stored){
+    pathleInitialSave=window.PathleSaveSchema.migrateSave(stored.data);
+    window.PathleSaveBoot=Object.freeze({status:'loaded',revision:stored.revision,source:stored.source,schemaVersion:pathleInitialSave.schemaVersion});
+  }else{
+    pathleInitialSave=window.PathleSaveSchema.createEmptySave();
+    const written=await window.PathleStorage.save(pathleInitialSave);
+    window.PathleSaveBoot=Object.freeze({status:'created',revision:written.revision,source:'current',schemaVersion:pathleInitialSave.schemaVersion});
+  }
+  console.info('[Pathle 5B.2A] IndexedDB startup:',window.PathleSaveBoot.status);
+}catch(error){
+  console.error('[Pathle 5B.2A] IndexedDB startup failed:',error);
+  if(window.location.protocol==='file:'){
+    // Chromebook local-file preview remains usable; IndexedDB must be checked on HTTPS.
+    window.PathleSaveBoot=Object.freeze({status:'local-file-preview',schemaVersion:null});
+    console.warn('[Pathle] Local file preview uses the existing localStorage gameplay saves. Test IndexedDB on HTTPS.');
+  }else{
+    // A future production save must never be reset merely because loading failed.
+    window.PathleSaveBoot=Object.freeze({status:'error',schemaVersion:null});
+    const panel=document.createElement('section');
+    panel.id='pathleSaveStartupError';
+    panel.setAttribute('role','alert');
+    panel.style.cssText='position:fixed;z-index:99999;inset:0;display:flex;align-items:center;justify-content:center;background:#062747eE;padding:22px;color:white;font:16px/1.5 system-ui,sans-serif;text-align:center';
+    const content=document.createElement('div');
+    content.style.cssText='max-width:380px;background:#124367;border:1px solid #8edffa;border-radius:18px;padding:24px';
+    const title=document.createElement('h2');title.textContent='Unable to load game progress';
+    const description=document.createElement('p');description.textContent='Your saved data has not been deleted. Check your browser settings or storage permissions, then try again.';
+    const retry=document.createElement('button');retry.type='button';retry.textContent='Try again';
+    retry.style.cssText='padding:10px 22px;border:0;border-radius:24px;background:#ffd56c;color:#123047;font-weight:bold;cursor:pointer';
+    retry.onclick=()=>window.location.reload();
+    content.append(title,description,retry);panel.append(content);document.body.append(panel);
+    return;
+  }
+}
+
 const {CONFIG,neighbors,makeBoard}=window.PathleBoardEngine;
 const STORE='pathle_ocean_adventure_v1',SOUND='pathle_sound_v05',OLD_SOUND='piiloreitti_sound_v04';
 const INTRO=['Welcome to Coral Reef','Pearl Discovery','Coral Gates','Pearl Trail','Reef Islands','Hidden Passage','Treasure Reef'];
@@ -320,4 +366,5 @@ el('share').onclick=async()=>{if(mode!=='daily'||!allDone())return;const text=sh
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!el('storyModal').hidden)closeStory();else if(!el('settingsModal').hidden)settingsClose();else if(!el('rewardModal').hidden){if(el('openChest').hidden){el('rewardModal').hidden=true;renderHome()}}else if(!el('resultModal').hidden)el('resultModal').hidden=true}});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){if(screen==='home')renderHome();else if(mode==='daily'&&game&&game.date!==today())toHome()}updateAudioScene()});
 save(STORE,adventure);save(COLLECTION_STORE,collection);showScreen('home');
+if(pathleBootScreen)pathleBootScreen.inert=false;
 })();
