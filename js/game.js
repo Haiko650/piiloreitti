@@ -1,6 +1,6 @@
 (async()=>{'use strict';
 
-/* Pathle 5B.3B.2 — safe IndexedDB recovery notices, errors and retries for Daily Adventure, rewards,
+/* Pathle 5B.3B.3C — centered, blocking retry for Daily Adventure, rewards,
    settings and Haiko guides. Legacy localStorage is used only for file://
    previews and retired cosmetics; preserve existing player saves on failure. */
 const pathleBootScreen=document.getElementById('welcomeScreen');
@@ -82,17 +82,71 @@ if(!validAdventure(adventure)){
  adventure=freshAdventure();
 }
 let dailySaveCounter=0,dailySaveConfirmed=0,dailySaveFailed=0;
-let dailySaveAlert=null;
-function clearDailySaveWarning(){if(dailySaveAlert){dailySaveAlert.remove();dailySaveAlert=null}}
-function dailySaveWarning(error){
- console.error('[Pathle 5B.2B] Could not save Daily Adventure:',error);
- if(dailySaveAlert)return;
- const panel=document.createElement('section');panel.id='pathleDailySaveWarning';panel.setAttribute('role','alert');
- panel.style.cssText='position:fixed;z-index:99998;bottom:12px;left:12px;right:12px;max-width:440px;margin:auto;padding:14px 17px;border:2px solid #ffd56c;border-radius:16px;background:#123047;color:white;box-shadow:0 6px 26px #0008;font:14px/1.45 system-ui,sans-serif';
- const msg=document.createElement('p');msg.textContent='Progress not saved. Keep the game open and try again.';msg.style.margin='0 0 8px';
- const retry=document.createElement('button');retry.type='button';retry.textContent='Retry save';
- retry.style.cssText='border:0;border-radius:18px;padding:8px 16px;background:#ffd56c;color:#123047;font-weight:bold';
- retry.onclick=()=>persistAdventure();panel.append(msg,retry);document.body.append(panel);dailySaveAlert=panel;
+let pendingTreasureRetry=null;
+let saveErrorPanel=null,saveErrorRetryButton=null,saveRetryInProgress=false,saveErrorPreviousFocus=null;
+
+// All save failures share ONE blocking alert dialog. Each retry re-applies the
+// freshest pending changes through the existing atomic IndexedDB updater.
+function saveFailuresPresent(){
+ return dailySaveFailed>dailySaveConfirmed||failedPreferenceKeys.size>0||pendingTreasureRetry!==null;
+}
+function syncSaveErrorDialog(){
+ const hasFailures=saveFailuresPresent();
+ if(!hasFailures&&!saveRetryInProgress){
+  if(saveErrorPanel){
+   saveErrorPanel.remove();saveErrorPanel=null;saveErrorRetryButton=null;
+   if(saveErrorPreviousFocus?.isConnected)saveErrorPreviousFocus.focus({preventScroll:true});
+   saveErrorPreviousFocus=null;
+  }
+  return;
+ }
+ if(!saveErrorPanel){
+  saveErrorPreviousFocus=document.activeElement;
+  const overlay=document.createElement('div');overlay.id='pathleSaveErrorDialog';overlay.className='pathleSaveErrorBackdrop';
+  const card=document.createElement('section');card.className='pathleSaveErrorCard';
+  card.setAttribute('role','alertdialog');card.setAttribute('aria-modal','true');
+  card.setAttribute('aria-labelledby','pathleSaveErrorTitle');card.setAttribute('aria-describedby','pathleSaveErrorMessage');
+  const symbol=document.createElement('div');symbol.className='pathleSaveErrorSymbol';symbol.setAttribute('aria-hidden','true');symbol.textContent='!';
+  const title=document.createElement('h2');title.id='pathleSaveErrorTitle';
+  const message=document.createElement('p');message.id='pathleSaveErrorMessage';
+  const retry=document.createElement('button');retry.id='pathleSaveErrorRetry';retry.className='pathleSaveErrorRetry';
+  retry.type='button';retry.textContent='Retry Save';retry.onclick=retryOutstandingSaves;
+  card.append(symbol,title,message,retry);overlay.append(card);document.body.append(overlay);
+  saveErrorPanel=overlay;saveErrorRetryButton=retry;
+  retry.focus({preventScroll:true});
+ }
+ const title=saveErrorPanel.querySelector('#pathleSaveErrorTitle');
+ const message=saveErrorPanel.querySelector('#pathleSaveErrorMessage');
+ if(pendingTreasureRetry){
+  title.textContent='Treasure not saved!';
+  message.textContent='Your treasure could not be saved. Keep the game open and try again before continuing.';
+ }else if(dailySaveFailed>dailySaveConfirmed){
+  title.textContent='Progress not saved!';
+  message.textContent='Your latest progress could not be saved. Keep the game open and try again before continuing.';
+ }else{
+  title.textContent='Settings not saved!';
+  message.textContent='A setting or Haiko guide could not be saved. Keep the game open and try again.';
+ }
+ saveErrorRetryButton.disabled=saveRetryInProgress;
+ saveErrorRetryButton.textContent=saveRetryInProgress?'Saving…':'Retry Save';
+}
+// Escape and Tab must not let players interact with the underlying game.
+document.addEventListener('keydown',event=>{
+ if(!saveErrorPanel)return;
+ if(event.key==='Escape'||event.key==='Tab'){
+  event.preventDefault();event.stopImmediatePropagation();
+  if(event.key==='Tab')saveErrorRetryButton?.focus({preventScroll:true});
+ }
+},true);
+async function retryOutstandingSaves(){
+ if(saveRetryInProgress||!saveFailuresPresent())return;
+ saveRetryInProgress=true;syncSaveErrorDialog();
+ const actions=[];
+ if(dailySaveFailed>dailySaveConfirmed)actions.push(persistAdventure());
+ if(failedPreferenceKeys.size>0)actions.push(retryPreferenceSaves());
+ if(pendingTreasureRetry)actions.push(retryTreasureSave());
+ try{await Promise.allSettled(actions)}
+ finally{saveRetryInProgress=false;syncSaveErrorDialog()}
 }
 function persistAdventure(){
  if(!useIndexedDaily){save(STORE,adventure);return}
@@ -100,15 +154,18 @@ function persistAdventure(){
  // IndexedDB save AT COMMIT TIME, preserving future rewards and settings.
  const dailySnapshot=JSON.parse(JSON.stringify(adventure));
  const number=++dailySaveCounter;
- window.PathleStorage.update(latest=>{
+ return window.PathleStorage.update(latest=>{
   latest.progress.chapters[dailyChapterId]=dailySnapshot;
   return latest;
  }).then(()=>{
   dailySaveConfirmed=Math.max(dailySaveConfirmed,number);
-  if(dailySaveConfirmed>=dailySaveFailed)clearDailySaveWarning();
+  syncSaveErrorDialog();
+  return true;
  },error=>{
+  console.error('[Pathle] Could not save Daily Adventure:',error);
   dailySaveFailed=Math.max(dailySaveFailed,number);
-  if(dailySaveConfirmed<dailySaveFailed)dailySaveWarning(error);
+  syncSaveErrorDialog();
+  return false;
  });
 }
 function persist(){if(mode==='daily')persistAdventure()}
@@ -197,21 +254,7 @@ const guideFlags=useIndexedDaily?{...pathleInitialSave.guides.seen}:(load(GUIDE_
 // a failed sound save. Newer changes supersede older pending changes.
 const pendingPreferenceChanges=new Map();
 const failedPreferenceKeys=new Set();
-let preferenceSaveAlert=null;
-function refreshPreferenceSaveWarning(){
- if(failedPreferenceKeys.size===0){
-  if(preferenceSaveAlert){preferenceSaveAlert.remove();preferenceSaveAlert=null}
-  return;
- }
- if(preferenceSaveAlert)return;
- const panel=document.createElement('section');panel.id='pathlePreferenceSaveWarning';panel.setAttribute('role','alert');
- panel.style.cssText='position:fixed;z-index:99999;bottom:12px;left:12px;right:12px;max-width:440px;margin:auto;padding:14px 17px;border:2px solid #ffd56c;border-radius:16px;background:#123047;color:white;box-shadow:0 6px 26px #0008;font:14px/1.45 system-ui,sans-serif';
- const msg=document.createElement('p');msg.textContent='Settings or guide not saved. Keep the game open and try again.';msg.style.margin='0 0 8px';
- const retry=document.createElement('button');retry.type='button';retry.textContent='Retry save';
- retry.style.cssText='border:0;border-radius:18px;padding:8px 16px;background:#ffd56c;color:#123047;font-weight:bold';
- retry.onclick=retryPreferenceSaves;
- panel.append(msg,retry);document.body.append(panel);preferenceSaveAlert=panel;
-}
+function refreshPreferenceSaveWarning(){syncSaveErrorDialog()}
 function applyPreferenceChange(saveData,entry){
  if(entry.section==='settings')saveData.settings[entry.key]=entry.value;
  else saveData.guides.seen[entry.key]=true;
@@ -237,8 +280,8 @@ function recordPreferenceChange(section,key,value){
 }
 function retryPreferenceSaves(){
  const entries=[...failedPreferenceKeys].map(id=>[id,pendingPreferenceChanges.get(id)]).filter(([,entry])=>entry);
- if(!entries.length)return;
- window.PathleStorage.update(latest=>{
+ if(!entries.length)return Promise.resolve(true);
+ return window.PathleStorage.update(latest=>{
   for(const [,entry] of entries)applyPreferenceChange(latest,entry);
   return latest;
  }).then(()=>{
@@ -246,9 +289,11 @@ function retryPreferenceSaves(){
    if(pendingPreferenceChanges.get(id)===entry){pendingPreferenceChanges.delete(id);failedPreferenceKeys.delete(id)}
   }
   refreshPreferenceSaveWarning();
+  return true;
  },error=>{
-  console.error('[Pathle 5B.2C.3] Retrying settings/guides failed:',error);
+  console.error('[Pathle] Retrying settings/guides failed:',error);
   refreshPreferenceSaveWarning();
+  return false;
  });
 }
 let storyPages=[],storyIndex=0,storyDone=null,resizePending=false;
@@ -360,17 +405,34 @@ function unlockChest(){const chest=el('openChest');if(el('rewardModal').hidden||
     el('chestReveal').hidden=true;
     el('rewardClose').hidden=true;
     el('rewardTitle').textContent='Treasure not saved';
-    el('rewardDescription').textContent='Please tap the chest to retry saving. Keep this page open so your treasure is not lost.';
+    el('rewardDescription').textContent='Keep the game open and use Retry Save to save your treasure.';
+    pendingTreasureRetry={chapterId:dailyChapterId,rewardId:CHAPTER_CONTENT.ocean[0].rewardId};
+    syncSaveErrorDialog();
     return;
    }
   }
-  if(el('rewardModal').hidden)return;
-  chest.hidden=true;el('chestReveal').hidden=false;
-  el('rewardTitle').textContent='Treasure discovered!';
-  el('rewardDescription').textContent=rewardPreview?'DEV preview only — no official reward is granted.':'Luminous Pearl! Your first treasure is ready for Haiko’s Hideout.';
-  if(sound){const a=ensureAudio();if(a){let t=a.currentTime+.15;[783.99,1046.5,1318.51,1567.98].forEach((f,i)=>tone(f,t+i*.19,.55,.036,'sine'))}}
-  el('rewardClose').hidden=false;
+  revealChestTreasure();
  },780);
+}
+function revealChestTreasure(){
+ if(el('rewardModal').hidden)return;
+ el('openChest').hidden=true;el('chestReveal').hidden=false;
+ el('rewardTitle').textContent='Treasure discovered!';
+ el('rewardDescription').textContent=rewardPreview?'DEV preview only — no official reward is granted.':'Luminous Pearl! Your first treasure is ready for Haiko’s Hideout.';
+ if(sound){const a=ensureAudio();if(a){let t=a.currentTime+.15;[783.99,1046.5,1318.51,1567.98].forEach((f,i)=>tone(f,t+i*.19,.55,.036,'sine'))}}
+ el('rewardClose').hidden=false;
+}
+async function retryTreasureSave(){
+ const pending=pendingTreasureRetry;
+ if(!pending)return true;
+ try{
+  await commitChapterTreasure(pending.chapterId,pending.rewardId);
+  if(pendingTreasureRetry===pending){pendingTreasureRetry=null;revealChestTreasure()}
+  return true;
+ }catch(error){
+  console.error('[Pathle] Retrying treasure save failed:',error);
+  return false;
+ }
 }
 function openStory(pages,onDone){storyPages=pages;storyIndex=0;storyDone=onDone||null;paintStory();el('storyModal').hidden=false;requestAnimationFrame(positionStoryFocus)}
 function paintStory(){const a=storyPages[storyIndex];if(!a)return;el('storyHeading').textContent=a.heading;el('storyText').textContent=a.text;const dots=el('storyDots');dots.replaceChildren();storyPages.forEach((_,i)=>{const dot=document.createElement('span');dot.className=i===storyIndex?'active':'';dots.append(dot)});el('storyPrev').disabled=storyIndex===0;el('storyNext').textContent=storyIndex===storyPages.length-1?'✓':'→';requestAnimationFrame(positionStoryFocus)}
