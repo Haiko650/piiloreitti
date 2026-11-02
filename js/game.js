@@ -95,12 +95,14 @@ function dailySaveWarning(error){
 }
 function persistAdventure(){
  if(!useIndexedDaily){save(STORE,adventure);return}
- // Capture a full, independent snapshot immediately. The IndexedDB adapter
- // serializes writes, preventing rapid taps from committing out of order.
- const candidate=JSON.parse(JSON.stringify(pathleInitialSave));
- candidate.progress.chapters[dailyChapterId]=JSON.parse(JSON.stringify(adventure));
+ // Capture only Daily Adventure now. The adapter merges it into the newest
+ // IndexedDB save AT COMMIT TIME, preserving future rewards and settings.
+ const dailySnapshot=JSON.parse(JSON.stringify(adventure));
  const number=++dailySaveCounter;
- window.PathleStorage.save(candidate).then(()=>{
+ window.PathleStorage.update(latest=>{
+  latest.progress.chapters[dailyChapterId]=dailySnapshot;
+  return latest;
+ }).then(()=>{
   dailySaveConfirmed=Math.max(dailySaveConfirmed,number);
   if(dailySaveConfirmed>=dailySaveFailed)clearDailySaveWarning();
  },error=>{

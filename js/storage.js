@@ -1,5 +1,5 @@
-/* Pathle 5B.1 — IndexedDB adapter. Not yet connected to game.js.
-   Lazy initialization: the database is opened only when load()/save() is called. */
+/* Pathle 5B.2C.1 — IndexedDB adapter with atomic shared-save updates.
+   Lazy initialization: the database opens only when storage is used. */
 (()=>{'use strict';
   const DB_NAME='pathle_game_saves';
   const DB_VERSION=1;
@@ -100,5 +100,58 @@
     return next;
   }
 
-  window.PathleStorage=Object.freeze({load,save,openDatabase,DB_NAME,DB_VERSION});
+  // Atomically modify the LATEST committed save, not a snapshot captured at boot.
+  // This keeps future collection/settings/guide changes safe from Daily writes.
+  // The mutator MUST be synchronous; IDB transactions cannot wait for promises.
+  function update(mutator){
+    if(typeof mutator!=='function')return Promise.reject(new TypeError('Save updater must be a function'));
+    const next=writeQueue.then(async()=>{
+      const db=await openDatabase();
+      return new Promise((resolve,reject)=>{
+        const tx=db.transaction(STORE,'readwrite');
+        const store=tx.objectStore(STORE);
+        const readCurrent=store.get('current');
+        const readPrevious=store.get('previous');
+        let current,previous,written=null,reason=null;
+        readCurrent.onsuccess=()=>{current=readCurrent.result};
+        readPrevious.onsuccess=()=>{previous=readPrevious.result};
+        // Both reads and the write happen under one readwrite transaction.
+        // This also serializes updates from DIFFERENT tabs on this origin.
+        let readsComplete=0;
+        function applyUpdate(){
+          if(++readsComplete!==2)return;
+          try{
+            const base=checkRecord(current)?current:checkRecord(previous)?previous:null;
+            if(!base)throw new Error('No valid Pathle save available for update');
+            const draft=copyJson(base.payload);
+            const returned=mutator(draft);
+            if(returned&&typeof returned.then==='function')throw new TypeError('Save updater must not be async');
+            const candidate=copyJson(returned===undefined?draft:returned);
+            const status=schema.validateSave(candidate);
+            if(!status.valid)throw new Error(`Refusing invalid Pathle save: ${status.errors.join('; ')}`);
+            const revision=Math.max(
+              checkRecord(current)?current.revision:0,
+              checkRecord(previous)?previous.revision:0
+            )+1;
+            written={slot:'current',revision,updatedAt:Date.now(),payload:candidate};
+            // Preserve the latest valid state as a rollback snapshot.
+            store.put({...base,slot:'previous'});
+            store.put(written);
+          }catch(error){
+            reason=error;
+            try{tx.abort()}catch{}
+          }
+        }
+        readCurrent.addEventListener('success',applyUpdate);
+        readPrevious.addEventListener('success',applyUpdate);
+        tx.oncomplete=()=>resolve({revision:written.revision,updatedAt:written.updatedAt});
+        tx.onabort=()=>reject(reason||tx.error||new Error('Pathle save update aborted'));
+        tx.onerror=()=>{ /* Transaction abort will reject. */ };
+      });
+    });
+    writeQueue=next.catch(()=>{});
+    return next;
+  }
+
+  window.PathleStorage=Object.freeze({load,save,update,openDatabase,DB_NAME,DB_VERSION});
 })();
