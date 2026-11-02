@@ -1,4 +1,4 @@
-/* Pathle 5B.2C.1 — IndexedDB adapter with atomic shared-save updates.
+/* Pathle 5B.3B.1 — IndexedDB adapter, atomic updates and three snapshots.
    Lazy initialization: the database opens only when storage is used. */
 (()=>{'use strict';
   const DB_NAME='pathle_game_saves';
@@ -32,9 +32,20 @@
     return dbPromise;
   }
 
+  // Detect unintended changes even when a damaged payload happens to remain
+  // structurally valid. This is a corruption check, NOT a security signature.
+  // Old stage-5B snapshots have no checksum and remain readable.
+  function checksum(payload){
+    const text=JSON.stringify(payload);
+    if(typeof text!=='string')return null;
+    let value=2166136261;
+    for(let i=0;i<text.length;i++){value^=text.charCodeAt(i);value=Math.imul(value,16777619)}
+    return (value>>>0).toString(16).padStart(8,'0');
+  }
   function checkRecord(record){
-    return record&&Number.isSafeInteger(record.revision)&&record.revision>=1&&
-      Number.isFinite(record.updatedAt)&&schema.validateSave(record.payload).valid;
+    return !!record&&Number.isSafeInteger(record.revision)&&record.revision>=1&&
+      Number.isFinite(record.updatedAt)&&schema.validateSave(record.payload).valid&&
+      (record.checksum===undefined||record.checksum===checksum(record.payload));
   }
 
   function copyJson(data){
@@ -43,27 +54,59 @@
     return JSON.parse(raw);
   }
 
-  // Returns {data,revision,updatedAt,source} or null. If the newest snapshot
-  // is malformed, a previous valid snapshot can still be recovered.
+  // Keep current, previous, recovery snapshots in the SAME IndexedDB store.
+  // No schema/database upgrade is required: slots are ordinary record keys.
+  const SLOTS=['current','previous','recovery'];
+  function newestValid(records){
+    return records.filter(checkRecord).sort((a,b)=>b.revision-a.revision||
+      SLOTS.indexOf(a.slot)-SLOTS.indexOf(b.slot));
+  }
+  function readSlots(store,callback){
+    const records=[];
+    let remaining=SLOTS.length;
+    for(const slot of SLOTS){
+      const request=store.get(slot);
+      request.onsuccess=()=>{
+        if(request.result)records.push(request.result);
+        if(!--remaining)callback(records);
+      };
+    }
+  }
+  function nextRevision(records){
+    return Math.max(0,...records.filter(record=>record&&Number.isSafeInteger(record.revision)&&record.revision>=1)
+      .map(record=>record.revision))+1;
+  }
+  // All snapshot rotations happen in the same readwrite transaction. A failed
+  // transaction cannot leave backups or the current save half-updated.
+  function commitSnapshot(store,records,candidate){
+    const valid=newestValid(records);
+    const written={slot:'current',revision:nextRevision(records),updatedAt:Date.now(),payload:candidate,checksum:checksum(candidate)};
+    store.put(written);
+    if(valid[0])store.put({...valid[0],slot:'previous'});
+    else store.delete('previous');
+    if(valid[1])store.put({...valid[1],slot:'recovery'});
+    else store.delete('recovery');
+    return written;
+  }
+
+  // Returns {data,revision,updatedAt,source} or null.
+  // If current is damaged, recover the newest valid backup without changing it.
   async function load(){
     await writeQueue;
     const db=await openDatabase();
     return new Promise((resolve,reject)=>{
-      let primary,backup,finished=false;
       const tx=db.transaction(STORE,'readonly');
       const store=tx.objectStore(STORE);
-      const a=store.get('current'),b=store.get('previous');
-      a.onsuccess=()=>{primary=a.result};
-      b.onsuccess=()=>{backup=b.result};
+      let records=[];
+      readSlots(store,found=>{records=found});
       tx.oncomplete=()=>{
-        finished=true;
-        if(checkRecord(primary))resolve({data:copyJson(primary.payload),revision:primary.revision,updatedAt:primary.updatedAt,source:'current'});
-        else if(checkRecord(backup))resolve({data:copyJson(backup.payload),revision:backup.revision,updatedAt:backup.updatedAt,source:'previous'});
-        else if(primary||backup)reject(new Error('Pathle save exists, but neither snapshot is valid'));
+        const valid=newestValid(records);
+        const chosen=valid[0];
+        if(chosen)resolve({data:copyJson(chosen.payload),revision:chosen.revision,updatedAt:chosen.updatedAt,source:chosen.slot});
+        else if(records.length)reject(new Error('Pathle save exists, but no snapshot is valid. Data has not been deleted.'));
         else resolve(null);
       };
-      tx.onabort=()=>{if(!finished)reject(tx.error||new Error('Pathle save read aborted'))};
-      tx.onerror=()=>{ /* Transaction abort will reject. */ };
+      tx.onabort=()=>reject(tx.error||new Error('Pathle save read aborted'));
     });
   }
 
@@ -75,19 +118,18 @@
     return new Promise((resolve,reject)=>{
       const tx=db.transaction(STORE,'readwrite');
       const store=tx.objectStore(STORE);
-      const req=store.get('current');
-      let written=null;
-      req.onsuccess=()=>{
-        const old=req.result;
-        const previousRev=old&&Number.isSafeInteger(old.revision)&&old.revision>0?old.revision:0;
-        written={slot:'current',revision:previousRev+1,updatedAt:Date.now(),payload:candidate};
-        // Both writes belong to the SAME transaction; either both commit or neither does.
-        if(checkRecord(old))store.put({...old,slot:'previous'});
-        store.put(written);
-      };
+      let written=null,reason=null;
+      readSlots(store,records=>{
+        try{
+          // Never silently replace existing but unrecoverable data with a
+          // fresh save. The user must choose a deliberate recovery later.
+          if(records.length&&!newestValid(records).length)
+            throw new Error('Existing Pathle saves are invalid; refusing to overwrite them');
+          written=commitSnapshot(store,records,candidate);
+        }catch(error){reason=error;try{tx.abort()}catch{}}
+      });
       tx.oncomplete=()=>resolve({revision:written.revision,updatedAt:written.updatedAt});
-      tx.onabort=()=>reject(tx.error||new Error('Pathle save write aborted'));
-      tx.onerror=()=>{ /* Transaction abort will reject. */ };
+      tx.onabort=()=>reject(reason||tx.error||new Error('Pathle save write aborted'));
     });
   }
 
@@ -100,9 +142,9 @@
     return next;
   }
 
-  // Atomically modify the LATEST committed save, not a snapshot captured at boot.
-  // This keeps future collection/settings/guide changes safe from Daily writes.
-  // The mutator MUST be synchronous; IDB transactions cannot wait for promises.
+  // Atomically modify the LATEST valid snapshot. This keeps rewards,
+  // settings, Daily progress and future content from overwriting each other.
+  // The updater MUST be synchronous; IndexedDB transactions cannot await it.
   function update(mutator){
     if(typeof mutator!=='function')return Promise.reject(new TypeError('Save updater must be a function'));
     const next=writeQueue.then(async()=>{
@@ -110,18 +152,10 @@
       return new Promise((resolve,reject)=>{
         const tx=db.transaction(STORE,'readwrite');
         const store=tx.objectStore(STORE);
-        const readCurrent=store.get('current');
-        const readPrevious=store.get('previous');
-        let current,previous,written=null,reason=null;
-        readCurrent.onsuccess=()=>{current=readCurrent.result};
-        readPrevious.onsuccess=()=>{previous=readPrevious.result};
-        // Both reads and the write happen under one readwrite transaction.
-        // This also serializes updates from DIFFERENT tabs on this origin.
-        let readsComplete=0;
-        function applyUpdate(){
-          if(++readsComplete!==2)return;
+        let written=null,reason=null;
+        readSlots(store,records=>{
           try{
-            const base=checkRecord(current)?current:checkRecord(previous)?previous:null;
+            const base=newestValid(records)[0];
             if(!base)throw new Error('No valid Pathle save available for update');
             const draft=copyJson(base.payload);
             const returned=mutator(draft);
@@ -129,24 +163,11 @@
             const candidate=copyJson(returned===undefined?draft:returned);
             const status=schema.validateSave(candidate);
             if(!status.valid)throw new Error(`Refusing invalid Pathle save: ${status.errors.join('; ')}`);
-            const revision=Math.max(
-              checkRecord(current)?current.revision:0,
-              checkRecord(previous)?previous.revision:0
-            )+1;
-            written={slot:'current',revision,updatedAt:Date.now(),payload:candidate};
-            // Preserve the latest valid state as a rollback snapshot.
-            store.put({...base,slot:'previous'});
-            store.put(written);
-          }catch(error){
-            reason=error;
-            try{tx.abort()}catch{}
-          }
-        }
-        readCurrent.addEventListener('success',applyUpdate);
-        readPrevious.addEventListener('success',applyUpdate);
+            written=commitSnapshot(store,records,candidate);
+          }catch(error){reason=error;try{tx.abort()}catch{}}
+        });
         tx.oncomplete=()=>resolve({revision:written.revision,updatedAt:written.updatedAt});
         tx.onabort=()=>reject(reason||tx.error||new Error('Pathle save update aborted'));
-        tx.onerror=()=>{ /* Transaction abort will reject. */ };
       });
     });
     writeQueue=next.catch(()=>{});
