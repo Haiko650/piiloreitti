@@ -132,7 +132,12 @@ if(equipment.glasses==='gold'&&!ownedCosmetics.includes('gold_glasses')){ownedCo
 // Call this ONLY when a later complete adventure season is released, never on chapter change.
 function beginCosmeticSeason(id){if(!COSMETIC_SEASONS[id]||id===activeSeason)return;activeSeason=id;save(SEASON_STORE,id);ownedCosmetics=[];save(COSMETIC_INVENTORY,ownedCosmetics);equipment={glasses:'purple',sceneItem:null,hat:null,handItem:null};save(EQUIP_STORE,equipment);equipGold()}
 function equipCosmetic(itemId){const c=COSMETIC_CATALOG[itemId];if(!c||c.season!==activeSeason||!ownedCosmetics.includes(itemId))return false;equipment={...equipment,[c.slot]:c.appearance};save(EQUIP_STORE,equipment);equipGold();return true}
-let chestState=load(CHEST_STORE)||{opened:!!load(REWARD_SEEN)};let musicOn=load(MUSIC_KEY);if(typeof musicOn!=='boolean')musicOn=true;let ambientOn=load(AMBIENT_KEY);if(typeof ambientOn!=='boolean')ambientOn=true;
+// On HTTPS the chest belongs to the same IndexedDB save as Daily Adventure.
+// A local file preview retains the old localStorage chest, without migrating test progress.
+let chestState=useIndexedDaily
+ ?{opened:pathleInitialSave.collection.hideout.chests?.[dailyChapterId]===true}
+ :(load(CHEST_STORE)||{opened:!!load(REWARD_SEEN)});
+let musicOn=load(MUSIC_KEY);if(typeof musicOn!=='boolean')musicOn=true;let ambientOn=load(AMBIENT_KEY);if(typeof ambientOn!=='boolean')ambientOn=true;
 // Pathle 1.3 collectible model. Chapter content is data, not hardcoded in the puzzle engine.
 const COLLECTION_STORE='pathle_season_collections_v13';
 const CHAPTER_CONTENT={
@@ -140,14 +145,44 @@ const CHAPTER_CONTENT={
  space:[]
 };
 const COLLECTIBLE_DEFS={luminous_pearl:{id:'luminous_pearl',title:'Luminous Pearl',season:'ocean',chapter:1,placement:'shell-pedestal'}};
-let collection=load(COLLECTION_STORE);
+// A player's collection stores permanent item IDs, never artwork or coordinates.
+// The collection catalogue decides names, images and future room placement.
+let collection=useIndexedDaily?{version:1,seasons:{ocean:[],space:[]}}:load(COLLECTION_STORE);
 if(!collection||collection.version!==1||!collection.seasons||typeof collection.seasons!=='object')collection={version:1,seasons:{ocean:[],space:[]}};
 if(!Array.isArray(collection.seasons.ocean))collection.seasons.ocean=[];
 if(!Array.isArray(collection.seasons.space))collection.seasons.space=[];
+if(useIndexedDaily){
+ for(const [id,owned] of Object.entries(pathleInitialSave.collection.items)){
+  const def=COLLECTIBLE_DEFS[id];
+  if(def&&owned===true&&!collection.seasons[def.season].includes(id))collection.seasons[def.season].push(id);
+ }
+}
 function hasTreasure(id){const item=COLLECTIBLE_DEFS[id];return !!item&&Array.isArray(collection.seasons[item.season])&&collection.seasons[item.season].includes(id)}
-function grantTreasure(id){const item=COLLECTIBLE_DEFS[id];if(!item)return false;let owned=collection.seasons[item.season]||(collection.seasons[item.season]=[]);if(!owned.includes(id)){owned.push(id);save(COLLECTION_STORE,collection)}return true}
-// Players who opened the original Day 7 chest keep their earned chapter reward.
-if(adventure.completedDays>=7&&chestState.opened&&!hasTreasure('luminous_pearl'))grantTreasure('luminous_pearl');
+function grantTreasure(id){const item=COLLECTIBLE_DEFS[id];if(!item)return false;let owned=collection.seasons[item.season]||(collection.seasons[item.season]=[]);if(!owned.includes(id)){owned.push(id);if(!useIndexedDaily)save(COLLECTION_STORE,collection)}return true}
+// Keep the legacy local-file preview compatible with the older chest record.
+if(!useIndexedDaily&&adventure.completedDays>=7&&chestState.opened&&!hasTreasure('luminous_pearl'))grantTreasure('luminous_pearl');
+
+// A chest and its associated reward MUST be committed together. This function
+// is also idempotent: retries and repeated taps cannot award duplicates.
+async function commitChapterTreasure(chapterId,rewardId){
+ const definition=COLLECTIBLE_DEFS[rewardId];
+ if(!definition)throw new Error('Unknown Pathle treasure');
+ if(!useIndexedDaily){
+  // Preserve existing Chromebook file:// preview behavior.
+  chestState={opened:true};save(CHEST_STORE,chestState);grantTreasure(rewardId);return;
+ }
+ await window.PathleStorage.update(latest=>{
+  const chapter=latest.progress.chapters[chapterId];
+  if(!chapter||chapter.completedDays<7)throw new Error('Complete all 7 adventure days before opening the chest');
+  if(!latest.collection.hideout.chests)latest.collection.hideout.chests={};
+  latest.collection.hideout.chests[chapterId]=true;
+  latest.collection.items[rewardId]=true;
+  return latest;
+ });
+ // Update the displayed state ONLY after IndexedDB has committed successfully.
+ chestState={opened:true};
+ grantTreasure(rewardId);
+}
 // Old gold glasses are retired, never shown on Haiko or leaked as a mystery reward.
 
 const guideFlags=load(GUIDE_STORE)||{};
@@ -245,11 +280,31 @@ function showReward(){rewardPreview=mode==='dev';clearTimeout(chestTimer);
 }
 function unlockChest(){const chest=el('openChest');if(el('rewardModal').hidden||chest.hidden||chest.classList.contains('opening'))return;
  chest.classList.add('opening');if(sound){const a=ensureAudio();if(a){let t=a.currentTime+.03;[261.63,329.63,440,659.25].forEach((f,i)=>tone(f,t+i*.16,.44,.035,'triangle'))}}
- chestTimer=setTimeout(()=>{if(el('rewardModal').hidden)return;chest.hidden=true;el('chestReveal').hidden=false;el('rewardTitle').textContent='Treasure discovered!';el('rewardDescription').textContent=rewardPreview?'DEV preview only — no official reward is granted.':'Luminous Pearl! Your first treasure is ready for Haiko’s Hideout.';
- // Reward is committed when the treasure is opened, never by closing an animation.
- if(!rewardPreview&&adventure.completedDays>=7){chestState={opened:true};save(CHEST_STORE,chestState);grantTreasure('luminous_pearl');equipGold()}
- if(sound){const a=ensureAudio();if(a){let t=a.currentTime+.15;[783.99,1046.5,1318.51,1567.98].forEach((f,i)=>tone(f,t+i*.19,.55,.036,'sine'))}}
- el('rewardClose').hidden=false;
+ chestTimer=setTimeout(async()=>{
+  if(el('rewardModal').hidden)return;
+  // A genuine reward is never shown as earned before the database commit.
+  if(!rewardPreview){
+   try{
+    el('rewardDescription').textContent='Saving your treasure…';
+    await commitChapterTreasure(dailyChapterId,CHAPTER_CONTENT.ocean[0].rewardId);
+    equipGold();
+   }catch(error){
+    console.error('[Pathle] Treasure could not be saved:',error);
+    chest.classList.remove('opening');
+    chest.hidden=false;
+    el('chestReveal').hidden=true;
+    el('rewardClose').hidden=true;
+    el('rewardTitle').textContent='Treasure not saved';
+    el('rewardDescription').textContent='Please tap the chest to retry saving. Keep this page open so your treasure is not lost.';
+    return;
+   }
+  }
+  if(el('rewardModal').hidden)return;
+  chest.hidden=true;el('chestReveal').hidden=false;
+  el('rewardTitle').textContent='Treasure discovered!';
+  el('rewardDescription').textContent=rewardPreview?'DEV preview only — no official reward is granted.':'Luminous Pearl! Your first treasure is ready for Haiko’s Hideout.';
+  if(sound){const a=ensureAudio();if(a){let t=a.currentTime+.15;[783.99,1046.5,1318.51,1567.98].forEach((f,i)=>tone(f,t+i*.19,.55,.036,'sine'))}}
+  el('rewardClose').hidden=false;
  },780);
 }
 function openStory(pages,onDone){storyPages=pages;storyIndex=0;storyDone=onDone||null;paintStory();el('storyModal').hidden=false;requestAnimationFrame(positionStoryFocus)}
@@ -415,6 +470,6 @@ el('resultModal').onclick=e=>{if(e.target===el('resultModal'))el('resultModal').
 el('share').onclick=async()=>{if(mode!=='daily'||!allDone())return;const text=shareText();try{if(navigator.share){await navigator.share({title:'Pathle',text});return}if(navigator.clipboard){await navigator.clipboard.writeText(text);alert('Results copied!');return}}catch(e){if(e.name==='AbortError')return}prompt('Copy:',text)};
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!el('storyModal').hidden)closeStory();else if(!el('settingsModal').hidden)settingsClose();else if(!el('rewardModal').hidden){if(el('openChest').hidden){el('rewardModal').hidden=true;renderHome()}}else if(!el('resultModal').hidden)el('resultModal').hidden=true}});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){if(screen==='home')renderHome();else if(mode==='daily'&&game&&game.date!==today())toHome()}updateAudioScene()});
-persistAdventure();save(COLLECTION_STORE,collection);showScreen('home');
+persistAdventure();if(!useIndexedDaily)save(COLLECTION_STORE,collection);showScreen('home');
 if(pathleBootScreen)pathleBootScreen.inert=false;
 })();

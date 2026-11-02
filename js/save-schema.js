@@ -10,7 +10,7 @@
     return {
       schemaVersion:VERSION,
       progress:{chapters:{},activeChallenge:null,history:[]},
-      collection:{items:{},hideout:{}},
+      collection:{items:{},hideout:{chests:{}}},
       settings:{sound:true,music:true,ambient:true},
       guides:{seen:{}},
       extensions:{}
@@ -24,6 +24,13 @@
     if(!isObject(value.progress)||!isMap(value.progress.chapters)||!Array.isArray(value.progress.history)||
        !(value.progress.activeChallenge===null||isObject(value.progress.activeChallenge)))errors.push('Invalid progress');
     if(!isObject(value.collection)||!isMap(value.collection.items)||!isMap(value.collection.hideout))errors.push('Invalid collection');
+    // Prior 5B saves may have hideout:{}; new saves use hideout.chests.
+    const chests=value.collection?.hideout?.chests;
+    if(chests!==undefined&&(!isMap(chests)||Object.values(chests).some(open=>open!==true)))errors.push('Invalid chest states');
+    // Owned rewards use stable item IDs with true as the only owned value.
+    // Other existing extension fields are not constrained by this catalogue.
+    if(value.collection?.items?.luminous_pearl!==undefined&&value.collection.items.luminous_pearl!==true)errors.push('Invalid Luminous Pearl state');
+    if(chests?.['ocean-01']===true&&value.collection?.items?.luminous_pearl!==true)errors.push('Opened chapter chest is missing its reward');
     if(!isObject(value.settings)||['sound','music','ambient'].some(k=>typeof value.settings[k]!=='boolean'))errors.push('Invalid settings');
     if(!isObject(value.guides)||!isMap(value.guides.seen))errors.push('Invalid guides');
     if(!isMap(value.extensions))errors.push('Invalid extensions');
