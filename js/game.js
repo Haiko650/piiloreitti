@@ -1,9 +1,8 @@
 (async()=>{'use strict';
 
-/* Pathle 5B.2B — load versioned IndexedDB before wiring the game.
-   Daily Adventure uses the loaded IndexedDB save. Other preferences,
-   collectibles and guides remain on localStorage in this development phase.
-   Never erase an invalid IndexedDB save at startup. */
+/* Pathle 5B.2C.3 — versioned IndexedDB for Daily Adventure, rewards,
+   settings and Haiko guides. Legacy localStorage is used only for file://
+   previews and retired cosmetics; preserve existing player saves on failure. */
 const pathleBootScreen=document.getElementById('welcomeScreen');
 if(pathleBootScreen)pathleBootScreen.inert=true;
 let pathleInitialSave=null;
@@ -57,10 +56,9 @@ const blankRun=(day,date,seed)=>({date,day,activeLevel:0,levels:CONFIG.map(blank
 const freshAdventure=()=>({version:1,completedDays:0,lastCompleteDate:'',history:[],active:null});
 function validBoard(b,i){const n=CONFIG[i].size;return b&&Array.isArray(b.path)&&b.path.length>=2&&b.path[0]===0&&b.path.at(-1)===n*n-1&&new Set(b.path).size===b.path.length&&b.path.every((v,j)=>Number.isInteger(v)&&v>=0&&v<n*n&&(j===0||neighbors(v,n).includes(b.path[j-1])))&&Array.isArray(b.pearls)&&b.pearls.every(v=>b.path.includes(v)&&v!==0&&v!==n*n-1)&&Array.isArray(b.blocks)&&b.blocks.every(v=>Number.isInteger(v)&&v>=0&&v<n*n&&!b.path.includes(v))}
 function validRun(r){return r&&typeof r.date==='string'&&Number.isInteger(r.day)&&r.day>=1&&r.day<=7&&Number.isInteger(r.activeLevel)&&r.activeLevel>=0&&r.activeLevel<3&&Array.isArray(r.boards)&&r.boards.length===3&&r.boards.every(validBoard)&&Array.isArray(r.levels)&&r.levels.length===3&&r.levels.every((s,i)=>s&&Number.isInteger(s.attemptsUsed)&&s.attemptsUsed>=0&&s.attemptsUsed<=3&&Array.isArray(s.attemptScores)&&s.attemptScores.length===s.attemptsUsed&&s.attemptScores.every(v=>Number.isSafeInteger(v)&&v>=r.boards[i].path.length-1)&&Array.isArray(s.visited)&&s.visited.length>0&&s.visited.every((v,j)=>v===r.boards[i].path[j])&&s.clicks>=0&&s.wrongByStep&&typeof s.wrongByStep==='object'&&typeof s.completed==='boolean'&&(s.bestClicks===null||s.bestClicks===Math.min(...s.attemptScores)))}
-/* Pathle 5B.2B: Daily Adventure is now restored and persisted in IndexedDB.
-   Only the Daily Adventure changes storage in this stage: other settings,
-   collectibles, guides and all Practice/DEV logic retain their old behavior.
-   Local file previews use the legacy store only when IndexedDB is unavailable. */
+/* Pathle 5B.2C.3: Daily Adventure, earned treasures, sound settings and
+   completed Haiko guides use the shared IndexedDB record on HTTPS.
+   Practice/DEV logic remains unchanged. Local file previews use legacy saves. */
 const useIndexedDaily=pathleInitialSave!==null;
 const dailyChapterId='ocean-01';
 const savedDailyChapter=useIndexedDaily?pathleInitialSave.progress.chapters[dailyChapterId]:undefined;
@@ -116,7 +114,8 @@ function ensureRun(){if(!canPlayToday())return null;const date=today(),day=adven
  if(!adventure.active||adventure.active.date!==date||adventure.active.day!==day)adventure.active=blankRun(day,date,`official|${date}|${day}`);
  persistAdventure();return adventure.active;
 }
-let sound=load(SOUND);if(typeof sound!=='boolean'){sound=load(OLD_SOUND);if(typeof sound!=='boolean')sound=true}
+let sound=useIndexedDaily?pathleInitialSave.settings.sound:load(SOUND);
+if(typeof sound!=='boolean'){sound=load(OLD_SOUND);if(typeof sound!=='boolean')sound=true}
 let mode='daily',game=null,screen='home',devEnabled=false,devDay=1,devGame=null;
 const GUIDE_STORE='pathle_haiko_guides_v12',REWARD_SEEN='pathle_gold_glasses_seen_v11',EQUIP_STORE='pathle_haiko_equipment_v12',CHEST_STORE='pathle_chapter1_chest_v12',MUSIC_KEY='pathle_music_v12',AMBIENT_KEY='pathle_ambient_v12';
 let equipment=load(EQUIP_STORE)||{glasses:load(REWARD_SEEN)?'gold':'purple'};
@@ -137,7 +136,10 @@ function equipCosmetic(itemId){const c=COSMETIC_CATALOG[itemId];if(!c||c.season!
 let chestState=useIndexedDaily
  ?{opened:pathleInitialSave.collection.hideout.chests?.[dailyChapterId]===true}
  :(load(CHEST_STORE)||{opened:!!load(REWARD_SEEN)});
-let musicOn=load(MUSIC_KEY);if(typeof musicOn!=='boolean')musicOn=true;let ambientOn=load(AMBIENT_KEY);if(typeof ambientOn!=='boolean')ambientOn=true;
+let musicOn=useIndexedDaily?pathleInitialSave.settings.music:load(MUSIC_KEY);
+if(typeof musicOn!=='boolean')musicOn=true;
+let ambientOn=useIndexedDaily?pathleInitialSave.settings.ambient:load(AMBIENT_KEY);
+if(typeof ambientOn!=='boolean')ambientOn=true;
 // Pathle 1.3 collectible model. Chapter content is data, not hardcoded in the puzzle engine.
 const COLLECTION_STORE='pathle_season_collections_v13';
 const CHAPTER_CONTENT={
@@ -185,7 +187,67 @@ async function commitChapterTreasure(chapterId,rewardId){
 }
 // Old gold glasses are retired, never shown on Haiko or leaked as a mystery reward.
 
-const guideFlags=load(GUIDE_STORE)||{};
+const guideFlags=useIndexedDaily?{...pathleInitialSave.guides.seen}:(load(GUIDE_STORE)||{});
+// Each preference/guide update modifies only its own key in the LATEST
+// IndexedDB snapshot. Queued atomic updates cannot revert Daily or rewards.
+// Track unsuccessful keys separately: a successful music save must NOT hide
+// a failed sound save. Newer changes supersede older pending changes.
+const pendingPreferenceChanges=new Map();
+const failedPreferenceKeys=new Set();
+let preferenceSaveAlert=null;
+function refreshPreferenceSaveWarning(){
+ if(failedPreferenceKeys.size===0){
+  if(preferenceSaveAlert){preferenceSaveAlert.remove();preferenceSaveAlert=null}
+  return;
+ }
+ if(preferenceSaveAlert)return;
+ const panel=document.createElement('section');panel.id='pathlePreferenceSaveWarning';panel.setAttribute('role','alert');
+ panel.style.cssText='position:fixed;z-index:99999;bottom:12px;left:12px;right:12px;max-width:440px;margin:auto;padding:14px 17px;border:2px solid #ffd56c;border-radius:16px;background:#123047;color:white;box-shadow:0 6px 26px #0008;font:14px/1.45 system-ui,sans-serif';
+ const msg=document.createElement('p');msg.textContent='A setting or guide was not saved. Keep this page open and try again.';msg.style.margin='0 0 8px';
+ const retry=document.createElement('button');retry.type='button';retry.textContent='Retry save';
+ retry.style.cssText='border:0;border-radius:18px;padding:8px 16px;background:#ffd56c;color:#123047;font-weight:bold';
+ retry.onclick=retryPreferenceSaves;
+ panel.append(msg,retry);document.body.append(panel);preferenceSaveAlert=panel;
+}
+function applyPreferenceChange(saveData,entry){
+ if(entry.section==='settings')saveData.settings[entry.key]=entry.value;
+ else saveData.guides.seen[entry.key]=true;
+ return saveData;
+}
+function recordPreferenceChange(section,key,value){
+ if(!useIndexedDaily){
+  if(section==='guides')save(GUIDE_STORE,guideFlags);
+  else save(({sound:SOUND,music:MUSIC_KEY,ambient:AMBIENT_KEY})[key],value);
+  return;
+ }
+ const id=`${section}:${key}`,entry={section,key,value};
+ pendingPreferenceChanges.set(id,entry);failedPreferenceKeys.delete(id);
+ refreshPreferenceSaveWarning();
+ window.PathleStorage.update(latest=>applyPreferenceChange(latest,entry)).then(()=>{
+  if(pendingPreferenceChanges.get(id)===entry){pendingPreferenceChanges.delete(id);failedPreferenceKeys.delete(id)}
+  refreshPreferenceSaveWarning();
+ },error=>{
+  console.error('[Pathle 5B.2C.3] Setting or guide save failed:',error);
+  if(pendingPreferenceChanges.get(id)===entry)failedPreferenceKeys.add(id);
+  refreshPreferenceSaveWarning();
+ });
+}
+function retryPreferenceSaves(){
+ const entries=[...failedPreferenceKeys].map(id=>[id,pendingPreferenceChanges.get(id)]).filter(([,entry])=>entry);
+ if(!entries.length)return;
+ window.PathleStorage.update(latest=>{
+  for(const [,entry] of entries)applyPreferenceChange(latest,entry);
+  return latest;
+ }).then(()=>{
+  for(const [id,entry] of entries){
+   if(pendingPreferenceChanges.get(id)===entry){pendingPreferenceChanges.delete(id);failedPreferenceKeys.delete(id)}
+  }
+  refreshPreferenceSaveWarning();
+ },error=>{
+  console.error('[Pathle 5B.2C.3] Retrying settings/guides failed:',error);
+  refreshPreferenceSaveWarning();
+ });
+}
 let storyPages=[],storyIndex=0,storyDone=null,resizePending=false;
 const guideIntro=[
  {heading:'Hey, explorer!',text:'I’m Haiko! This beautiful reef is full of secret paths and treasure. Ready to explore with me?',target:'start'},
@@ -341,7 +403,7 @@ function tutorialWhenNeeded(){if(mode!=='daily'&&mode!=='dev')return;
  if(mode==='daily'&&!guideFlags.intro)queue.push({pages:guideIntro,key:'intro'});
  if(game.day===2&&(mode==='dev'||!guideFlags.pearls))queue.push({pages:guidePearl,key:'pearls'});
  if(game.day===3&&(mode==='dev'||!guideFlags.coral))queue.push({pages:guideCoral,key:'coral'});
- let n=0;function next(){if(n>=queue.length)return;const item=queue[n++];openStory(item.pages,()=>{if(mode==='daily'){guideFlags[item.key]=true;save(GUIDE_STORE,guideFlags)}next()})}next();
+ let n=0;function next(){if(n>=queue.length)return;const item=queue[n++];openStory(item.pages,()=>{if(mode==='daily'){guideFlags[item.key]=true;recordPreferenceChange('guides',item.key,true)}next()})}next();
 }
 function sizeBoard(){if(screen!=='game'||!game)return;
  const board=el('board'),panel=el('playPanel');if(!board||!panel)return;
@@ -455,14 +517,14 @@ function nextLevel(){const i=game.activeLevel,s=game.levels[i];if(i===2){if(mode
  if(mode!=='practice'&&s.attemptsUsed<3){const left=3-s.attemptsUsed;if(!confirm(`Continue to ${CONFIG[i+1].name}? You have ${left} ${left===1?'try':'tries'} left on ${CONFIG[i].name}. You cannot return today.`))return}
  cancelEffects();game.activeLevel++;if(mode==='practice'){game.levels[game.activeLevel]=blank();game.boards[game.activeLevel]=makePracticeBoard(game.activeLevel,game.boards[game.activeLevel])}persist();render()}
 el('homeSettings').onclick=settingsOpen;el('gameSettings').onclick=settingsOpen;
-el('journeyQuick').onclick=()=>showScreen('journey');el('openHideout').onclick=()=>showScreen('hideout');el('hideoutBack').onclick=()=>showScreen('home');el('hideoutDone').onclick=()=>showScreen('home');el('homeGuideBtn').onclick=()=>openStory(guideIntro);el('homeMusicBtn').onclick=()=>{musicOn=!musicOn;save(MUSIC_KEY,musicOn);activateAudio();renderHome()};el('homeAmbientBtn').onclick=()=>{ambientOn=!ambientOn;save(AMBIENT_KEY,ambientOn);activateAudio();renderHome()};
+el('journeyQuick').onclick=()=>showScreen('journey');el('openHideout').onclick=()=>showScreen('hideout');el('hideoutBack').onclick=()=>showScreen('home');el('hideoutDone').onclick=()=>showScreen('home');el('homeGuideBtn').onclick=()=>openStory(guideIntro);el('homeMusicBtn').onclick=()=>{musicOn=!musicOn;recordPreferenceChange('settings','music',musicOn);activateAudio();renderHome()};el('homeAmbientBtn').onclick=()=>{ambientOn=!ambientOn;recordPreferenceChange('settings','ambient',ambientOn);activateAudio();renderHome()};
 el('storyPrev').onclick=()=>{if(storyIndex>0){storyIndex--;paintStory()}};
 el('storyNext').onclick=()=>{if(storyIndex<storyPages.length-1){storyIndex++;paintStory()}else closeStory()};
 el('storySkip').onclick=closeStory;
 el('howPlaySettings').onclick=()=>{settingsClose();openStory(guideIntro)};
 el('resultShare').onclick=()=>el('share').click();
 window.addEventListener('resize',()=>{requestSizeBoard();positionStoryFocus()});
-el('closeSettings').onclick=settingsClose;el('doneSettings').onclick=settingsClose;el('settingsModal').onclick=e=>{if(e.target===el('settingsModal'))settingsClose()};el('soundSwitch').onchange=e=>{sound=e.target.checked;save(SOUND,sound)};el('musicSwitch').onchange=e=>{musicOn=e.target.checked;save(MUSIC_KEY,musicOn);activateAudio()};el('ambientSwitch').onchange=e=>{ambientOn=e.target.checked;save(AMBIENT_KEY,ambientOn);activateAudio()};
+el('closeSettings').onclick=settingsClose;el('doneSettings').onclick=settingsClose;el('settingsModal').onclick=e=>{if(e.target===el('settingsModal'))settingsClose()};el('soundSwitch').onchange=e=>{sound=e.target.checked;recordPreferenceChange('settings','sound',sound)};el('musicSwitch').onchange=e=>{musicOn=e.target.checked;recordPreferenceChange('settings','music',musicOn);activateAudio()};el('ambientSwitch').onchange=e=>{ambientOn=e.target.checked;recordPreferenceChange('settings','ambient',ambientOn);activateAudio()};
 el('devToggle').onchange=e=>{devEnabled=e.target.checked;renderHome()};el('devDaySelect').onchange=e=>{devDay=Number(e.target.value)};el('launchDev').onclick=()=>startGame('dev');
 el('playDaily').onclick=()=>{if(adventure.completedDays>=7&&!chestState.opened){mode='daily';showReward()}else startGame('daily')};el('playPractice').onclick=()=>startGame('practice');el('journeyButton').onclick=()=>showScreen('journey');el('journeyBack').onclick=()=>showScreen('home');el('homeBack').onclick=toHome;
 el('reset').onclick=resetLevel;el('next').onclick=nextLevel;el('resultHome').onclick=()=>{const wasReward=(mode==='dev'||mode==='daily')&&game.day===7&&allDone()&&(mode==='dev'||!chestState.opened);toHome();if(wasReward)showReward()};el('resultRetry').onclick=resetLevel;el('resultNext').onclick=nextLevel;
