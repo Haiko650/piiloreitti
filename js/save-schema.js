@@ -1,4 +1,5 @@
-/* Pathle 5B.1 — future save model. Not yet connected to the game. */
+/* Pathle 5B.2B — versioned save model. Daily Adventure is stored in
+   progress.chapters['ocean-01']; other game data will be migrated later. */
 (()=>{'use strict';
   const VERSION=1;
   const isObject=value=>value!==null&&typeof value==='object'&&!Array.isArray(value);
@@ -26,6 +27,15 @@
     if(!isObject(value.settings)||['sound','music','ambient'].some(k=>typeof value.settings[k]!=='boolean'))errors.push('Invalid settings');
     if(!isObject(value.guides)||!isMap(value.guides.seen))errors.push('Invalid guides');
     if(!isMap(value.extensions))errors.push('Invalid extensions');
+    // Stage 5B.2B saves the original daily-adventure record under a stable
+    // chapter ID. Other chapter IDs are reserved for later releases.
+    const daily=value.progress?.chapters?.['ocean-01'];
+    if(daily!==undefined){
+      if(!isObject(daily)||daily.version!==1||!Number.isInteger(daily.completedDays)||
+         daily.completedDays<0||daily.completedDays>7||typeof daily.lastCompleteDate!=='string'||
+         !Array.isArray(daily.history)||!(daily.active===null||isObject(daily.active)))
+        errors.push('Invalid ocean-01 daily progress');
+    }
     return {valid:errors.length===0,errors};
   }
 

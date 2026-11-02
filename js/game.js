@@ -1,10 +1,9 @@
 (async()=>{'use strict';
 
-/* Pathle 5B.2A — BOOTSTRAP ONLY.
-   Load / initialize the versioned IndexedDB save *before* wiring up the game.
-   Existing localStorage reads/writes remain the active gameplay persistence until 5B.2B.
-   The loaded save stays in memory for the next integration step; it does not yet
-   override live game progress. Do not silently erase an invalid database save. */
+/* Pathle 5B.2B — load versioned IndexedDB before wiring the game.
+   Daily Adventure uses the loaded IndexedDB save. Other preferences,
+   collectibles and guides remain on localStorage in this development phase.
+   Never erase an invalid IndexedDB save at startup. */
 const pathleBootScreen=document.getElementById('welcomeScreen');
 if(pathleBootScreen)pathleBootScreen.inert=true;
 let pathleInitialSave=null;
@@ -58,13 +57,62 @@ const blankRun=(day,date,seed)=>({date,day,activeLevel:0,levels:CONFIG.map(blank
 const freshAdventure=()=>({version:1,completedDays:0,lastCompleteDate:'',history:[],active:null});
 function validBoard(b,i){const n=CONFIG[i].size;return b&&Array.isArray(b.path)&&b.path.length>=2&&b.path[0]===0&&b.path.at(-1)===n*n-1&&new Set(b.path).size===b.path.length&&b.path.every((v,j)=>Number.isInteger(v)&&v>=0&&v<n*n&&(j===0||neighbors(v,n).includes(b.path[j-1])))&&Array.isArray(b.pearls)&&b.pearls.every(v=>b.path.includes(v)&&v!==0&&v!==n*n-1)&&Array.isArray(b.blocks)&&b.blocks.every(v=>Number.isInteger(v)&&v>=0&&v<n*n&&!b.path.includes(v))}
 function validRun(r){return r&&typeof r.date==='string'&&Number.isInteger(r.day)&&r.day>=1&&r.day<=7&&Number.isInteger(r.activeLevel)&&r.activeLevel>=0&&r.activeLevel<3&&Array.isArray(r.boards)&&r.boards.length===3&&r.boards.every(validBoard)&&Array.isArray(r.levels)&&r.levels.length===3&&r.levels.every((s,i)=>s&&Number.isInteger(s.attemptsUsed)&&s.attemptsUsed>=0&&s.attemptsUsed<=3&&Array.isArray(s.attemptScores)&&s.attemptScores.length===s.attemptsUsed&&s.attemptScores.every(v=>Number.isSafeInteger(v)&&v>=r.boards[i].path.length-1)&&Array.isArray(s.visited)&&s.visited.length>0&&s.visited.every((v,j)=>v===r.boards[i].path[j])&&s.clicks>=0&&s.wrongByStep&&typeof s.wrongByStep==='object'&&typeof s.completed==='boolean'&&(s.bestClicks===null||s.bestClicks===Math.min(...s.attemptScores)))}
-let adventure=load(STORE);
-if(!adventure||adventure.version!==1||!Number.isInteger(adventure.completedDays)||adventure.completedDays<0||adventure.completedDays>7||typeof adventure.lastCompleteDate!=='string'||!Array.isArray(adventure.history)||adventure.active&&!validRun(adventure.active))adventure=freshAdventure();
-function persist(){if(mode==='daily')save(STORE,adventure)}
+/* Pathle 5B.2B: Daily Adventure is now restored and persisted in IndexedDB.
+   Only the Daily Adventure changes storage in this stage: other settings,
+   collectibles, guides and all Practice/DEV logic retain their old behavior.
+   Local file previews use the legacy store only when IndexedDB is unavailable. */
+const useIndexedDaily=pathleInitialSave!==null;
+const dailyChapterId='ocean-01';
+const savedDailyChapter=useIndexedDaily?pathleInitialSave.progress.chapters[dailyChapterId]:undefined;
+function validAdventure(a){return !!a&&a.version===1&&Number.isInteger(a.completedDays)&&a.completedDays>=0&&a.completedDays<=7&&typeof a.lastCompleteDate==='string'&&Array.isArray(a.history)&&(!a.active||validRun(a.active))}
+let adventure=useIndexedDaily?(savedDailyChapter===undefined?freshAdventure():savedDailyChapter):load(STORE);
+if(!validAdventure(adventure)){
+ if(useIndexedDaily&&savedDailyChapter!==undefined){
+  console.error('[Pathle] Invalid Daily Adventure save: keeping the database untouched.');
+  window.PathleSaveBoot=Object.freeze({...window.PathleSaveBoot,status:'invalid-daily-save'});
+  const blocker=document.createElement('section');blocker.id='pathleDailyInvalidSave';blocker.setAttribute('role','alert');
+  blocker.style.cssText='position:fixed;inset:0;z-index:99999;background:#062747ee;color:white;display:grid;place-items:center;padding:22px;text-align:center;font:16px/1.5 system-ui,sans-serif';
+  const inner=document.createElement('div');inner.style.cssText='max-width:420px;padding:24px;border-radius:18px;background:#124367;border:1px solid #8edffa';
+  const title=document.createElement('h2');title.textContent='Unable to restore Daily Adventure';
+  const detail=document.createElement('p');detail.textContent='Your saved progress has not been deleted. Please keep this data and check the game version before trying again.';
+  inner.append(title,detail);blocker.append(inner);document.body.append(blocker);
+  return;
+ }
+ adventure=freshAdventure();
+}
+let dailySaveCounter=0,dailySaveConfirmed=0,dailySaveFailed=0;
+let dailySaveAlert=null;
+function clearDailySaveWarning(){if(dailySaveAlert){dailySaveAlert.remove();dailySaveAlert=null}}
+function dailySaveWarning(error){
+ console.error('[Pathle 5B.2B] Could not save Daily Adventure:',error);
+ if(dailySaveAlert)return;
+ const panel=document.createElement('section');panel.id='pathleDailySaveWarning';panel.setAttribute('role','alert');
+ panel.style.cssText='position:fixed;z-index:99998;bottom:12px;left:12px;right:12px;max-width:440px;margin:auto;padding:14px 17px;border:2px solid #ffd56c;border-radius:16px;background:#123047;color:white;box-shadow:0 6px 26px #0008;font:14px/1.45 system-ui,sans-serif';
+ const msg=document.createElement('p');msg.textContent='Progress was not saved. Keep this page open and try again.';msg.style.margin='0 0 8px';
+ const retry=document.createElement('button');retry.type='button';retry.textContent='Retry save';
+ retry.style.cssText='border:0;border-radius:18px;padding:8px 16px;background:#ffd56c;color:#123047;font-weight:bold';
+ retry.onclick=()=>persistAdventure();panel.append(msg,retry);document.body.append(panel);dailySaveAlert=panel;
+}
+function persistAdventure(){
+ if(!useIndexedDaily){save(STORE,adventure);return}
+ // Capture a full, independent snapshot immediately. The IndexedDB adapter
+ // serializes writes, preventing rapid taps from committing out of order.
+ const candidate=JSON.parse(JSON.stringify(pathleInitialSave));
+ candidate.progress.chapters[dailyChapterId]=JSON.parse(JSON.stringify(adventure));
+ const number=++dailySaveCounter;
+ window.PathleStorage.save(candidate).then(()=>{
+  dailySaveConfirmed=Math.max(dailySaveConfirmed,number);
+  if(dailySaveConfirmed>=dailySaveFailed)clearDailySaveWarning();
+ },error=>{
+  dailySaveFailed=Math.max(dailySaveFailed,number);
+  if(dailySaveConfirmed<dailySaveFailed)dailySaveWarning(error);
+ });
+}
+function persist(){if(mode==='daily')persistAdventure()}
 function canPlayToday(){return adventure.completedDays<7&&adventure.lastCompleteDate!==today()}
 function ensureRun(){if(!canPlayToday())return null;const date=today(),day=adventure.completedDays+1;
  if(!adventure.active||adventure.active.date!==date||adventure.active.day!==day)adventure.active=blankRun(day,date,`official|${date}|${day}`);
- save(STORE,adventure);return adventure.active;
+ persistAdventure();return adventure.active;
 }
 let sound=load(SOUND);if(typeof sound!=='boolean'){sound=load(OLD_SOUND);if(typeof sound!=='boolean')sound=true}
 let mode='daily',game=null,screen='home',devEnabled=false,devDay=1,devGame=null;
@@ -365,6 +413,6 @@ el('resultModal').onclick=e=>{if(e.target===el('resultModal'))el('resultModal').
 el('share').onclick=async()=>{if(mode!=='daily'||!allDone())return;const text=shareText();try{if(navigator.share){await navigator.share({title:'Pathle',text});return}if(navigator.clipboard){await navigator.clipboard.writeText(text);alert('Results copied!');return}}catch(e){if(e.name==='AbortError')return}prompt('Copy:',text)};
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!el('storyModal').hidden)closeStory();else if(!el('settingsModal').hidden)settingsClose();else if(!el('rewardModal').hidden){if(el('openChest').hidden){el('rewardModal').hidden=true;renderHome()}}else if(!el('resultModal').hidden)el('resultModal').hidden=true}});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){if(screen==='home')renderHome();else if(mode==='daily'&&game&&game.date!==today())toHome()}updateAudioScene()});
-save(STORE,adventure);save(COLLECTION_STORE,collection);showScreen('home');
+persistAdventure();save(COLLECTION_STORE,collection);showScreen('home');
 if(pathleBootScreen)pathleBootScreen.inert=false;
 })();
