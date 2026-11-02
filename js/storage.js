@@ -1,4 +1,4 @@
-/* Pathle 5B.3B.1 — IndexedDB adapter, atomic updates and three snapshots.
+/* Pathle 5B.3B.2 — IndexedDB adapter, atomic updates and safe recovery.
    Lazy initialization: the database opens only when storage is used. */
 (()=>{'use strict';
   const DB_NAME='pathle_game_saves';
@@ -72,6 +72,19 @@
       };
     }
   }
+  // A save created by a newer Pathle must never be treated as damaged and
+  // silently replaced by an older valid snapshot. Protect writes too, even
+  // if the newer record is in a backup slot or has an invalid checksum.
+  function rejectUnknownNewerSave(records){
+    const newer=records.some(record=>record&&record.payload&&
+      Number.isSafeInteger(record.payload.schemaVersion)&&
+      record.payload.schemaVersion>schema.VERSION);
+    if(newer){
+      const error=new Error('Pathle progress belongs to a newer game version. Open the latest version to keep your progress safe.');
+      error.code='PATHLE_NEWER_SAVE';
+      throw error;
+    }
+  }
   function nextRevision(records){
     return Math.max(0,...records.filter(record=>record&&Number.isSafeInteger(record.revision)&&record.revision>=1)
       .map(record=>record.revision))+1;
@@ -100,11 +113,14 @@
       let records=[];
       readSlots(store,found=>{records=found});
       tx.oncomplete=()=>{
-        const valid=newestValid(records);
-        const chosen=valid[0];
-        if(chosen)resolve({data:copyJson(chosen.payload),revision:chosen.revision,updatedAt:chosen.updatedAt,source:chosen.slot});
-        else if(records.length)reject(new Error('Pathle save exists, but no snapshot is valid. Data has not been deleted.'));
-        else resolve(null);
+        try{
+          rejectUnknownNewerSave(records);
+          const valid=newestValid(records);
+          const chosen=valid[0];
+          if(chosen)resolve({data:copyJson(chosen.payload),revision:chosen.revision,updatedAt:chosen.updatedAt,source:chosen.slot});
+          else if(records.length)reject(new Error('Pathle save exists, but no snapshot is valid. Data has not been deleted.'));
+          else resolve(null);
+        }catch(error){reject(error)}
       };
       tx.onabort=()=>reject(tx.error||new Error('Pathle save read aborted'));
     });
@@ -121,6 +137,7 @@
       let written=null,reason=null;
       readSlots(store,records=>{
         try{
+          rejectUnknownNewerSave(records);
           // Never silently replace existing but unrecoverable data with a
           // fresh save. The user must choose a deliberate recovery later.
           if(records.length&&!newestValid(records).length)
@@ -155,6 +172,7 @@
         let written=null,reason=null;
         readSlots(store,records=>{
           try{
+            rejectUnknownNewerSave(records);
             const base=newestValid(records)[0];
             if(!base)throw new Error('No valid Pathle save available for update');
             const draft=copyJson(base.payload);

@@ -1,6 +1,6 @@
 (async()=>{'use strict';
 
-/* Pathle 5B.2C.3 — versioned IndexedDB for Daily Adventure, rewards,
+/* Pathle 5B.3B.2 — safe IndexedDB recovery notices, errors and retries for Daily Adventure, rewards,
    settings and Haiko guides. Legacy localStorage is used only for file://
    previews and retired cosmetics; preserve existing player saves on failure. */
 const pathleBootScreen=document.getElementById('welcomeScreen');
@@ -17,9 +17,9 @@ try{
     const written=await window.PathleStorage.save(pathleInitialSave);
     window.PathleSaveBoot=Object.freeze({status:'created',revision:written.revision,source:'current',schemaVersion:pathleInitialSave.schemaVersion});
   }
-  console.info('[Pathle 5B.2A] IndexedDB startup:',window.PathleSaveBoot.status);
+  console.info('[Pathle 5B.3B.2] IndexedDB startup:',window.PathleSaveBoot.status,window.PathleSaveBoot.source);
 }catch(error){
-  console.error('[Pathle 5B.2A] IndexedDB startup failed:',error);
+  console.error('[Pathle 5B.3B.2] IndexedDB startup failed:',error);
   if(window.location.protocol==='file:'){
     // Chromebook local-file preview remains usable; IndexedDB must be checked on HTTPS.
     window.PathleSaveBoot=Object.freeze({status:'local-file-preview',schemaVersion:null});
@@ -33,8 +33,11 @@ try{
     panel.style.cssText='position:fixed;z-index:99999;inset:0;display:flex;align-items:center;justify-content:center;background:#062747eE;padding:22px;color:white;font:16px/1.5 system-ui,sans-serif;text-align:center';
     const content=document.createElement('div');
     content.style.cssText='max-width:380px;background:#124367;border:1px solid #8edffa;border-radius:18px;padding:24px';
-    const title=document.createElement('h2');title.textContent='Unable to load game progress';
-    const description=document.createElement('p');description.textContent='Your saved data has not been deleted. Check your browser settings or storage permissions, then try again.';
+    const futureVersion=error&&error.code==='PATHLE_NEWER_SAVE';
+    const title=document.createElement('h2');title.textContent=futureVersion?'Newer game version required':'Unable to load game progress';
+    const description=document.createElement('p');description.textContent=futureVersion
+      ?'This progress was saved by a newer Pathle version. Open the latest game version. Your saved data has not been changed.'
+      :'Your saved data has not been deleted. Check your connection to device storage or storage permissions, then try again. Do not clear the site data.';
     const retry=document.createElement('button');retry.type='button';retry.textContent='Try again';
     retry.style.cssText='padding:10px 22px;border:0;border-radius:24px;background:#ffd56c;color:#123047;font-weight:bold;cursor:pointer';
     retry.onclick=()=>window.location.reload();
@@ -86,7 +89,7 @@ function dailySaveWarning(error){
  if(dailySaveAlert)return;
  const panel=document.createElement('section');panel.id='pathleDailySaveWarning';panel.setAttribute('role','alert');
  panel.style.cssText='position:fixed;z-index:99998;bottom:12px;left:12px;right:12px;max-width:440px;margin:auto;padding:14px 17px;border:2px solid #ffd56c;border-radius:16px;background:#123047;color:white;box-shadow:0 6px 26px #0008;font:14px/1.45 system-ui,sans-serif';
- const msg=document.createElement('p');msg.textContent='Progress was not saved. Keep this page open and try again.';msg.style.margin='0 0 8px';
+ const msg=document.createElement('p');msg.textContent='Progress not saved. Keep the game open and try again.';msg.style.margin='0 0 8px';
  const retry=document.createElement('button');retry.type='button';retry.textContent='Retry save';
  retry.style.cssText='border:0;border-radius:18px;padding:8px 16px;background:#ffd56c;color:#123047;font-weight:bold';
  retry.onclick=()=>persistAdventure();panel.append(msg,retry);document.body.append(panel);dailySaveAlert=panel;
@@ -203,7 +206,7 @@ function refreshPreferenceSaveWarning(){
  if(preferenceSaveAlert)return;
  const panel=document.createElement('section');panel.id='pathlePreferenceSaveWarning';panel.setAttribute('role','alert');
  panel.style.cssText='position:fixed;z-index:99999;bottom:12px;left:12px;right:12px;max-width:440px;margin:auto;padding:14px 17px;border:2px solid #ffd56c;border-radius:16px;background:#123047;color:white;box-shadow:0 6px 26px #0008;font:14px/1.45 system-ui,sans-serif';
- const msg=document.createElement('p');msg.textContent='A setting or guide was not saved. Keep this page open and try again.';msg.style.margin='0 0 8px';
+ const msg=document.createElement('p');msg.textContent='Settings or guide not saved. Keep the game open and try again.';msg.style.margin='0 0 8px';
  const retry=document.createElement('button');retry.type='button';retry.textContent='Retry save';
  retry.style.cssText='border:0;border-radius:18px;padding:8px 16px;background:#ffd56c;color:#123047;font-weight:bold';
  retry.onclick=retryPreferenceSaves;
@@ -532,6 +535,21 @@ el('resultModal').onclick=e=>{if(e.target===el('resultModal'))el('resultModal').
 el('share').onclick=async()=>{if(mode!=='daily'||!allDone())return;const text=shareText();try{if(navigator.share){await navigator.share({title:'Pathle',text});return}if(navigator.clipboard){await navigator.clipboard.writeText(text);alert('Results copied!');return}}catch(e){if(e.name==='AbortError')return}prompt('Copy:',text)};
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!el('storyModal').hidden)closeStory();else if(!el('settingsModal').hidden)settingsClose();else if(!el('rewardModal').hidden){if(el('openChest').hidden){el('rewardModal').hidden=true;renderHome()}}else if(!el('resultModal').hidden)el('resultModal').hidden=true}});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){if(screen==='home')renderHome();else if(mode==='daily'&&game&&game.date!==today())toHome()}updateAudioScene()});
-persistAdventure();if(!useIndexedDaily)save(COLLECTION_STORE,collection);showScreen('home');
+// On HTTPS, merely opening the game must not rotate recovery snapshots.
+// file:// previews retain the legacy localStorage startup behavior.
+if(!useIndexedDaily){persistAdventure();save(COLLECTION_STORE,collection)}
+showScreen('home');
 if(pathleBootScreen)pathleBootScreen.inert=false;
+// Inform players when an older safe snapshot was used. Do not write anything
+// until the player actually changes game state. This notice is dismissible.
+if(useIndexedDaily&&['previous','recovery'].includes(window.PathleSaveBoot?.source)){
+ const panel=document.createElement('section');panel.id='pathleRecoveryNotice';
+ panel.setAttribute('role','status');panel.setAttribute('aria-live','polite');
+ panel.style.cssText='position:fixed;z-index:99995;top:12px;left:12px;right:12px;max-width:440px;margin:auto;padding:14px 17px;border:2px solid #8edffa;border-radius:16px;background:#123047;color:white;box-shadow:0 6px 26px #0008;font:14px/1.45 system-ui,sans-serif';
+ const title=document.createElement('strong');title.textContent='Previous progress restored';
+ const msg=document.createElement('p');msg.textContent='We restored an earlier save because the latest save could not be read. Some recent progress may be missing.';msg.style.margin='6px 0 10px';
+ const dismiss=document.createElement('button');dismiss.type='button';dismiss.textContent='Continue';
+ dismiss.style.cssText='border:0;border-radius:18px;padding:8px 16px;background:#ffd56c;color:#123047;font-weight:bold';
+ dismiss.onclick=()=>panel.remove();panel.append(title,msg,dismiss);document.body.append(panel);
+}
 })();
