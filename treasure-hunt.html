@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#09617d">
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>Pathle – Treasure Hunt (TH.2 Test)</title>
+  <link rel="stylesheet" href="css/treasure.css">
+</head>
+<body class="th-page">
+  <main class="th-shell">
+    <header class="th-header">
+      <a class="th-back" href="index.html" aria-label="Back to Pathle home">←</a>
+      <div class="th-heading"><small>TREASURE HUNT · TH.2 TEST</small><h1>Coral Coast</h1></div>
+      <span class="th-test-badge" aria-label="Prototype">TEST</span>
+    </header>
+    <nav class="th-level-tabs" aria-label="Select test level">
+      <button type="button" data-th-level="0" aria-pressed="true">1 <small>Shallows</small></button>
+      <button type="button" data-th-level="1" aria-pressed="false">2 <small>Passage</small></button>
+      <button type="button" data-th-level="2" aria-pressed="false">3 <small>Ocean</small></button>
+    </nav>
+    <section class="th-panel" aria-label="Treasure Hunt test level">
+      <div class="th-stats" aria-live="polite">
+        <div><small>MOVES</small><strong id="thMoves">0</strong></div>
+        <div><small>TREASURES</small><strong id="thTreasures">0 / 2</strong></div>
+        <div><small>LEVEL</small><strong id="thLevel">1 / 3</strong></div>
+      </div>
+      <div class="th-board-container">
+        <div id="thBoard" class="th-board" aria-label="Treasure Hunt board. Move to adjacent water tiles, or drag a path." role="grid"></div>
+      </div>
+      <p id="thMessage" class="th-message" role="status" aria-live="polite">Collect every treasure, then reach the golden X.</p>
+      <div class="th-actions">
+        <button id="thRestart" type="button">↻ Restart</button>
+        <button id="thNext" type="button" hidden>Next level →</button>
+      </div>
+    </section>
+    <p class="th-footnote">Test version · Tap an adjacent tile or drag through the water. No scores saved yet.</p>
+  </main>
+  <script src="js/treasure-engine.js"></script>
+  <script src="js/treasure-levels.js"></script>
+  <script src="js/treasure-ui.js"></script>
+</body>
+</html>
