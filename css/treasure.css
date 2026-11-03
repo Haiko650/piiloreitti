@@ -2,7 +2,7 @@
 * { box-sizing: border-box; }
 html,body { margin: 0; min-height: 100%; }
 body.th-page { color: #f5feff; background: radial-gradient(ellipse at 45% -15%,#1ac4ca 0%,#0b7798 40%,#073653 100%); }
-.th-shell { width: min(100%,490px); min-height: 100dvh; margin:auto; padding: max(10px,env(safe-area-inset-top)) 12px max(10px,env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 9px; }
+.th-shell { width: min(100%,490px); min-height: 0; height: 100dvh; margin:auto; padding: max(10px,env(safe-area-inset-top)) 12px max(10px,env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 9px; }
 .th-header { display: flex; gap:12px; align-items:center; justify-content:space-between; }
 .th-back { flex:none; display:grid; place-items:center; width:40px; height:40px; border-radius:14px; border:1px solid #baf6ff77; background:#0a5173; color:#fff; font-size:27px; text-decoration:none; }
 .th-heading { text-align: center; flex:1; }
@@ -15,13 +15,13 @@ body.th-page { color: #f5feff; background: radial-gradient(ellipse at 45% -15%,#
 .th-level-tabs small { font-size:10px; display:block; color:#c0ecf3; font-weight:600; }
 .th-level-tabs button[aria-pressed="true"] { background:#dba64c; border-color:#ffe9aa; color:#2c4360; box-shadow: inset 0 1px #fff5cc; }
 .th-level-tabs button[aria-pressed="true"] small {color:#284964;}
-.th-panel { background:linear-gradient(165deg,#136d86b8,#07516dbf); border:1px solid #83e4e79a; border-radius:20px; padding:10px 10px 11px; box-shadow:0 10px 24px #01283866; display:flex; flex-direction:column; min-height:0; gap:8px; }
+.th-panel { background:linear-gradient(165deg,#136d86b8,#07516dbf); border:1px solid #83e4e79a; border-radius:20px; padding:10px 10px 11px; box-shadow:0 10px 24px #01283866; display:flex; flex-direction:column; min-height:0; flex:1 1 auto; overflow:hidden; gap:8px; }
 .th-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; }
 .th-stats div { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:5px; min-height:50px; border-radius:12px; background:#073e5b98; }
 .th-stats small { font-size:9px; color:#aae7f1; font-weight:800; letter-spacing:.08em; }
 .th-stats strong { font-size:20px; color:#fff5c2; font-variant-numeric:tabular-nums; }
-.th-board-container { display:flex; justify-content:center; align-items:center; min-height:0; width:100%; }
-.th-board { --cols:6; --rows:8; --cell:40px; display:grid; position:relative; flex:none; grid-template-columns:repeat(var(--cols),minmax(0,1fr)); grid-template-rows:repeat(var(--rows),minmax(0,1fr)); width: min(100%,calc((100dvh - 259px) * var(--cols) / var(--rows))); aspect-ratio:var(--cols) / var(--rows); padding:3px; gap:2px; background:#074b68; border:2px solid #71d1d9; border-radius:13px; overflow:hidden; touch-action:none; user-select:none; -webkit-user-select:none; box-shadow:0 8px 20px #022d48aa, inset 0 1px 8px #9af4f447; }
+.th-board-container { display:flex; flex:1 1 auto; justify-content:center; align-items:center; min-height:0; width:100%; overflow:hidden; }
+.th-board { --cols:6; --rows:8; --cell:40px; display:grid; position:relative; flex:none; grid-template-columns:repeat(var(--cols),minmax(0,1fr)); grid-template-rows:repeat(var(--rows),minmax(0,1fr)); width:100%; aspect-ratio:var(--cols) / var(--rows); padding:3px; gap:2px; background:#074b68; border:2px solid #71d1d9; border-radius:13px; overflow:hidden; touch-action:none; user-select:none; -webkit-user-select:none; box-shadow:0 8px 20px #022d48aa, inset 0 1px 8px #9af4f447; }
 .th-tile { position:relative; min-width:0; min-height:0; border:1px solid #94e7e98f; border-radius:5px; background:linear-gradient(155deg,#83dbdc 0%,#49bfc9 40%,#2e97ba 100%); padding:0; overflow:hidden; pointer-events:none; }
 .th-tile::before { content:""; position:absolute; inset:-35%; background:repeating-radial-gradient(ellipse at 26% 30%,transparent 0 13%,#c1fff428 14% 16%,transparent 17% 31%); animation:th-water 7s linear infinite alternate; pointer-events:none; }
 .th-tile.is-land { border-color:#8fba9b; background:radial-gradient(circle at 35% 24%,#ddc69c 0 27%,#93b68e 66%,#508e7d); }
@@ -34,7 +34,8 @@ body.th-page { color: #f5feff; background: radial-gradient(ellipse at 45% -15%,#
 .th-treasure svg { width:75%; height:75%; max-width:28px; }
 .th-tile.treasure-gone .th-treasure { display:none; }
 .th-tile.treasure-gone { background:linear-gradient(140deg,#84dac9,#2d99b2); }
-.th-fin { position:absolute; z-index:5; left:0; top:0; width:var(--cell); height:var(--cell); display:grid; place-items:center; pointer-events:none; transition:transform 115ms linear; will-change:transform; filter:drop-shadow(0 2px 2px #0d466b); }
+.th-fin { position:absolute; z-index:5; left:0; top:0; width:var(--cell); height:var(--cell); display:grid; place-items:center; pointer-events:none; transition:transform 80ms linear; will-change:transform; filter:drop-shadow(0 2px 2px #0d466b); }
+.th-fin-initial {transition:none!important;}
 .th-fin svg { width:80%; height:80%; }
 .th-fin::after { content:""; position:absolute; width:65%; height:26%; border:2px solid #c6ffff9a; border-radius:50%; bottom:4%; animation:th-fin-ripple 2.8s ease-in-out infinite; }
 .th-message { margin:0; min-height:22px; text-align:center; color:#e5fcff; font-size:12px; font-weight:700; line-height:1.35; }
@@ -46,5 +47,7 @@ body.th-page { color: #f5feff; background: radial-gradient(ellipse at 45% -15%,#
 @keyframes th-water {to{transform:translate(9%,8%) rotate(5deg);}}
 @keyframes th-goal-glow {to{filter:brightness(1.3);}}
 @keyframes th-fin-ripple {0%,100%{transform:scale(.85);opacity:.45}50%{transform:scale(1.15);opacity:.9}}
-@media(max-height:680px){.th-shell{gap:6px}.th-level-tabs button{min-height:37px;padding:4px}.th-panel{padding:7px;gap:5px}.th-stats div{min-height:44px;padding:3px}.th-board{width:min(100%,calc((100dvh - 229px) * var(--cols) / var(--rows)));}.th-footnote{font-size:10px}}
+@media(max-height:680px){.th-shell{gap:6px}.th-level-tabs button{min-height:37px;padding:4px}.th-panel{padding:7px;gap:5px}.th-stats div{min-height:44px;padding:3px}.th-footnote{font-size:10px}}
 @media(prefers-reduced-motion:reduce){.th-tile::before,.th-tile.is-goal.is-ready,.th-fin::after{animation:none}.th-fin{transition:none}}
+
+@media(max-height:610px){.th-shell{gap:4px}.th-header{min-height:33px}.th-back{height:33px;width:33px}.th-heading h1{font-size:20px}.th-level-tabs button{min-height:32px;padding:3px}.th-stats div{min-height:38px;padding:2px}.th-stats strong{font-size:16px}.th-actions button{min-height:34px;padding:6px}.th-message{font-size:11px}.th-footnote{display:none}}
