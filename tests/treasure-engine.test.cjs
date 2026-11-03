@@ -167,7 +167,7 @@ test('a sampled set of valid rectangular boards always allows complete treasure 
   // Validation's reachability guarantee, exercised for different non-square layouts.
   for(const [width,height] of [[2,4],[3,7],[7,10],[10,15]]) {
     const n=width*height;
-    const b=makeLevel({id:\`th-\${width}-\${height}\`,width,height,start:width-1,goal:n-width,blocked:[],treasures:[n-1]});
+    const b=makeLevel({id:`th-${width}-${height}`,width,height,start:width-1,goal:n-width,blocked:[],treasures:[n-1]});
     assert.equal(TH.validateLevel(b).valid,true);
     assert.equal(TH.getNeighbors(b,b.start).every(t=>t>=0&&t<n),true);
   }
