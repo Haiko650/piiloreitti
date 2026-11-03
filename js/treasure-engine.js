@@ -59,7 +59,7 @@
     }
     if (!Number.isInteger(level.width) || level.width < 2 || level.width > MAX_WIDTH ||
         !Number.isInteger(level.height) || level.height < 2 || level.height > MAX_HEIGHT) {
-      errors.push(\`Board dimensions must be 2..\${MAX_WIDTH} wide and 2..\${MAX_HEIGHT} high\`);
+      errors.push(`Board dimensions must be 2..${MAX_WIDTH} wide and 2..${MAX_HEIGHT} high`);
       return { valid: false, errors };
     }
 
@@ -69,7 +69,7 @@
     if (level.start === level.goal) errors.push('Start and goal must be different tiles');
     if (!validUniqueTiles(level.blocked, count)) errors.push('Blocked tiles must be unique valid tile ids');
     if (!validUniqueTiles(level.treasures, count) || level.treasures.length < 1 || level.treasures.length > MAX_TREASURES) {
-      errors.push(\`Treasures must contain 1..\${MAX_TREASURES} unique valid tile ids\`);
+      errors.push(`Treasures must contain 1..${MAX_TREASURES} unique valid tile ids`);
     }
     // Do not silently accept effects that TH.1 cannot simulate or score.
     if (!Array.isArray(level.effects) || level.effects.length !== 0) {
@@ -105,7 +105,7 @@
 
   function assertLevel(level) {
     const result = validateLevel(level);
-    if (!result.valid) throw new TypeError(\`Invalid Treasure Hunt level: \${result.errors.join('; ')}\`);
+    if (!result.valid) throw new TypeError(`Invalid Treasure Hunt level: ${result.errors.join('; ')}`);
   }
 
   function getNeighbors(level, from) {
@@ -184,7 +184,7 @@
   function applyAction(level, state, action) {
     assertLevel(level);
     const stateStatus = validateRun(level, state);
-    if (!stateStatus.valid) throw new TypeError(\`Invalid Treasure Hunt run: \${stateStatus.errors.join('; ')}\`);
+    if (!stateStatus.valid) throw new TypeError(`Invalid Treasure Hunt run: ${stateStatus.errors.join('; ')}`);
 
     function rejected(reason) { return { accepted: false, reason, state, events: [] }; }
     if (state.completed) return rejected('already-completed');
