@@ -1,0 +1,50 @@
+:root { color-scheme: dark; font-family: system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+* { box-sizing: border-box; }
+html,body { margin: 0; min-height: 100%; }
+body.th-page { color: #f5feff; background: radial-gradient(ellipse at 45% -15%,#1ac4ca 0%,#0b7798 40%,#073653 100%); }
+.th-shell { width: min(100%,490px); min-height: 100dvh; margin:auto; padding: max(10px,env(safe-area-inset-top)) 12px max(10px,env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 9px; }
+.th-header { display: flex; gap:12px; align-items:center; justify-content:space-between; }
+.th-back { flex:none; display:grid; place-items:center; width:40px; height:40px; border-radius:14px; border:1px solid #baf6ff77; background:#0a5173; color:#fff; font-size:27px; text-decoration:none; }
+.th-heading { text-align: center; flex:1; }
+.th-heading small { color:#a9f5f6; font-size:10px; letter-spacing:.11em; font-weight:900; }
+.th-heading h1 { margin:0; font-size:clamp(21px,5.5vw,29px); line-height:1.2; text-shadow:0 2px 8px #06364c; }
+.th-test-badge { font-size:10px; padding:6px 7px; background:#126f83; border:1px solid #89d9e4; color:#fff3c0; border-radius:9px; font-weight:900; }
+.th-level-tabs { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:7px; }
+.th-page button { font:inherit; color:inherit; border:0; cursor:pointer; user-select:none; -webkit-tap-highlight-color:transparent; }
+.th-level-tabs button { border-radius:13px; padding:6px 4px; font-size:16px; font-weight:900; background:#105976; border:1px solid #7fcfda77; min-height:43px; }
+.th-level-tabs small { font-size:10px; display:block; color:#c0ecf3; font-weight:600; }
+.th-level-tabs button[aria-pressed="true"] { background:#dba64c; border-color:#ffe9aa; color:#2c4360; box-shadow: inset 0 1px #fff5cc; }
+.th-level-tabs button[aria-pressed="true"] small {color:#284964;}
+.th-panel { background:linear-gradient(165deg,#136d86b8,#07516dbf); border:1px solid #83e4e79a; border-radius:20px; padding:10px 10px 11px; box-shadow:0 10px 24px #01283866; display:flex; flex-direction:column; min-height:0; gap:8px; }
+.th-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; }
+.th-stats div { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:5px; min-height:50px; border-radius:12px; background:#073e5b98; }
+.th-stats small { font-size:9px; color:#aae7f1; font-weight:800; letter-spacing:.08em; }
+.th-stats strong { font-size:20px; color:#fff5c2; font-variant-numeric:tabular-nums; }
+.th-board-container { display:flex; justify-content:center; align-items:center; min-height:0; width:100%; }
+.th-board { --cols:6; --rows:8; --cell:40px; display:grid; position:relative; flex:none; grid-template-columns:repeat(var(--cols),minmax(0,1fr)); grid-template-rows:repeat(var(--rows),minmax(0,1fr)); width: min(100%,calc((100dvh - 259px) * var(--cols) / var(--rows))); aspect-ratio:var(--cols) / var(--rows); padding:3px; gap:2px; background:#074b68; border:2px solid #71d1d9; border-radius:13px; overflow:hidden; touch-action:none; user-select:none; -webkit-user-select:none; box-shadow:0 8px 20px #022d48aa, inset 0 1px 8px #9af4f447; }
+.th-tile { position:relative; min-width:0; min-height:0; border:1px solid #94e7e98f; border-radius:5px; background:linear-gradient(155deg,#83dbdc 0%,#49bfc9 40%,#2e97ba 100%); padding:0; overflow:hidden; pointer-events:none; }
+.th-tile::before { content:""; position:absolute; inset:-35%; background:repeating-radial-gradient(ellipse at 26% 30%,transparent 0 13%,#c1fff428 14% 16%,transparent 17% 31%); animation:th-water 7s linear infinite alternate; pointer-events:none; }
+.th-tile.is-land { border-color:#8fba9b; background:radial-gradient(circle at 35% 24%,#ddc69c 0 27%,#93b68e 66%,#508e7d); }
+.th-tile.is-land::before { display:none; }
+.th-tile.is-land::after { content:"🪸"; position:absolute; inset:0; display:grid; place-items:center; font-size:clamp(9px,2.6vw,17px); opacity:.82; }
+.th-tile.is-start:not(.has-fin)::after {content:"";}
+.th-tile.is-goal::after { content:"✕"; position:absolute; inset:0; display:grid; place-items:center; color:#f5ce66; font-size:clamp(18px,5vw,31px); font-weight:1000; text-shadow:1px 2px 0 #7c5319,0 0 6px #fff0ae; }
+.th-tile.is-goal.is-ready {box-shadow:inset 0 0 10px #ffdc71; animation:th-goal-glow 1.6s ease-in-out infinite alternate;}
+.th-treasure { position:absolute; inset:0; display:grid; place-items:center; pointer-events:none; filter:drop-shadow(0 2px 2px #14627f); }
+.th-treasure svg { width:75%; height:75%; max-width:28px; }
+.th-tile.treasure-gone .th-treasure { display:none; }
+.th-tile.treasure-gone { background:linear-gradient(140deg,#84dac9,#2d99b2); }
+.th-fin { position:absolute; z-index:5; left:0; top:0; width:var(--cell); height:var(--cell); display:grid; place-items:center; pointer-events:none; transition:transform 115ms linear; will-change:transform; filter:drop-shadow(0 2px 2px #0d466b); }
+.th-fin svg { width:80%; height:80%; }
+.th-fin::after { content:""; position:absolute; width:65%; height:26%; border:2px solid #c6ffff9a; border-radius:50%; bottom:4%; animation:th-fin-ripple 2.8s ease-in-out infinite; }
+.th-message { margin:0; min-height:22px; text-align:center; color:#e5fcff; font-size:12px; font-weight:700; line-height:1.35; }
+.th-message.is-won { color:#ffeca8; font-weight:900; font-size:14px; }
+.th-actions { display:flex; gap:9px; }
+.th-actions button { flex:1; background:#0d4e6a; border:1px solid #88dfe3a8; padding:10px; border-radius:12px; font-weight:900; min-height:41px; }
+#thNext { background:linear-gradient(#ffe9a0,#e4ac4d); color:#3d341e; border:1px solid #fff4c2; }
+.th-footnote { color:#c0e5e9; font-size:11px; line-height:1.4; text-align:center; margin:0 3px; }
+@keyframes th-water {to{transform:translate(9%,8%) rotate(5deg);}}
+@keyframes th-goal-glow {to{filter:brightness(1.3);}}
+@keyframes th-fin-ripple {0%,100%{transform:scale(.85);opacity:.45}50%{transform:scale(1.15);opacity:.9}}
+@media(max-height:680px){.th-shell{gap:6px}.th-level-tabs button{min-height:37px;padding:4px}.th-panel{padding:7px;gap:5px}.th-stats div{min-height:44px;padding:3px}.th-board{width:min(100%,calc((100dvh - 229px) * var(--cols) / var(--rows)));}.th-footnote{font-size:10px}}
+@media(prefers-reduced-motion:reduce){.th-tile::before,.th-tile.is-goal.is-ready,.th-fin::after{animation:none}.th-fin{transition:none}}
