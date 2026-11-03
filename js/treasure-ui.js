@@ -25,10 +25,32 @@
   let pointerId = null;
   let lastPoint = null;
   let resizeObserver = null;
+  const MOVE_MS = 80;
+  const MAX_PENDING_MOVES = 250;
+  let pendingMoves = [];
+  let moveTimer = null;
+  let animating = false;
+  let blocked = new Set();
   const statusMessage = 'Collect every treasure, then reach the golden X.';
 
   const FIN_SVG = '<svg viewBox="0 0 52 52" aria-hidden="true"><ellipse cx="26" cy="42" rx="20" ry="6" fill="#a6f5f6" opacity=".5"/><path d="M7 42 C17 29 21 12 27 6 C34 9 41 27 44 43 C30 36 21 39 7 42 Z" fill="#176bb8" stroke="#054778" stroke-width="2.6"/><path d="M17 36 Q27 15 28 13" fill="none" stroke="#7bd2f2" stroke-width="3.2" stroke-linecap="round"/></svg>';
   const TREASURE_SVG = '<svg viewBox="0 0 50 50" aria-hidden="true"><path d="M5 31 Q8 13 25 12 Q42 13 45 31 Q41 45 25 45 Q9 43 5 31Z" fill="#f6d6a1" stroke="#e8a572" stroke-width="2"/><path d="M9 29L25 42 41 29 M16 17L25 42 34 17" fill="none" stroke="#fff0c8" stroke-width="2"/><circle cx="25" cy="25" r="9" fill="#fff6dd" stroke="#80dfdc" stroke-width="2"/><circle cx="22" cy="21" r="3" fill="#fff"/></svg>';
+
+  // Fit within the *actual* board container height and width. The container
+  // grows/shrinks with the mobile browser's dynamic viewport (address bar).
+  function fitBoard() {
+    if (!level || !tiles.length) return;
+    const container = board.parentElement;
+    const availableWidth = container.clientWidth;
+    const availableHeight = container.clientHeight;
+    if (availableWidth < 2 || availableHeight < 2) return;
+    const aspect = level.width / level.height;
+    const width = Math.floor(Math.min(availableWidth, availableHeight * aspect));
+    const height = Math.floor(width / aspect);
+    board.style.width = `${width}px`;
+    board.style.height = `${height}px`;
+    measureFin();
+  }
 
   function measureFin() {
     if (!fin || !tiles.length) return;
@@ -89,11 +111,23 @@
       tiles.push(tile);
     }
     fin=document.createElement('div');
-    fin.className='th-fin';
+    fin.className='th-fin th-fin-initial';
     fin.setAttribute('aria-hidden','true');
     fin.innerHTML=FIN_SVG;
     board.append(fin);
-    measureFin();
+    fitBoard();
+    // Do not animate in from (0,0) when starting or restarting a level.
+    const createdFin = fin;
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      if (createdFin.isConnected) createdFin.classList.remove('th-fin-initial');
+    }));
+  }
+
+  function cancelPendingMoves() {
+    if (moveTimer !== null) clearTimeout(moveTimer);
+    moveTimer = null;
+    pendingMoves = [];
+    animating = false;
   }
 
   function selectLevel(index) {
@@ -101,21 +135,56 @@
     const chosen=levels[index];
     const validation=engine.validateLevel(chosen);
     if(!validation.valid) throw new Error(`Invalid TH.2 test level ${index+1}: ${validation.errors.join('; ')}`);
+    if (pointerId !== null && board.hasPointerCapture(pointerId)) {
+      try { board.releasePointerCapture(pointerId); } catch (_error) {}
+    }
     pointerId=null;
     lastPoint=null;
+    cancelPendingMoves();
     levelIndex=index;
     level=chosen;
     state=engine.createRun(level);
+    blocked = new Set(level.blocked);
     tabs.forEach((b,i)=>b.setAttribute('aria-pressed',String(i===index)));
     makeBoard();
     update();
   }
 
-  function moveTo(tile) {
-    const result=engine.applyAction(level,state,{type:'move',to:tile});
-    if(!result.accepted) return false;
-    state=result.state;
+  function plannedPosition() {
+    return pendingMoves.length ? pendingMoves[pendingMoves.length - 1] : state.position;
+  }
+
+  function processPendingMoves() {
+    if (animating || document.hidden || pendingMoves.length === 0) return;
+    const to = pendingMoves.shift();
+    const result = engine.applyAction(level, state, {type:'move', to});
+    if (!result.accepted) {
+      // Defensive stop: a future rule should never leave a stale gesture queued.
+      pendingMoves = [];
+      return;
+    }
+    state = result.state;
     update();
+    if (state.completed) pendingMoves = [];
+    animating = true;
+    moveTimer = setTimeout(() => {
+      moveTimer = null;
+      animating = false;
+      processPendingMoves();
+    }, MOVE_MS);
+  }
+
+  function enqueueMove(to) {
+    if (state.completed || pendingMoves.length >= MAX_PENDING_MOVES) return false;
+    const from = plannedPosition();
+    const fromX = from % level.width;
+    const fromY = Math.floor(from / level.width);
+    const toX = to % level.width;
+    const toY = Math.floor(to / level.width);
+    if (!Number.isInteger(to) || to < 0 || to >= level.width * level.height ||
+        Math.abs(fromX - toX) + Math.abs(fromY - toY) !== 1 || blocked.has(to)) return false;
+    pendingMoves.push(to);
+    processPendingMoves();
     return true;
   }
 
@@ -146,14 +215,15 @@
     const step=Math.max(2,Math.min(rect.width/level.width,rect.height/level.height)/4);
     const steps=Math.min(200,Math.ceil(Math.hypot(b.x-a.x,b.y-a.y)/step));
     for(let i=1;i<=steps;i++) {
-      if(state.completed) break;
+      if(state.completed || pendingMoves.length >= MAX_PENDING_MOVES) break;
       const x=a.x+(b.x-a.x)*i/steps;
       const y=a.y+(b.y-a.y)*i/steps;
       const id=cellAtPoint(x,y);
-      if(id===null||id===state.position) continue;
-      const sx=state.position%level.width,sy=Math.floor(state.position/level.width);
+      const from = plannedPosition();
+      if(id===null||id===from) continue;
+      const sx=from%level.width,sy=Math.floor(from/level.width);
       const tx=id%level.width,ty=Math.floor(id/level.width);
-      if(Math.abs(sx-tx)+Math.abs(sy-ty)===1) moveTo(id);
+      if(Math.abs(sx-tx)+Math.abs(sy-ty)===1) enqueueMove(id);
     }
   }
 
@@ -165,7 +235,7 @@
     lastPoint={x:event.clientX,y:event.clientY};
     try{board.setPointerCapture(pointerId);}catch(_error){}
     const target=cellAtPoint(event.clientX,event.clientY);
-    if(target!==null) moveTo(target);
+    if(target!==null) enqueueMove(target);
   });
   board.addEventListener('pointermove',event=>{
     if(event.pointerId!==pointerId||!lastPoint)return;
@@ -187,15 +257,24 @@
     const dir={ArrowUp:'up',ArrowDown:'down',ArrowLeft:'left',ArrowRight:'right'}[event.key];
     if(!dir||state.completed)return;
     event.preventDefault();
-    const result=engine.applyAction(level,state,{type:'move',direction:dir});
-    if(result.accepted){state=result.state;update();}
+    const from = plannedPosition();
+    const dx = dir==='right'?1:dir==='left'?-1:0;
+    const dy = dir==='down'?1:dir==='up'?-1:0;
+    const x = from%level.width + dx;
+    const y = Math.floor(from/level.width) + dy;
+    if (x>=0 && x<level.width && y>=0 && y<level.height) enqueueMove(y*level.width+x);
   });
   tabs.forEach((button,index)=>button.addEventListener('click',()=>selectLevel(index)));
   $('thRestart').addEventListener('click',()=>selectLevel(levelIndex));
   next.addEventListener('click',()=>selectLevel(levelIndex+1));
   if('ResizeObserver' in window) {
-    resizeObserver=new ResizeObserver(()=>measureFin());
-    resizeObserver.observe(board);
-  } else window.addEventListener('resize',measureFin);
+    resizeObserver = new ResizeObserver(fitBoard);
+    resizeObserver.observe(board.parentElement);
+  }
+  window.addEventListener('resize', fitBoard);
+  if (window.visualViewport) window.visualViewport.addEventListener('resize', fitBoard);
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) processPendingMoves();
+  });
   selectLevel(0);
 })();
