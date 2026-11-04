@@ -19,13 +19,14 @@
   const msg = $('thMessage');
   // The default TH.3 prototype still shows the exact same three original tabs.
   // Only ?th4a=1 builds a scrollable, temporary 30-board test selector.
-  if(window.PathleTreasurePreview){
+  if(window.PathleTreasurePreview||window.PathleTreasureCampaignMode){
     document.body.classList.add('th-generated-preview');
-    document.querySelector('.th-heading small').textContent='TREASURE HUNT · TH.4A GENERATOR TEST';
-    document.querySelector('.th-heading h1').textContent='Generated Adventures';
-    document.querySelector('.th-test-badge').textContent='30 MAPS';
+    if(window.PathleTreasureCampaignMode)document.body.classList.add('th-campaign');
+    document.querySelector('.th-heading small').textContent=window.PathleTreasureCampaignMode?'TREASURE HUNT · TH.5 CAMPAIGN':'TREASURE HUNT · TH.4A GENERATOR TEST';
+    document.querySelector('.th-heading h1').textContent=window.PathleTreasureCampaignMode?'Ocean Treasure Trail':'Generated Adventures';
+    document.querySelector('.th-test-badge').textContent=window.PathleTreasureCampaignMode?'ADVENTURE':'30 MAPS';
     document.querySelector('.th-footnote').textContent='Generator test · Levels are not saved or locked yet. Try any map, then restart it to confirm the layout stays identical.';
-    $('thWinFinal').textContent='All 30 generated test levels completed!';
+    $('thWinFinal').textContent=window.PathleTreasureCampaignMode?'All 30 adventures completed!':'All 30 generated test levels completed!';
     const host=document.querySelector('.th-level-tabs');
     const buttons=levels.map((item,i)=>{
       const button=document.createElement('button');
@@ -163,6 +164,7 @@
 
   function selectLevel(index) {
     if(!Number.isInteger(index)||index<0||index>=levels.length) return;
+    if(window.PathleTreasureCampaignMode&&window.PathleTreasureCampaign&&!window.PathleTreasureCampaign.canEnter(index))return;
     idlePeek.cancel();
     const chosen=levels[index];
     const validation=engine.validateLevel(chosen);
@@ -329,5 +331,6 @@
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden) processPendingMoves();
   });
+  window.PathleTreasureUI=Object.freeze({selectLevel,fitBoard,getCurrentLevel:()=>levelIndex});
   selectLevel(0);
 })();
