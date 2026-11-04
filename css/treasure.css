@@ -42,7 +42,6 @@ body.th-page { color: #f5feff; background: radial-gradient(ellipse at 45% -15%,#
 .th-message.is-won { color:#ffeca8; font-weight:900; font-size:14px; }
 .th-actions { display:flex; gap:9px; }
 .th-actions button { flex:1; background:#0d4e6a; border:1px solid #88dfe3a8; padding:10px; border-radius:12px; font-weight:900; min-height:41px; }
-#thNext { background:linear-gradient(#ffe9a0,#e4ac4d); color:#3d341e; border:1px solid #fff4c2; }
 .th-footnote { color:#c0e5e9; font-size:11px; line-height:1.4; text-align:center; margin:0 3px; }
 @keyframes th-water {to{transform:translate(9%,8%) rotate(5deg);}}
 @keyframes th-goal-glow {to{filter:brightness(1.3);}}
@@ -51,3 +50,39 @@ body.th-page { color: #f5feff; background: radial-gradient(ellipse at 45% -15%,#
 @media(prefers-reduced-motion:reduce){.th-tile::before,.th-tile.is-goal.is-ready,.th-fin::after{animation:none}.th-fin{transition:none}}
 
 @media(max-height:610px){.th-shell{gap:4px}.th-header{min-height:33px}.th-back{height:33px;width:33px}.th-heading h1{font-size:20px}.th-level-tabs button{min-height:32px;padding:3px}.th-stats div{min-height:38px;padding:2px}.th-stats strong{font-size:16px}.th-actions button{min-height:34px;padding:6px}.th-message{font-size:11px}.th-footnote{display:none}}
+
+
+/* TH.3C – victory popup overlays the unchanged board geometry. */
+.th-message {height:30px; min-height:30px; display:flex; justify-content:center; align-items:center; overflow:hidden; text-align:center; line-height:1.3;}
+.th-message.is-won {font-size:12px;}
+.th-victory {position:fixed; inset:0; z-index:120; display:grid; place-items:center; padding:calc(12px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom)); background:rgba(1,22,43,.77); backdrop-filter:blur(7px); -webkit-backdrop-filter:blur(7px);}
+.th-victory[hidden], .th-victory [hidden] {display:none!important;}
+.th-win-card {position:relative; width:min(100%,380px); max-height:100%; overflow-y:auto; overscroll-behavior:contain; display:flex; flex-direction:column; align-items:center; gap:12px; padding:22px 18px 18px; border-radius:26px; border:2px solid #8be7ed; background:radial-gradient(ellipse at 50% -35%,#35c5d1 0%,#127f9d 40%,#07527d 72%,#063656 100%); box-shadow:0 18px 70px #001827c9, inset 0 2px 22px #9ef4eb25; color:#f5fcff; text-align:center; animation:th-win-appear .28s ease-out both;}
+.th-win-card::before {content:""; position:absolute; inset:4px; border:1px solid #ffffff22; border-radius:23px; pointer-events:none;}
+.th-win-heading {color:#b9f7f7; letter-spacing:.16em; font-size:11px; font-weight:900;}
+#thWinTitle {color:#fff2c0; margin:0; font-size:clamp(20px,5.3vw,26px); line-height:1.1; letter-spacing:.025em; text-shadow:0 3px 9px #064e70;}
+.th-win-fins {--fin-color:#eabd57; --fin-edge:#fff2b7; --fin-shine:#fff8d8; display:flex; align-items:center; justify-content:center; gap:4px; min-height:77px; width:100%;}
+.th-win-fins.th-win-silver {--fin-color:#bdcede; --fin-edge:#ffffff; --fin-shine:#f7fcff;}
+.th-win-fins.th-win-blue {--fin-color:#3289cf; --fin-edge:#a3e5ff; --fin-shine:#d1f9ff;}
+.th-win-fin {display:block; width:clamp(49px,15vw,64px); height:76px; color:var(--fin-color); filter:drop-shadow(0 4px 4px #034461bb); animation:th-fin-reward .55s backwards cubic-bezier(.17,1.7,.45,1);}
+.th-win-fin:nth-child(2) {animation-delay:.11s;}
+.th-win-fin:nth-child(3) {animation-delay:.2s;}
+.th-win-fin svg {width:100%; height:100%;}
+.th-win-tier {font-size:13px; font-weight:900; color:#fff1a9; margin:0; letter-spacing:.075em;}
+.th-win-silver + .th-win-tier {color:#f4fcff;}
+.th-win-blue + .th-win-tier {color:#c8ecff;}
+.th-win-scores {display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; width:100%;}
+.th-win-scores>div {background:#064364d9; border-radius:15px; border:1px solid #9beaf25c; display:flex; flex-direction:column; align-items:center; padding:10px 6px; gap:3px;}
+.th-win-scores span {font-size:10px; color:#b4ecf4; font-weight:800; letter-spacing:.05em;}
+.th-win-scores strong {font-size:28px; font-variant-numeric:tabular-nums; color:#fff6d6;}
+.th-win-record {margin:0; font-size:13px; font-weight:900; color:#ffeea8;}
+.th-win-best {margin:-9px 0 0; font-size:12px; color:#d9f6fc;}
+.th-win-primary {width:100%; min-height:48px; border:1px solid #fff4bb!important; border-radius:14px; background:linear-gradient(180deg,#fff4bc,#e6b75b); color:#3d331f!important; font-weight:950!important; box-shadow:0 4px 0 #8f632b;}
+.th-win-last {margin:0; font-size:13px; font-weight:800; color:#fceab9;}
+.th-win-secondary {display:grid; grid-template-columns:1fr 1fr; width:100%; gap:9px; margin-top:4px;}
+.th-win-secondary button,.th-win-secondary a {display:grid; place-items:center; font:inherit; min-height:42px; padding:7px 4px; border-radius:12px; border:1px solid #8bdae6a0; background:#073e61; color:#ecfdff; text-decoration:none; font-size:12px; font-weight:800;}
+.th-win-card :is(button,a):focus-visible {outline:3px solid white; outline-offset:3px;}
+@keyframes th-win-appear {from{opacity:0;transform:translateY(18px) scale(.94)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes th-fin-reward {from{opacity:0;transform:translateY(20px) scale(.5)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(max-height:630px){.th-win-card{padding:12px 13px;gap:6px}.th-win-fins{min-height:55px}.th-win-fin{height:55px;width:48px}.th-win-scores>div{padding:6px}.th-win-scores strong{font-size:22px}.th-win-primary{min-height:41px}.th-win-secondary button,.th-win-secondary a{min-height:35px}}
+@media(prefers-reduced-motion:reduce){.th-win-card,.th-win-fin{animation:none!important}}
