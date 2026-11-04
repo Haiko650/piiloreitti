@@ -5,6 +5,8 @@
 (function () {
   'use strict';
   const engine = window.PathleTreasureEngine;
+  const visualAssets = window.PathleVisualAssets;
+  if (!visualAssets) throw new Error('TH.3D requires visual-assets.js');
   if (!engine) throw new Error('Treasure Hunt requires js/treasure-engine.js');
 
   const levels = window.PathleTreasureLevels;
@@ -32,6 +34,12 @@
   let animating = false;
   let blocked = new Set();
   const statusMessage = 'Collect every treasure, then reach the golden X.';
+  const idlePeek=visualAssets.createIdlePeek({
+    theme:()=>level?level.environment:'coast',
+    anchor:()=>fin,
+    canShow:()=>!!level&&!!state&&!state.completed&&!animating&&
+      pendingMoves.length===0&&pointerId===null&&$('thVictory').hidden
+  });
 
   const FIN_SVG = '<svg viewBox="0 0 52 52" aria-hidden="true"><ellipse cx="26" cy="42" rx="20" ry="6" fill="#a6f5f6" opacity=".5"/><path d="M7 42 C17 29 21 12 27 6 C34 9 41 27 44 43 C30 36 21 39 7 42 Z" fill="#176bb8" stroke="#054778" stroke-width="2.6"/><path d="M17 36 Q27 15 28 13" fill="none" stroke="#7bd2f2" stroke-width="3.2" stroke-linecap="round"/></svg>';
   const TREASURE_SVG = '<svg viewBox="0 0 50 50" aria-hidden="true"><path d="M5 31 Q8 13 25 12 Q42 13 45 31 Q41 45 25 45 Q9 43 5 31Z" fill="#f6d6a1" stroke="#e8a572" stroke-width="2"/><path d="M9 29L25 42 41 29 M16 17L25 42 34 17" fill="none" stroke="#fff0c8" stroke-width="2"/><circle cx="25" cy="25" r="9" fill="#fff6dd" stroke="#80dfdc" stroke-width="2"/><circle cx="22" cy="21" r="3" fill="#fff"/></svg>';
@@ -86,6 +94,7 @@
     board.replaceChildren();
     board.style.setProperty('--cols',String(level.width));
     board.style.setProperty('--rows',String(level.height));
+    visualAssets.applyBoard(board,level.environment);
     board.setAttribute('aria-label',`${level.width} by ${level.height} Treasure Hunt board, ${level.treasures.length} treasures`);
     board.tabIndex=0;
     tiles=[];
@@ -102,16 +111,17 @@
       if(treasureSet.has(id)) {
         const gem=document.createElement('span');
         gem.className='th-treasure';
-        gem.innerHTML=TREASURE_SVG;
+        gem.innerHTML=visualAssets.sprite('treasure',level.environment,TREASURE_SVG);
         tile.append(gem);
       }
+      visualAssets.decorateTile(tile,visualAssets.terrainFor(level,id,blocked.has(id)),id===level.start?'start':id===level.goal?'goal':null,level.environment);
       board.append(tile);
       tiles.push(tile);
     }
     fin=document.createElement('div');
     fin.className='th-fin th-fin-initial';
     fin.setAttribute('aria-hidden','true');
-    fin.innerHTML=FIN_SVG;
+    fin.innerHTML=visualAssets.sprite('fin',level.environment,FIN_SVG);
     board.append(fin);
     fitBoard();
     // Do not animate in from (0,0) when starting or restarting a level.
@@ -130,6 +140,7 @@
 
   function selectLevel(index) {
     if(!Number.isInteger(index)||index<0||index>=levels.length) return;
+    idlePeek.cancel();
     const chosen=levels[index];
     const validation=engine.validateLevel(chosen);
     if(!validation.valid) throw new Error(`Invalid TH.2 test level ${index+1}: ${validation.errors.join('; ')}`);
@@ -149,6 +160,7 @@
     tabs.forEach((b,i)=>b.setAttribute('aria-pressed',String(i===index)));
     makeBoard();
     update();
+    idlePeek.reset();
   }
 
   function plannedPosition() {
@@ -167,6 +179,7 @@
     state = result.state;
     update();
     if (state.completed) {
+      idlePeek.cancel();
       pendingMoves = [];
       // Let the 80ms fin motion reach the goal before presenting results.
       // A level switch or restart cancels this timer.
@@ -187,6 +200,7 @@
       moveTimer = null;
       animating = false;
       processPendingMoves();
+      if(!animating&&!pendingMoves.length&&!state.completed)idlePeek.reset();
     }, MOVE_MS);
   }
 
@@ -199,6 +213,7 @@
     const toY = Math.floor(to / level.width);
     if (!Number.isInteger(to) || to < 0 || to >= level.width * level.height ||
         Math.abs(fromX - toX) + Math.abs(fromY - toY) !== 1 || blocked.has(to)) return false;
+    idlePeek.cancel();
     pendingMoves.push(to);
     processPendingMoves();
     return true;
