@@ -15,7 +15,8 @@
   background-size:cover !important;
   background-position:center !important;
 }
-.pa-board.pa-has-coral :is(.tile,.th-tile)[data-terrain="coral"]{background-image:var(--pa-coral) !important;}
+/* Daily coral uses a replaceable sprite; Treasure Hunt uses a tile texture. */
+.pa-board.pa-has-coral .th-tile[data-terrain="coral"]{background-image:var(--pa-coral) !important;}
 .pa-board.pa-has-beach :is(.tile,.th-tile)[data-terrain="beach"]{background-image:var(--pa-beach) !important;}
 .pa-board.pa-has-forest :is(.tile,.th-tile)[data-terrain="forest"]{background-image:var(--pa-forest) !important;}
 .pa-board.pa-has-current :is(.tile,.th-tile)[data-terrain="current"]{background-image:var(--pa-current) !important;}
@@ -23,7 +24,8 @@
 .pa-board.pa-has-start :is(.tile,.th-tile)[data-art-feature="start"] {
   background:var(--pa-start) center/cover no-repeat !important;
 }
-.pa-board.pa-has-goal :is(.tile,.th-tile)[data-art-feature="goal"] {
+/* Daily goal is the standalone sprite; TH goal is a background emblem. */
+.pa-board.pa-has-goal .th-tile[data-art-feature="goal"] {
   background:var(--pa-goal) center/cover no-repeat !important;
 }
 /* Existing Treasure Hunt coral / goal symbols are fallback graphics. */
