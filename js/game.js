@@ -47,6 +47,8 @@ try{
 }
 
 const {CONFIG,neighbors,makeBoard}=window.PathleBoardEngine;
+const visualAssets=window.PathleVisualAssets;
+if(!visualAssets)throw new Error('Pathle visual-assets.js must load before game.js');
 const STORE='pathle_ocean_adventure_v1',SOUND='pathle_sound_v05',OLD_SOUND='piiloreitti_sound_v04';
 const INTRO=['Welcome to Coral Reef','Pearl Discovery','Coral Gates','Pearl Trail','Reef Islands','Hidden Passage','Treasure Reef'];
 const HINTS=['Haiko is ready to explore.','Pearls mark a route to treasure.','Coral grows along the reef.','Follow the pearl trail.','Reef islands reveal new passages.','A winding hidden passage.','A mystery treasure lies ahead.'];
@@ -353,13 +355,19 @@ function updateAudioScene(){if(musicClock){clearInterval(musicClock);musicClock=
 }
 function activateAudio(){ensureAudio();updateAudioScene()}
 let flash=null,flashTimer,celebrationTimer,resultTimer,rushToken=0;
+const dailyPeek=visualAssets.createIdlePeek({
+ theme:()=> 'coral-reef',
+ anchor:()=>{if(!game)return null;const active=game.levels[game.activeLevel];return el('board').children[active.visited[active.visited.length-1]]||null;},
+ canShow:()=>screen==='game'&&!!game&&!game.levels[game.activeLevel].completed&&
+  ['settingsModal','storyModal','resultModal','rewardModal'].every(id=>el(id).hidden)
+});
 function clearRush(){rushToken++;document.querySelectorAll('.rush-fin').forEach(x=>x.remove());document.querySelectorAll('.rush-lit,.fin-departed').forEach(x=>x.classList.remove('rush-lit','fin-departed'))}
-function cancelEffects(){clearRush();clearTimeout(resultTimer);clearTimeout(flashTimer);clearTimeout(celebrationTimer);el('celebration').replaceChildren();el('resultModal').hidden=true;el('rewardModal').hidden=true;flash=null}
+function cancelEffects(){dailyPeek.cancel();clearRush();clearTimeout(resultTimer);clearTimeout(flashTimer);clearTimeout(celebrationTimer);el('celebration').replaceChildren();el('resultModal').hidden=true;el('rewardModal').hidden=true;flash=null}
 function rush(path,finalVictory,data){
  clearRush();clearTimeout(flashTimer);flash=null;const token=rushToken,reduce=matchMedia('(prefers-reduced-motion: reduce)').matches,board=el('board');
  if(reduce){afterRush(finalVictory,data);return}
  const tiles=Array.from(board.children),origin=tiles[0];origin?.classList.add('fin-departed');
- const fin=document.createElement('div');fin.className='rush-fin';fin.innerHTML=finSVG;document.body.append(fin);
+ const fin=document.createElement('div');fin.className='rush-fin';fin.innerHTML=visualAssets.sprite('fin','coral-reef',finSVG);document.body.append(fin);
  const duration=Math.max(900,Math.min(1900,path.length*65)),start=performance.now();let last=-1;
  function frame(now){if(token!==rushToken){fin.remove();return}const p=Math.min(1,(now-start)/duration),at=p*(path.length-1),idx=Math.min(path.length-2,Math.floor(at)),f=at-idx;
   const a=tiles[path[idx]]?.getBoundingClientRect(),b=tiles[path[idx+1]]?.getBoundingClientRect();if(!a||!b){fin.remove();afterRush(finalVictory,data);return}
@@ -462,7 +470,7 @@ function positionStoryFocus(){
  const mx=(sx+tx)/2,my=(sy+ty)/2-(sy<ty?15:-15);
  el('guidePointerPath').setAttribute('d',`M ${sx} ${sy} Q ${mx} ${my} ${tx} ${ty}`);pointer.hidden=false;
 }
-function closeStory(){el('storyModal').hidden=true;el('guideFocus').hidden=true;el('guidePointer').hidden=true;const fn=storyDone;storyDone=null;if(fn)fn()}
+function closeStory(){el('storyModal').hidden=true;dailyPeek.reset();el('guideFocus').hidden=true;el('guidePointer').hidden=true;const fn=storyDone;storyDone=null;if(fn)fn()}
 function tutorialWhenNeeded(){if(mode!=='daily'&&mode!=='dev')return;
  const queue=[];
  if(mode==='daily'&&!guideFlags.intro)queue.push({pages:guideIntro,key:'intro'});
@@ -508,7 +516,7 @@ function renderHideout(){
  el('collectibleState').textContent=earned?'Collected':'Locked';
  el('pearlCollectionTile').setAttribute('aria-label',earned?'Luminous Pearl, collected':'Mystery treasure, locked');
 }
-function showScreen(s){screen=s;document.body.classList.toggle('game-active',s==='game');['welcomeScreen','gameScreen','journeyScreen','hideoutScreen'].forEach(id=>el(id).hidden=(id!==({home:'welcomeScreen',game:'gameScreen',journey:'journeyScreen',hideout:'hideoutScreen'}[s])));if(s==='home')renderHome();if(s==='journey')renderJourney();if(s==='hideout')renderHideout();window.scrollTo(0,0);if(s==='game')requestSizeBoard();updateAudioScene()}
+function showScreen(s){screen=s;document.body.classList.toggle('game-active',s==='game');['welcomeScreen','gameScreen','journeyScreen','hideoutScreen'].forEach(id=>el(id).hidden=(id!==({home:'welcomeScreen',game:'gameScreen',journey:'journeyScreen',hideout:'hideoutScreen'}[s])));if(s==='home')renderHome();if(s==='journey')renderJourney();if(s==='hideout')renderHideout();window.scrollTo(0,0);if(s==='game'){requestSizeBoard();dailyPeek.reset()}else dailyPeek.cancel();updateAudioScene()}
 function toHome(){cancelEffects();if(mode==='daily')persist();showScreen('home')}
 function startGame(which){cancelEffects();if(which==='daily'){
   if(!canPlayToday()){showScreen('home');return}
@@ -526,7 +534,7 @@ function settingsClose(){el('settingsModal').hidden=true}
 function choose(id){if(!game)return;if(mode==='daily'&&today()!==game.date){alert('A new day has begun. Return to the menu to start today’s adventure.');toHome();return}
  const idx=game.activeLevel,s=game.levels[idx],b=game.boards[idx],step=s.visited.length-1,here=s.visited[step];
  if(s.completed||b.blocks.includes(id)||!neighbors(here,CONFIG[idx].size).includes(id)||s.visited.includes(id)||(s.wrongByStep[step]||[]).includes(id))return;
- s.clicks++;const right=id===b.path[step+1];
+ dailyPeek.cancel();s.clicks++;const right=id===b.path[step+1];
  if(right){s.visited.push(id);if(id===CONFIG[idx].size**2-1){
   s.completed=true;const oldBest=s.bestClicks;
   if(mode!=='practice'){s.attemptsUsed++;s.attemptScores.push(s.clicks);s.bestClicks=Math.min(...s.attemptScores)}
@@ -540,7 +548,7 @@ function choose(id){if(!game)return;if(mode==='daily'&&today()!==game.date){aler
   const data={mode,level:idx,used:mode==='practice'?1:s.attemptsUsed,remaining:mode==='practice'?null:3-s.attemptsUsed,taps:s.clicks,best:mode==='practice'?s.clicks:s.bestClicks,record:mode!=='practice'&&(oldBest===null||s.clicks<oldBest),finalVictory:finale,reward};
   const token=rushToken,path=b.path.slice();setTimeout(()=>{if(mode===data.mode&&game.activeLevel===idx&&s.completed&&token===rushToken)rush(path,finale,data)},75);
  }}else{(s.wrongByStep[step]??=[]).push(id)}
- flash={id,right};beep(right);persist();render();clearTimeout(flashTimer);flashTimer=setTimeout(()=>{flash=null;if(screen==='game')render()},290);
+ flash={id,right};beep(right);persist();render();if(!s.completed)dailyPeek.reset();clearTimeout(flashTimer);flashTimer=setTimeout(()=>{flash=null;if(screen==='game')render()},290);
 }
 function render(){if(!game)return;const idx=game.activeLevel,cfg=CONFIG[idx],s=game.levels[idx],b=game.boards[idx],step=s.visited.length-1,here=s.visited[step],isDaily=mode!=='practice';
  el('gameTitle').textContent=mode==='daily'?'DAILY ADVENTURE':mode==='dev'?'DEV · TEST ADVENTURE':'PRACTICE MODE';
@@ -553,11 +561,12 @@ function render(){if(!game)return;const idx=game.activeLevel,cfg=CONFIG[idx],s=g
  el('clicks').textContent=s.clicks;el('best').textContent=best===null?'—':best;el('optimal').textContent=b.path.length-1;el('grade').textContent=best===null?'—':grade(best,b.path.length-1);
  el('attemptInfo').classList.toggle('hidden',!isDaily);
  if(isDaily)el('attemptInfo').textContent=s.completed?`Completed attempts: ${s.attemptsUsed}/3 · ${3-s.attemptsUsed} left · Best ${s.bestClicks} taps`:`Attempt ${Math.min(3,s.attemptsUsed+1)} of 3 · ${s.attemptsUsed} finished`;
- const board=el('board');board.style.setProperty('--size',cfg.size);board.replaceChildren();const adjacent=neighbors(here,cfg.size);
+ const board=el('board');board.style.setProperty('--size',cfg.size);board.replaceChildren();visualAssets.applyBoard(board,'coral-reef');const adjacent=neighbors(here,cfg.size);
  for(let id=0;id<cfg.size*cfg.size;id++){
   const t=document.createElement('button');t.type='button';t.className='tile';const visited=s.visited.includes(id),wrong=(s.wrongByStep[step]||[]).includes(id),obstacle=b.blocks.includes(id),pearl=b.pearls.includes(id),possible=!s.completed&&!obstacle&&adjacent.includes(id)&&!visited&&!wrong;
   if(obstacle)t.classList.add('obstacle');if(visited)t.classList.add('visited');if(id===here)t.classList.add('current');if(wrong)t.classList.add('wrong');if(id===cfg.size*cfg.size-1)t.classList.add('goal');if(pearl)t.classList.add('pearl-tile');if(possible)t.classList.add('possible');if(flash?.id===id)t.classList.add(flash.right?'correct-pop':'wrong-pop');
-  if(id===0)t.innerHTML=finSVG;else if(id===cfg.size*cfg.size-1)t.innerHTML=treasureSVG;else if(obstacle)t.innerHTML=coralSVG;else if(wrong)t.textContent='×';else if(visited)t.textContent='✓';else if(pearl)t.innerHTML=pearlSVG;
+  if(id===0)t.innerHTML=visualAssets.sprite('fin','coral-reef',finSVG);else if(id===cfg.size*cfg.size-1)t.innerHTML=visualAssets.sprite('goal','coral-reef',treasureSVG);else if(obstacle)t.innerHTML=visualAssets.sprite('coral','coral-reef',coralSVG);else if(wrong)t.textContent='×';else if(visited)t.textContent='✓';else if(pearl)t.innerHTML=visualAssets.sprite('pearl','coral-reef',pearlSVG);
+   visualAssets.decorateTile(t,visualAssets.terrainFor(null,id,obstacle),id===0?'start':id===cfg.size*cfg.size-1?'goal':null,'coral-reef');
   t.disabled=!possible;t.setAttribute('aria-label',`Row ${Math.floor(id/cfg.size)+1} column ${id%cfg.size+1}${id===0?' shark fin start':''}${id===cfg.size*cfg.size-1?' treasure X finish':''}${obstacle?' obstacle':''}${pearl?' pearl clue':''}${visited?' visited':''}${wrong?' incorrect':''}`);
   t.onclick=()=>choose(id);board.append(t);
  }
