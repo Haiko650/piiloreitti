@@ -3,7 +3,7 @@
    element (with independent cosmetics, rewards and animations). */
 #welcomeScreen {
   background-color:#087eb8 !important;
-  background-image:url("../images/home-reef-background.webp"),
+  background-image:url("../images/home-reef-background.webp?v=20261104-1"),
     radial-gradient(ellipse at 50% 18%,#42dbe7,#13a7d4 40%,#076fa8 76%,#075280) !important;
   background-repeat:no-repeat !important;
   background-size:cover !important;
