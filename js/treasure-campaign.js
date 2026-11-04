@@ -20,8 +20,6 @@
   const $=id=>document.getElementById(id);
   const shell=document.querySelector('.th-shell');
   const boardPanel=document.querySelector('.th-panel');
-  const tabs=document.querySelector('.th-level-tabs');
-  const note=document.querySelector('.th-footnote');
   const map=$('thCampaignMap');
   const regions=$('thMapRegions');
   const summary=$('thMapSummary');
@@ -65,13 +63,14 @@
   function clearError(){errorBox.hidden=true;errorRetry.onclick=null;}
   function setGameVisible(visible){
     boardPanel.hidden=!visible;
-    tabs.hidden=true; // Campaign selects levels only on the adventure map.
-    note.hidden=true;
     map.hidden=visible;
     mapButton.hidden=!visible;
   }
-  function zoneName(index){return ['Coral Coast','Open Ocean','River Delta'][index]||'Ocean Journey';}
-  function zoneClass(index){return ['coast','ocean','river'][index]||'ocean';}
+  // Presentation-only structure. Future illustrated region art can replace
+  // these CSS backgrounds without changing level IDs, scores or unlocks.
+  function zoneName(index){
+    return ['Coral Coast','Open Ocean','River Delta','Kelp Forest'][index%4];
+  }
   function medalName(score,level){
     const rating=grading.rateMoves(score,optimal(level));
     return {tier:rating.tier,fins:rating.fins};
@@ -79,76 +78,69 @@
   function paintMap(){
     if(!progress)return;
     const cleared=progressModel.completedCount(progress,levels);
-    summary.textContent=cleared===levels.length?'All 30 maps explored! Replay to improve your fins.':
-      cleared+' / '+levels.length+' completed · Next: Level '+(cleared+1);
+    summary.textContent=cleared===levels.length
+      ? 'All '+levels.length+' levels complete · Replay to improve your scores!'
+      : cleared+' / '+levels.length+' complete · Next level: '+(cleared+1);
     regions.replaceChildren();
     const zoneCount=Math.ceil(levels.length/10);
-    for(let z=0;z<zoneCount;z++){
+    for(let zone=0;zone<zoneCount;zone++){
+      const first=zone*10,last=Math.min(levels.length,first+10);
       const section=document.createElement('section');
-      section.className='th-map-zone th-map-'+zoneClass(z);
-      section.setAttribute('aria-label',zoneName(z)+', levels '+(z*10+1)+' to '+Math.min(levels.length,(z+1)*10));
-      const heading=document.createElement('div');heading.className='th-map-zone-heading';
-      const title=document.createElement('h3');title.textContent=zoneName(z);
+      section.className='th-map-zone';
+      section.dataset.area=levels[first].environment;
+      section.setAttribute('aria-label',zoneName(zone)+', levels '+(first+1)+' to '+last);
+      const heading=document.createElement('div');
+      heading.className='th-map-zone-heading';
+      const title=document.createElement('h3');title.textContent=zoneName(zone);
       const count=document.createElement('span');
-      const local=levels.slice(z*10,(z+1)*10);
-      const localDone=local.filter(level=>progressModel.bestFor(progress,level)!==null).length;
-      count.textContent=localDone+' / '+local.length;
+      count.textContent=levels.slice(first,last)
+        .filter(item=>progressModel.bestFor(progress,item)!==null).length+' / '+(last-first);
       heading.append(title,count);section.append(heading);
-      const route=document.createElement('div');route.className='th-map-route';
-      const trail=document.createElementNS('http://www.w3.org/2000/svg','svg');
-      trail.setAttribute('viewBox','0 0 100 100');
-      trail.setAttribute('preserveAspectRatio','none');
-      trail.setAttribute('aria-hidden','true');
-      trail.classList.add('th-map-trail');
-      const path=document.createElementNS('http://www.w3.org/2000/svg','path');
-      path.setAttribute('d','M 10 28 C 18 21,22 36,30 28 S 42 20,50 28 S 62 36,70 28 S 82 20,90 28 Q 96 50,90 70 C 82 62,78 78,70 70 S 58 62,50 70 S 38 78,30 70 S 18 62,10 70');
-      path.setAttribute('fill','none');
-      path.setAttribute('stroke','currentColor');
-      path.setAttribute('stroke-width','1.5');
-      path.setAttribute('stroke-linecap','round');
-      path.setAttribute('stroke-dasharray','2.3 2.4');
-      trail.append(path);route.append(trail);
-      local.forEach((level,offset)=>{
-        const index=z*10+offset;
-        const record=progressModel.bestFor(progress,level);
+      const grid=document.createElement('div');
+      grid.className='th-map-grid';
+      for(let index=first;index<last;index++){
+        const level=levels[index],best=progressModel.bestFor(progress,level);
         const unlocked=progressModel.canEnter(progress,levels,index);
-        const current=unlocked&&record===null;
-        const x=offset<5?10+offset*20:90-(offset-5)*20;
-        const y=offset<5?28:70;
+        const current=unlocked&&best===null;
         const button=document.createElement('button');
-        button.type='button';button.className='th-map-stop';
-        button.classList.add(record!==null?'is-complete':current?'is-next':'is-locked');
-        button.style.left=x+'%';button.style.top=y+'%';
-        button.disabled=!unlocked;
+        button.type='button';button.className='th-map-level';
+        button.classList.add(best!==null?'is-complete':current?'is-next':'is-locked');
         button.dataset.level=String(index+1);
-        const numeral=document.createElement('strong');numeral.textContent=String(index+1);
-        button.append(numeral);
-        if(record!==null){
-          const medal=medalName(record,level);
+        button.disabled=!unlocked;
+        const number=document.createElement('strong');
+        number.className='th-map-number';number.textContent=String(index+1);
+        button.append(number);
+        const label=document.createElement('small');
+        label.className='th-map-status';
+        if(best!==null){
+          const medal=medalName(best,level);
           button.classList.add('medal-'+medal.tier);
-          const fin=document.createElement('span');fin.className='th-map-medal';
-          fin.textContent='◢'.repeat(medal.fins);
-          button.append(fin);
-          button.setAttribute('aria-label','Level '+(index+1)+', completed, '+medal.fins+' '+medal.tier+' fins, best '+record+' moves');
+          label.textContent=medal.fins+' fins';
+          button.title='Personal best: '+best+' moves';
+          button.setAttribute('aria-label','Level '+(index+1)+', completed, '+medal.fins+' '+medal.tier+' fins, best '+best+' moves');
+        }else if(current){
+          label.textContent='PLAY';
+          button.setAttribute('aria-label','Level '+(index+1)+', ready to play');
+          button.setAttribute('aria-current','step');
         }else{
-          button.setAttribute('aria-label','Level '+(index+1)+(current?', ready to play':', locked'));
-          if(!current){const lock=document.createElement('small');lock.textContent='●';lock.setAttribute('aria-hidden','true');button.append(lock);}
+          label.textContent='LOCKED';
+          button.setAttribute('aria-label','Level '+(index+1)+', locked');
         }
-        if(current)button.setAttribute('aria-current','step');
+        button.append(label);
         button.addEventListener('click',()=>openLevel(index));
-        route.append(button);
-      });
-      section.append(route);
-      regions.append(section);
+        grid.append(button);
+      }
+      section.append(grid);regions.append(section);
     }
   }
   function showMap(){
     if(!ready||busy)return;
     clearError();shell.inert=false;
+    if(typeof ui.leaveLevel==='function')ui.leaveLevel();
     setGameVisible(false);
     paintMap();
     const next=progressModel.completedCount(progress,levels);
-    const target=map.querySelector('.is-next')||map.querySelector('.th-map-stop.is-complete:last-of-type');
+    const target=map.querySelector('.is-next')||map.querySelector('.th-map-level.is-complete:last-of-type');
     if(target&&next<levels.length&&typeof target.scrollIntoView==='function')target.scrollIntoView({block:'nearest',behavior:'auto'});
   }
   function openLevel(index){
