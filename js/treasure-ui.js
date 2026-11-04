@@ -141,6 +141,18 @@
     animating = false;
   }
 
+  function leaveLevel(){
+    // Leaving the map mid-move must cancel all queued movement, not let a
+    // hidden board finish and secretly grant progress in the background.
+    // If the victory animation is still pending, keep the board until its
+    // completion event has been safely saved by the campaign controller.
+    if(state?.completed&&victoryTimer!==null)return false;
+    idlePeek.cancel();
+    cancelPendingMoves();
+    if(victoryTimer!==null){clearTimeout(victoryTimer);victoryTimer=null;}
+    return true;
+  }
+
   function selectLevel(index) {
     if(!Number.isInteger(index)||index<0||index>=levels.length) return;
     if(!window.PathleTreasureCampaign?.canEnter(index))return;
@@ -308,6 +320,6 @@
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden) processPendingMoves();
   });
-  window.PathleTreasureUI=Object.freeze({selectLevel,fitBoard,getCurrentLevel:()=>levelIndex});
+  window.PathleTreasureUI=Object.freeze({selectLevel,fitBoard,leaveLevel,getCurrentLevel:()=>levelIndex});
   // The map opens a level after shared progress has been loaded and verified.
 })();
