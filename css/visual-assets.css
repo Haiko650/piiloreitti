@@ -1,0 +1,56 @@
+/* Pathle visual skin layer. Loaded AFTER each mode's existing CSS.
+   Artwork absent -> the current accepted water and obstacle designs remain. */
+.pa-board.pa-has-water :is(.tile,.th-tile)[data-terrain="water"] {
+  background-image:var(--pa-water) !important;
+  background-size:cover !important;
+  background-repeat:no-repeat !important;
+  background-position:center !important;
+}
+.pa-board.pa-has-coral :is(.tile,.th-tile)[data-terrain="coral"],
+.pa-board.pa-has-beach :is(.tile,.th-tile)[data-terrain="beach"],
+.pa-board.pa-has-forest :is(.tile,.th-tile)[data-terrain="forest"],
+.pa-board.pa-has-current :is(.tile,.th-tile)[data-terrain="current"],
+.pa-board.pa-has-rock :is(.tile,.th-tile)[data-terrain="rock"] {
+  background-repeat:no-repeat !important;
+  background-size:cover !important;
+  background-position:center !important;
+}
+.pa-board.pa-has-coral :is(.tile,.th-tile)[data-terrain="coral"]{background-image:var(--pa-coral) !important;}
+.pa-board.pa-has-beach :is(.tile,.th-tile)[data-terrain="beach"]{background-image:var(--pa-beach) !important;}
+.pa-board.pa-has-forest :is(.tile,.th-tile)[data-terrain="forest"]{background-image:var(--pa-forest) !important;}
+.pa-board.pa-has-current :is(.tile,.th-tile)[data-terrain="current"]{background-image:var(--pa-current) !important;}
+.pa-board.pa-has-rock :is(.tile,.th-tile)[data-terrain="rock"]{background-image:var(--pa-rock) !important;}
+.pa-board.pa-has-start :is(.tile,.th-tile)[data-art-feature="start"] {
+  background:var(--pa-start) center/cover no-repeat !important;
+}
+.pa-board.pa-has-goal :is(.tile,.th-tile)[data-art-feature="goal"] {
+  background:var(--pa-goal) center/cover no-repeat !important;
+}
+/* Existing Treasure Hunt coral / goal symbols are fallback graphics. */
+.pa-board.pa-has-coral .th-tile.is-land[data-terrain="coral"]::after {content:none !important;}
+.pa-board.pa-has-goal .th-tile.is-goal::after {content:none !important;}
+.pa-sprite{display:block;object-fit:contain;width:80%;height:80%;margin:auto;pointer-events:none;}
+.rush-fin .pa-sprite{width:100%;height:100%;}
+.pa-wave{
+  position:absolute;inset:0;display:block;pointer-events:none;
+  background:var(--pa-wave) center/cover no-repeat;
+  opacity:.8;animation:pa-wave-drift 5s ease-in-out infinite alternate;
+}
+/* No additional DOM layer is created when wave artwork is unspecified. */
+@keyframes pa-wave-drift{from{transform:translateX(-3%);opacity:.48}to{transform:translateX(3%);opacity:.85}}
+.pa-peek-anchor{overflow:visible !important;isolation:isolate;z-index:9 !important;}
+.pa-idle-haiko{
+  position:absolute;pointer-events:none;display:block;z-index:12;
+  width:145%;height:145%;left:50%;bottom:26%;
+  background-position:bottom center;background-repeat:no-repeat;background-size:contain;
+  animation:pa-idle-peek 2.5s ease-in-out both;
+}
+@keyframes pa-idle-peek{
+  0%{opacity:0;transform:translate(-50%,34%) scale(.72)}
+  20%{opacity:1;transform:translate(-50%,-3%) scale(.92)}
+  65%{opacity:1;transform:translate(-50%,-8%) scale(1)}
+  100%{opacity:0;transform:translate(-50%,35%) scale(.78)}
+}
+@media(prefers-reduced-motion:reduce){
+  .pa-wave,.pa-idle-haiko{animation:none !important;}
+}
