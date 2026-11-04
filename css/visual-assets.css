@@ -34,8 +34,12 @@
 .pa-wave{
   position:absolute;inset:0;display:block;pointer-events:none;
   background:var(--pa-wave) center/cover no-repeat;
-  opacity:.8;animation:pa-wave-drift 5s ease-in-out infinite alternate;
+  z-index:0;opacity:.8;animation:pa-wave-drift 5s ease-in-out infinite alternate;
 }
+.pa-board :is(.tile,.th-tile) > svg,
+.pa-board :is(.tile,.th-tile) > .pa-sprite{position:relative;z-index:2;}
+.pa-board .th-treasure{z-index:2;}
+.pa-board .th-tile.is-goal::after{z-index:2;}
 /* No additional DOM layer is created when wave artwork is unspecified. */
 @keyframes pa-wave-drift{from{transform:translateX(-3%);opacity:.48}to{transform:translateX(3%);opacity:.85}}
 .pa-peek-anchor{overflow:visible !important;isolation:isolate;z-index:9 !important;}
