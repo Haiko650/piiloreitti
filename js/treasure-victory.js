@@ -84,7 +84,15 @@
     if(to>=levels.length)return;
     if(root.PathleTreasureCampaignMode && (!root.PathleTreasureCampaign || !root.PathleTreasureCampaign.canEnter(to)))return;
     closeDialog();
-    document.querySelector('[data-th-level="' + to + '"]').click();
+    if(root.PathleTreasureCampaignMode){
+      // The finished game has no hidden test tabs. Navigate through the
+      // same controller as the numbered map, preserving unlock checks.
+      root.PathleTreasureCampaign.openLevel(to);
+    }else{
+      // Backwards compatibility for the original isolated TH.3 unit tests.
+      const tab=document.querySelector('[data-th-level="' + to + '"]');
+      if(tab)tab.click();
+    }
   });
   replay.addEventListener('click', () => {
     closeDialog();
