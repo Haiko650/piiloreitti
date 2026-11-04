@@ -1,18 +1,10 @@
 # TH.4A – Deterministic Treasure Hunt field generator
 
-Implemented in `js/treasure-generator.js`. Existing manual TH.2/TH.3
-boards remain in `js/treasure-levels.js` and are still the default game.
+Implemented in `js/treasure-generator.js`. **Historical engineering stage:** the normal `treasure-hunt.html` now opens the complete generated adventure with its numbered map. The three original TH.2/TH.3 boards remain in `js/treasure-levels.js` only as regression fixtures.
 
 ## Development preview
 
-Open `treasure-hunt.html?th4a=1` on the `pathle-modular-dev`
-preview. This swaps the three manual test boards for **30 generated
-test boards**. A horizontally scrollable 1–30 selector allows direct
-testing; all levels are temporarily available. Neither progress nor
-best scores are persisted in TH.4A.
-
-The normal `treasure-hunt.html` URL still uses the three approved
-prototype maps and their original optimal scores (12, 24, 35).
+The former temporary `?th4a=1` preview has been retired. The same thirty stable generated maps are now the actual Treasure Hunt campaign, selected from a numbered map and saved to the game's existing IndexedDB. The three prototype boards and their optimal scores (12, 24, 35) are preserved in automated regression tests.
 
 ## Determinism and saved progress
 
