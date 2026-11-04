@@ -149,7 +149,7 @@
     paintMap();
     const next=progressModel.completedCount(progress,levels);
     const target=map.querySelector('.is-next')||map.querySelector('.th-map-stop.is-complete:last-of-type');
-    if(target&&next<levels.length)target.scrollIntoView({block:'nearest',behavior:'instant'});
+    if(target&&next<levels.length&&typeof target.scrollIntoView==='function')target.scrollIntoView({block:'nearest',behavior:'auto'});
   }
   function openLevel(index){
     if(!ready||busy||!progressModel.canEnter(progress,levels,index))return;
