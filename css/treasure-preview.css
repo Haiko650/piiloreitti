@@ -1,0 +1,18 @@
+/* TH.4A: scrollable developer selection for 30 generated maps.
+ * Default three-board prototype is untouched; this class is only set when
+ * ?th4a=1 selects a temporary generated campaign.
+ */
+.th-generated-preview .th-level-tabs{
+ display:flex;flex:0 0 auto;align-items:stretch;gap:6px;
+ width:100%;max-width:100%;overflow-x:auto;overflow-y:hidden;
+ scrollbar-width:thin;scrollbar-color:#8ddde2 #0b5879;
+ -webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;
+ padding:1px 1px 6px;
+}
+.th-generated-preview .th-level-tabs button{
+ flex:0 0 63px;min-width:63px;max-width:63px;
+ min-height:43px;scroll-snap-align:center;
+ padding:4px 2px;
+}
+.th-generated-preview .th-heading h1{font-size:clamp(19px,5vw,25px);}
+.th-generated-preview .th-footnote{font-size:10px;}
