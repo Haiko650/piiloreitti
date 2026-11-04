@@ -99,13 +99,20 @@ test('browser global loads without Node imports and returns identical campaign',
   const answer=context.window.PathleTreasureGenerator.generateLevel(8);
   assert.equal(JSON.stringify(answer),JSON.stringify(generator.generateLevel(8)));
 });
-test('the generated test screen is opt-in and does not replace the normal prototype',()=>{
+test('the normal Treasure Hunt entrypoint always loads the generated campaign map',()=>{
   const html=source('treasure-hunt.html');
-  assert.ok(html.indexOf('js/treasure-levels.js')<html.indexOf('js/treasure-generator.js'));
-  assert.ok(html.indexOf('js/treasure-generator.js')<html.indexOf('js/treasure-preview.js'));
-  assert.ok(html.indexOf('js/treasure-preview.js')<html.indexOf('js/treasure-ui.js'));
-  const preview=source('js/treasure-preview.js');
-  assert.match(preview,/params.get\('th4a'\)!=='1'/);
-  assert.match(preview,/generateCampaign\(\)/);
-  assert.match(source('js/treasure-ui.js'),/window.PathleTreasurePreview/);
+  assert.ok(html.indexOf('js/treasure-generator.js')<html.indexOf('js/treasure-bootstrap.js'));
+  assert.ok(html.indexOf('js/treasure-bootstrap.js')<html.indexOf('js/treasure-ui.js'));
+  assert.ok(html.indexOf('js/treasure-ui.js')<html.indexOf('js/treasure-campaign.js'));
+  assert.ok(!html.includes('js/treasure-preview.js'));
+  assert.ok(!html.includes('js/treasure-levels.js'));
+  assert.ok(!html.includes('Select test level'));
+  const bootstrap=source('js/treasure-bootstrap.js');
+  assert.match(bootstrap,/root.PathleTreasureLevels=levels/);
+  assert.match(bootstrap,/root.PathleTreasureCampaignMode=true/);
+  assert.match(bootstrap,/generator.generateCampaign\(\)/);
+  const home=source('index.html');
+  assert.match(home,/id="playTreasure" href="treasure-hunt.html"/);
+  assert.doesNotMatch(home,/3 playable test levels/);
+  assert.match(source('js/treasure-ui.js'),/const levels = window.PathleTreasureLevels/);
 });
