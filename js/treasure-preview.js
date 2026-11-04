@@ -5,7 +5,8 @@
 (function(root){
   'use strict';
   const params=new URLSearchParams(root.location.search);
-  if(params.get('th4a')!=='1')return;
+  const campaign=params.get('th5')==='1';
+  if(!campaign&&params.get('th4a')!=='1')return;
   const generator=root.PathleTreasureGenerator;
   const engine=root.PathleTreasureEngine;
   const solver=root.PathleTreasureSolver;
@@ -18,5 +19,6 @@
     if(solver.solve(level).optimalMoves<1)throw new Error('No optimal route: '+level.id);
   }
   root.PathleTreasureLevels=levels;
-  root.PathleTreasurePreview=true;
+  root.PathleTreasureCampaignMode=campaign;
+  root.PathleTreasurePreview=!campaign;
 })(window);
