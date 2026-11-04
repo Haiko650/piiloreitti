@@ -27,6 +27,18 @@
   }
 
   function openDialog(event) {
+    // In TH.5 campaign mode, do not show the victory dialog until the
+    // atomic IndexedDB update succeeds. On failure, a blocking Retry Save
+    // dialog keeps the completed run available and prevents false unlocks.
+    if(root.PathleTreasureCampaignMode){
+      if(!root.PathleTreasureCampaign)throw new Error('TH.5 campaign storage is not ready');
+      root.PathleTreasureCampaign.handleCompletion(event.detail,info=>paintDialog(event,info));
+      return;
+    }
+    paintDialog(event,null);
+  }
+
+  function paintDialog(event,saveInfo) {
     const detail = event.detail || {};
     const level = detail.level;
     const run = detail.run;
@@ -36,14 +48,15 @@
     }
     const rating = grading.rateRun(level, run);
     completedIndex = index;
-    const oldBest = sessionBest.get(level.id);
-    const improved = oldBest === undefined || rating.score < oldBest;
-    if (improved) sessionBest.set(level.id, rating.score);
+    const oldBest = saveInfo ? saveInfo.previousBest : sessionBest.get(level.id);
+    const improved = saveInfo ? saveInfo.improved : oldBest === undefined || rating.score < oldBest;
+    if(saveInfo)sessionBest.set(level.id,saveInfo.bestMoves);
+    else if(improved)sessionBest.set(level.id,rating.score);
 
     $('thWinMoves').textContent = String(rating.score);
     $('thWinOptimal').textContent = String(rating.optimalMoves);
-    $('thWinBest').textContent = 'Best this session: ' + sessionBest.get(level.id) + ' moves';
-    $('thWinRecord').textContent = oldBest === undefined ? 'FIRST CLEAR!' : improved ? 'NEW BEST!' : 'WELL DONE!';
+    $('thWinBest').textContent = (saveInfo?'Personal best: ':'Best this session: ')+sessionBest.get(level.id)+' moves';
+    $('thWinRecord').textContent = (saveInfo?saveInfo.firstClear:oldBest===undefined)?'FIRST CLEAR!':improved?'NEW BEST!':'WELL DONE!';
     const tierNames = {gold:'GOLDEN PERFORMANCE!', silver:'SILVER PERFORMANCE!', blue:'LEVEL COMPLETE!'};
     $('thWinTier').textContent = tierNames[rating.tier];
     $('thWinLevel').textContent = 'LEVEL ' + (index + 1) + ' / ' + levels.length;
@@ -68,7 +81,8 @@
 
   next.addEventListener('click', () => {
     const to = completedIndex + 1;
-    if (to >= levels.length) return;
+    if(to>=levels.length)return;
+    if(root.PathleTreasureCampaignMode && (!root.PathleTreasureCampaign || !root.PathleTreasureCampaign.canEnter(to)))return;
     closeDialog();
     document.querySelector('[data-th-level="' + to + '"]').click();
   });
