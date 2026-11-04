@@ -1,5 +1,5 @@
-/* TH.5A campaign UI and safe persistence.
- * Enabled ONLY by ?th5=1. Existing TH.3 and TH.4A previews remain unchanged.
+/* Treasure Hunt's permanent campaign UI and safe persistence.
+ * Launched by the normal treasure-hunt.html entrypoint.
  * All writes atomically mutate extensions.treasureHunt in PathleStorage.update;
  * we never write a stale copy of Daily Adventure, preferences or rewards.
  */
