@@ -136,7 +136,7 @@
   function showMap(){
     if(!ready||busy)return;
     clearError();shell.inert=false;
-    if(typeof ui.leaveLevel==='function')ui.leaveLevel();
+    if(typeof ui.leaveLevel==='function'&&ui.leaveLevel()===false)return;
     setGameVisible(false);
     paintMap();
     const next=progressModel.completedCount(progress,levels);
