@@ -1,8 +1,8 @@
 # Pathle Treasure Hunt – TH.5A Adventure Map & Save Progress
 
-**Development preview:** `treasure-hunt.html?th5=1` on `pathle-modular-dev` through RawGitHack.
+**Current player entrypoint:** `treasure-hunt.html` on `pathle-modular-dev` through RawGitHack. No query parameter or separate test version is required.
 
-The normal `treasure-hunt.html` stays at three manual prototype boards. `?th4a=1` still opens thirty freely selectable generated test boards **without permanent progress**. Only `?th5=1` enables the adventure map and indexed saves.
+The old three-map prototype and temporary query-parameter previews have been retired from the player interface. Thirty generated maps and durable IndexedDB progress now form the normal Treasure Hunt mode.
 
 ## Progression contract
 
@@ -32,8 +32,8 @@ The only use of `save(createEmptySave())` is a first visit to Treasure Hunt on a
 
 - `js/treasure-progress.js` – model, validation, immutable updates.
 - `js/treasure-campaign.js` – map, safe boot, IndexedDB updates and retry.
-- `css/treasure-campaign.css` – responsive visual map and error dialog.
-- `js/treasure-preview.js` – opt-in TH.4A/TH.5A modes.
+- `css/treasure-campaign.css` – numbered map layout with area sections; later graphics can replace styles.
+- `js/treasure-bootstrap.js` – always loads the generated campaign for the normal game.
 - `js/treasure-ui.js` – safe level selection and unchanged game engine.
 - `js/treasure-victory.js` – awaits a successful result save.
 
