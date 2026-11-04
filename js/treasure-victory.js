@@ -1,5 +1,5 @@
-/* Pathle Treasure Hunt TH.3C – modal results UI.
- * Session best scores only; persistent IndexedDB records are a later step.
+/* Pathle Treasure Hunt – modal results UI.
+ * In campaign mode, permanent best scores are saved before displaying the result.
  * This module never changes the board layout or game rules.
  */
 (function (root) {
