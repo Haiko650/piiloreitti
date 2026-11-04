@@ -10,13 +10,36 @@
   if (!engine) throw new Error('Treasure Hunt requires js/treasure-engine.js');
 
   const levels = window.PathleTreasureLevels;
-  if (!Array.isArray(levels) || levels.length !== 3) throw new Error('TH.2 needs three test levels');
+  if (!Array.isArray(levels) || levels.length < 1) throw new Error('Treasure Hunt needs at least one valid level');
   const $ = id => document.getElementById(id);
   const board = $('thBoard');
   const moves = $('thMoves');
   const treasures = $('thTreasures');
   const levelText = $('thLevel');
   const msg = $('thMessage');
+  // The default TH.3 prototype still shows the exact same three original tabs.
+  // Only ?th4a=1 builds a scrollable, temporary 30-board test selector.
+  if(window.PathleTreasurePreview){
+    document.body.classList.add('th-generated-preview');
+    document.querySelector('.th-heading small').textContent='TREASURE HUNT · TH.4A GENERATOR TEST';
+    document.querySelector('.th-heading h1').textContent='Generated Adventures';
+    document.querySelector('.th-test-badge').textContent='30 MAPS';
+    document.querySelector('.th-footnote').textContent='Generator test · Levels are not saved or locked yet. Try any map, then restart it to confirm the layout stays identical.';
+    $('thWinFinal').textContent='All 30 generated test levels completed!';
+    const host=document.querySelector('.th-level-tabs');
+    const buttons=levels.map((item,i)=>{
+      const button=document.createElement('button');
+      button.type='button';
+      button.dataset.thLevel=String(i);
+      button.setAttribute('aria-pressed','false');
+      button.textContent=String(i+1);
+      const label=document.createElement('small');
+      label.textContent=item.environment==='coast'?'Coast':item.environment==='ocean'?'Ocean':item.environment==='river'?'River':'Forest';
+      button.append(label);
+      return button;
+    });
+    host.replaceChildren(...buttons);
+  }
   const tabs = [...document.querySelectorAll('[data-th-level]')];
   let levelIndex = 0;
   let level = null;
