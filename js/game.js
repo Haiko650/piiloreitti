@@ -442,7 +442,7 @@ async function retryTreasureSave(){
   return false;
  }
 }
-function openStory(pages,onDone){storyPages=pages;storyIndex=0;storyDone=onDone||null;paintStory();el('storyModal').hidden=false;requestAnimationFrame(positionStoryFocus)}
+function openStory(pages,onDone){dailyPeek.cancel();storyPages=pages;storyIndex=0;storyDone=onDone||null;paintStory();el('storyModal').hidden=false;requestAnimationFrame(positionStoryFocus)}
 function paintStory(){const a=storyPages[storyIndex];if(!a)return;el('storyHeading').textContent=a.heading;el('storyText').textContent=a.text;const dots=el('storyDots');dots.replaceChildren();storyPages.forEach((_,i)=>{const dot=document.createElement('span');dot.className=i===storyIndex?'active':'';dots.append(dot)});el('storyPrev').disabled=storyIndex===0;el('storyNext').textContent=storyIndex===storyPages.length-1?'✓':'→';requestAnimationFrame(positionStoryFocus)}
 function positionStoryFocus(){
  const focus=el('guideFocus'),pointer=el('guidePointer'),scene=el('storyModal').querySelector('.haiko-guide-scene');
@@ -529,8 +529,8 @@ function startGame(which){cancelEffects();if(which==='daily'){
  }
  render();showScreen('game');activateAudio();tutorialWhenNeeded();
 }
-function settingsOpen(){activateAudio();el('soundSwitch').checked=sound;el('musicSwitch').checked=musicOn;el('ambientSwitch').checked=ambientOn;el('settingsModal').hidden=false}
-function settingsClose(){el('settingsModal').hidden=true}
+function settingsOpen(){dailyPeek.cancel();activateAudio();el('soundSwitch').checked=sound;el('musicSwitch').checked=musicOn;el('ambientSwitch').checked=ambientOn;el('settingsModal').hidden=false}
+function settingsClose(){el('settingsModal').hidden=true;dailyPeek.reset()}
 function choose(id){if(!game)return;if(mode==='daily'&&today()!==game.date){alert('A new day has begun. Return to the menu to start today’s adventure.');toHome();return}
  const idx=game.activeLevel,s=game.levels[idx],b=game.boards[idx],step=s.visited.length-1,here=s.visited[step];
  if(s.completed||b.blocks.includes(id)||!neighbors(here,CONFIG[idx].size).includes(id)||s.visited.includes(id)||(s.wrongByStep[step]||[]).includes(id))return;
