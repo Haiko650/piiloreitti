@@ -160,7 +160,7 @@
     idlePeek.cancel();
     const chosen=levels[index];
     const validation=engine.validateLevel(chosen);
-    if(!validation.valid) throw new Error(`Invalid TH.2 test level ${index+1}: ${validation.errors.join('; ')}`);
+    if(!validation.valid) throw new Error(`Invalid Treasure Hunt level ${index+1}: ${validation.errors.join('; ')}`);
     if (pointerId !== null && board.hasPointerCapture(pointerId)) {
       try { board.releasePointerCapture(pointerId); } catch (_error) {}
     }
