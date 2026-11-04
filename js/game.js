@@ -566,7 +566,7 @@ function render(){if(!game)return;const idx=game.activeLevel,cfg=CONFIG[idx],s=g
   const t=document.createElement('button');t.type='button';t.className='tile';const visited=s.visited.includes(id),wrong=(s.wrongByStep[step]||[]).includes(id),obstacle=b.blocks.includes(id),pearl=b.pearls.includes(id),possible=!s.completed&&!obstacle&&adjacent.includes(id)&&!visited&&!wrong;
   if(obstacle)t.classList.add('obstacle');if(visited)t.classList.add('visited');if(id===here)t.classList.add('current');if(wrong)t.classList.add('wrong');if(id===cfg.size*cfg.size-1)t.classList.add('goal');if(pearl)t.classList.add('pearl-tile');if(possible)t.classList.add('possible');if(flash?.id===id)t.classList.add(flash.right?'correct-pop':'wrong-pop');
   if(id===0)t.innerHTML=visualAssets.sprite('fin','coral-reef',finSVG);else if(id===cfg.size*cfg.size-1)t.innerHTML=visualAssets.sprite('goal','coral-reef',treasureSVG);else if(obstacle)t.innerHTML=visualAssets.sprite('coral','coral-reef',coralSVG);else if(wrong)t.textContent='×';else if(visited)t.textContent='✓';else if(pearl)t.innerHTML=visualAssets.sprite('pearl','coral-reef',pearlSVG);
-   visualAssets.decorateTile(t,visualAssets.terrainFor(null,id,obstacle),id===0?'start':id===cfg.size*cfg.size-1?'goal':null,'coral-reef');
+   visualAssets.decorateTile(t,visualAssets.terrainFor(b,id,obstacle),id===0?'start':id===cfg.size*cfg.size-1?'goal':null,'coral-reef');
   t.disabled=!possible;t.setAttribute('aria-label',`Row ${Math.floor(id/cfg.size)+1} column ${id%cfg.size+1}${id===0?' shark fin start':''}${id===cfg.size*cfg.size-1?' treasure X finish':''}${obstacle?' obstacle':''}${pearl?' pearl clue':''}${visited?' visited':''}${wrong?' incorrect':''}`);
   t.onclick=()=>choose(id);board.append(t);
  }
