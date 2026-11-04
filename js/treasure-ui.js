@@ -15,7 +15,6 @@
   const treasures = $('thTreasures');
   const levelText = $('thLevel');
   const msg = $('thMessage');
-  const next = $('thNext');
   const tabs = [...document.querySelectorAll('[data-th-level]')];
   let levelIndex = 0;
   let level = null;
@@ -29,6 +28,7 @@
   const MAX_PENDING_MOVES = 250;
   let pendingMoves = [];
   let moveTimer = null;
+  let victoryTimer = null;
   let animating = false;
   let blocked = new Set();
   const statusMessage = 'Collect every treasure, then reach the golden X.';
@@ -75,11 +75,9 @@
     if (state.completed) {
       msg.textContent = `Treasure Hunt complete! ${engine.getScore(state)} moves. Nice swimming, Haiko!`;
       msg.classList.add('is-won');
-      next.hidden = levelIndex === levels.length-1;
     } else {
       msg.textContent = allCollected ? 'All treasures found! Swim to the golden X.' : statusMessage;
       msg.classList.remove('is-won');
-      next.hidden = true;
     }
     measureFin();
   }
@@ -141,6 +139,9 @@
     pointerId=null;
     lastPoint=null;
     cancelPendingMoves();
+    if (victoryTimer !== null) clearTimeout(victoryTimer);
+    victoryTimer = null;
+    document.dispatchEvent(new CustomEvent('pathle:treasure-level-change', {detail:{levelId:chosen.id}}));
     levelIndex=index;
     level=chosen;
     state=engine.createRun(level);
@@ -165,7 +166,22 @@
     }
     state = result.state;
     update();
-    if (state.completed) pendingMoves = [];
+    if (state.completed) {
+      pendingMoves = [];
+      // Let the 80ms fin motion reach the goal before presenting results.
+      // A level switch or restart cancels this timer.
+      const completedLevel = level;
+      const completedRun = state;
+      const completedIndex = levelIndex;
+      victoryTimer = setTimeout(() => {
+        victoryTimer = null;
+        if (level === completedLevel && state === completedRun && state.completed) {
+          document.dispatchEvent(new CustomEvent('pathle:treasure-complete', {
+            detail: {level:completedLevel, run:completedRun, levelIndex:completedIndex}
+          }));
+        }
+      }, MOVE_MS + 220);
+    }
     animating = true;
     moveTimer = setTimeout(() => {
       moveTimer = null;
@@ -266,7 +282,6 @@
   });
   tabs.forEach((button,index)=>button.addEventListener('click',()=>selectLevel(index)));
   $('thRestart').addEventListener('click',()=>selectLevel(levelIndex));
-  next.addEventListener('click',()=>selectLevel(levelIndex+1));
   if('ResizeObserver' in window) {
     resizeObserver = new ResizeObserver(fitBoard);
     resizeObserver.observe(board.parentElement);
