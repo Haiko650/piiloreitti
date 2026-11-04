@@ -21,6 +21,7 @@
   // The map/controller owns unlocking and persistence; this module only renders
   // the selected board and runs its existing, independently tested mechanics.
   if(!window.PathleTreasureCampaignMode)throw new Error('Treasure Hunt requires the adventure bootstrap');
+  document.body.classList.add('th-campaign');
   let levelIndex = 0;
   let level = null;
   let state = null;
