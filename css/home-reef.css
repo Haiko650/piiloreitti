@@ -1,0 +1,75 @@
+/* Home reef redesign, 2026-11-04.
+   The reef is a standalone replaceable asset. Haiko remains a DOM
+   element (with independent cosmetics, rewards and animations). */
+#welcomeScreen {
+  background-color:#087eb8 !important;
+  background-image:url("../images/home-reef-background.webp"),
+    radial-gradient(ellipse at 50% 18%,#42dbe7,#13a7d4 40%,#076fa8 76%,#075280) !important;
+  background-repeat:no-repeat !important;
+  background-size:cover !important;
+  background-position:center center !important;
+}
+#welcomeScreen .illustratedHero {
+  display:flex !important;
+  justify-content:center;
+  align-items:center;
+  overflow:visible !important;
+  isolation:isolate;
+  /* Keep the existing flex spacer so controls never sit behind the shark. */
+}
+#welcomeScreen .illustratedHero .homeStage {
+  display:flex !important;
+  position:relative !important;
+  align-items:center;
+  justify-content:center;
+  flex:1 1 auto;
+  width:100%;
+  height:100%;
+  min-height:0 !important;
+  margin:0 !important;
+  border:0 !important;
+  background:none !important;
+  box-shadow:none !important;
+  pointer-events:none;
+}
+#welcomeScreen .illustratedHero .homeStage::before,
+#welcomeScreen .illustratedHero .homeStage::after {
+  content:none !important;
+  display:none !important;
+}
+/* The new illustration already includes corals, fish, sand and bubbles.
+   Only Haiko and his independently unlocked accessories are kept. */
+#welcomeScreen .illustratedHero .homeStage .sea-light-rays,
+#welcomeScreen .illustratedHero .homeStage .sea-floor,
+#welcomeScreen .illustratedHero .homeStage .home-fish,
+#welcomeScreen .illustratedHero .homeStage .home-bubble {
+  display:none !important;
+}
+#welcomeScreen .illustratedHero .homeStage > .home-haiko {
+  display:block !important;
+  width:min(78%,35dvh,330px) !important;
+  height:auto !important;
+  aspect-ratio:508/341 !important;
+  max-width:100% !important;
+  max-height:100% !important;
+  margin:0 !important;
+  position:relative !important;
+  z-index:2 !important;
+  animation:haikoHomeBob 4s ease-in-out infinite alternate;
+  filter:drop-shadow(0 9px 13px #003b6480);
+}
+#welcomeScreen .illustratedHero .homeStage .goldenBadge {
+  z-index:3;
+}
+/* Large screens keep the background centered in the phone-sized layout. */
+@media (max-height:610px) {
+  #welcomeScreen .illustratedHero {min-height:120px !important;}
+  #welcomeScreen .illustratedHero .homeStage > .home-haiko {
+    width:min(68%,30dvh,240px) !important;
+  }
+}
+@media (prefers-reduced-motion:reduce) {
+  #welcomeScreen .illustratedHero .homeStage > .home-haiko {
+    animation:none !important;
+  }
+}
