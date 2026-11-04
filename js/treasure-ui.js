@@ -1,6 +1,6 @@
-/* Pathle Treasure Hunt – TH.2 test UI.
- * Separate page and styles: does not access Daily Adventure or IndexedDB.
- * All scoring and rules are delegated to PathleTreasureEngine (TH.1).
+/* Pathle Treasure Hunt – board renderer and movement input.
+ * Campaign map selects a level after progress is verified; movement and
+ * scoring are delegated to the separately tested Treasure Engine.
  */
 (function () {
   'use strict';
@@ -17,31 +17,10 @@
   const treasures = $('thTreasures');
   const levelText = $('thLevel');
   const msg = $('thMessage');
-  // The default TH.3 prototype still shows the exact same three original tabs.
-  // Only ?th4a=1 builds a scrollable, temporary 30-board test selector.
-  if(window.PathleTreasurePreview||window.PathleTreasureCampaignMode){
-    document.body.classList.add('th-generated-preview');
-    if(window.PathleTreasureCampaignMode)document.body.classList.add('th-campaign');
-    document.querySelector('.th-heading small').textContent=window.PathleTreasureCampaignMode?'TREASURE HUNT · TH.5 CAMPAIGN':'TREASURE HUNT · TH.4A GENERATOR TEST';
-    document.querySelector('.th-heading h1').textContent=window.PathleTreasureCampaignMode?'Ocean Treasure Trail':'Generated Adventures';
-    document.querySelector('.th-test-badge').textContent=window.PathleTreasureCampaignMode?'ADVENTURE':'30 MAPS';
-    document.querySelector('.th-footnote').textContent='Generator test · Levels are not saved or locked yet. Try any map, then restart it to confirm the layout stays identical.';
-    $('thWinFinal').textContent=window.PathleTreasureCampaignMode?'All 30 adventures completed!':'All 30 generated test levels completed!';
-    const host=document.querySelector('.th-level-tabs');
-    const buttons=levels.map((item,i)=>{
-      const button=document.createElement('button');
-      button.type='button';
-      button.dataset.thLevel=String(i);
-      button.setAttribute('aria-pressed','false');
-      button.textContent=String(i+1);
-      const label=document.createElement('small');
-      label.textContent=item.environment==='coast'?'Coast':item.environment==='ocean'?'Ocean':item.environment==='river'?'River':'Forest';
-      button.append(label);
-      return button;
-    });
-    host.replaceChildren(...buttons);
-  }
-  const tabs = [...document.querySelectorAll('[data-th-level]')];
+  // Level selection now happens exclusively through the numbered adventure map.
+  // The map/controller owns unlocking and persistence; this module only renders
+  // the selected board and runs its existing, independently tested mechanics.
+  if(!window.PathleTreasureCampaignMode)throw new Error('Treasure Hunt requires the adventure bootstrap');
   let levelIndex = 0;
   let level = null;
   let state = null;
@@ -164,7 +143,7 @@
 
   function selectLevel(index) {
     if(!Number.isInteger(index)||index<0||index>=levels.length) return;
-    if(window.PathleTreasureCampaignMode&&window.PathleTreasureCampaign&&!window.PathleTreasureCampaign.canEnter(index))return;
+    if(!window.PathleTreasureCampaign?.canEnter(index))return;
     idlePeek.cancel();
     const chosen=levels[index];
     const validation=engine.validateLevel(chosen);
@@ -182,7 +161,6 @@
     level=chosen;
     state=engine.createRun(level);
     blocked = new Set(level.blocked);
-    tabs.forEach((b,i)=>b.setAttribute('aria-pressed',String(i===index)));
     makeBoard();
     update();
     idlePeek.reset();
@@ -320,7 +298,6 @@
     const y = Math.floor(from/level.width) + dy;
     if (x>=0 && x<level.width && y>=0 && y<level.height) enqueueMove(y*level.width+x);
   });
-  tabs.forEach((button,index)=>button.addEventListener('click',()=>selectLevel(index)));
   $('thRestart').addEventListener('click',()=>selectLevel(levelIndex));
   if('ResizeObserver' in window) {
     resizeObserver = new ResizeObserver(fitBoard);
@@ -332,5 +309,5 @@
     if (!document.hidden) processPendingMoves();
   });
   window.PathleTreasureUI=Object.freeze({selectLevel,fitBoard,getCurrentLevel:()=>levelIndex});
-  selectLevel(0);
+  // The map opens a level after shared progress has been loaded and verified.
 })();
