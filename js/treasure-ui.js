@@ -41,7 +41,7 @@
   const idlePeek=visualAssets.createIdlePeek({
     theme:()=>level?level.environment:'coast',
     anchor:()=>fin,
-    canShow:()=>!!level&&!!state&&!state.completed&&!animating&&
+    canShow:()=>!!level&&!!state&&!state.completed&&!document.querySelector('.th-panel')?.hidden&&!animating&&
       pendingMoves.length===0&&pointerId===null&&$('thVictory').hidden
   });
 
@@ -140,6 +140,10 @@
     moveTimer = null;
     pendingMoves = [];
     animating = false;
+  }
+
+  function hasUnfinishedProgress(){
+    return !!state&&!state.completed&&(state.moves>0||pendingMoves.length>0);
   }
 
   function leaveLevel(){
@@ -321,6 +325,6 @@
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden) processPendingMoves();
   });
-  window.PathleTreasureUI=Object.freeze({selectLevel,fitBoard,leaveLevel,getCurrentLevel:()=>levelIndex});
+  window.PathleTreasureUI=Object.freeze({selectLevel,fitBoard,leaveLevel,hasUnfinishedProgress,getCurrentLevel:()=>levelIndex});
   // The map opens a level after shared progress has been loaded and verified.
 })();
