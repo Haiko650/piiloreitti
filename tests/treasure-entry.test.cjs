@@ -56,7 +56,7 @@ function harness(store={data:newSave(),writes:0}){
       fitBoard(){},leaveLevel(){return true}
     }
   };
-  // Ordinary URL has NO special query: load the canonical 30-map adventure.
+  // Legacy regression harness, deliberately not loaded by canonical URL.
   vm.runInNewContext(read('js/treasure-bootstrap.js'),{window:root});
   vm.runInNewContext(read('js/treasure-victory.js'),{window:root,document});
   vm.runInNewContext(read('js/treasure-campaign.js'),{window:root,document,requestAnimationFrame:fn=>fn()});
@@ -73,25 +73,24 @@ function finished(level){
   return state;
 }
 
-test('the normal Treasure Hunt URL is a 30-level adventure, not the 3-board prototype',async()=>{
+test('the canonical Treasure Hunt URL loads v2 tutorial and Water World (not retired 30 maps)',async()=>{
   const html=read('treasure-hunt.html'),home=read('index.html');
   assert.match(home,/id="playTreasure" href="treasure-hunt.html"/);
-  assert.match(html,/js\/treasure-bootstrap.js/);
+  assert.match(html,/js\/treasure-bootstrap-v2\.js/);
+  assert.match(html,/js\/treasure-campaign-v2\.js/);
+  assert.match(html,/js\/treasure-worlds\.js/);
+  assert.match(html,/id="thV2Tutorial"/);
+  assert.match(html,/id="thV2World"/);
+  assert.match(html,/id="thV2Area"/);
+  assert.doesNotMatch(html,/src="js\/treasure-campaign\.js|src="js\/treasure-bootstrap\.js/);
   assert.doesNotMatch(html,/js\/treasure-preview.js|js\/treasure-levels.js|Select test level/);
+  // Legacy controller is still exercised as an archived regression harness.
   const h=harness();await idle();
   assert.equal(h.root.PathleTreasureLevels.length,30);
   assert.equal(h.root.PathleTreasureCampaign.isReady(),true);
-  assert.equal(h.$('thCampaignMap').hidden,false);
-  assert.equal(h.$('panel').hidden,true);
-  const regions=h.$('thMapRegions').children;
-  assert.equal(regions.length,3);
-  assert.deepEqual(regions.flatMap(section=>section.children[1].children.map(b=>Number(b.dataset.level))),
-    Array.from({length:30},(_,i)=>i+1));
-  assert.equal(h.root.PathleTreasureCampaign.canEnter(0),true);
-  assert.equal(h.root.PathleTreasureCampaign.canEnter(3),false);
 });
 
-test('completing levels 1, 2 and 3 lets Next Level open number 4',async()=>{
+test('legacy TH.5 regression: completing old levels 1–3 still reaches old level 4',async()=>{
   const h=harness();await idle();
   const levels=h.root.PathleTreasureLevels;
   h.root.PathleTreasureCampaign.openLevel(0);
@@ -113,7 +112,7 @@ test('completing levels 1, 2 and 3 lets Next Level open number 4',async()=>{
   assert.equal(h.store.data.progress.chapters['ocean-01'].testMarker,'daily-saved');
 });
 
-test('older TH.5 saves keep the first three clears when the permanent game starts',async()=>{
+test('legacy TH.5 saves remain recoverable and are not erased by the new campaign',async()=>{
   const store={data:newSave(),writes:0};
   const levels=generator.generateCampaign();
   let saved=progress.empty(generator.DEFAULT_SEED,generator.VERSION);
