@@ -59,11 +59,12 @@
     const {worlds,areas,tutorial,tutorialLevels}=catalog;
     if(!Array.isArray(worlds)||!Array.isArray(areas)||!tutorial||
        !Array.isArray(tutorialLevels))return {valid:false,errors:['Invalid catalog structure']};
-    const worldIds=new Set(),areaIds=new Set(),levelIds=new Set();
+    const worldIds=new Set(),worldOrders=new Set(),areaIds=new Set(),levelIds=new Set();
     for(const w of worlds){
-      if(!w||!safeId(w.id)||worldIds.has(w.id)||!['active','future'].includes(w.status))
+      if(!w||!safeId(w.id)||worldIds.has(w.id)||!Number.isSafeInteger(w.sort)||w.sort<1||
+         worldOrders.has(w.sort)||!['active','future'].includes(w.status))
         errors.push('Invalid or duplicate world');
-      else worldIds.add(w.id);
+      else {worldIds.add(w.id);worldOrders.add(w.sort);}
     }
     if(!safeId(tutorial.id)||!worldIds.has(tutorial.worldId)||tutorial.id!=='tutorial'||
        tutorialLevels.length!==3||!Array.isArray(tutorial.levelIds)||
@@ -125,9 +126,10 @@
   }
   function playableIds(catalog){
     assertValid(catalog);
+    const order=new Map(catalog.worlds.map(world=>[world.id,world.sort]));
     return [...catalog.tutorial.levelIds,
       ...catalog.areas.filter(area=>area.status==='released')
-        .sort((a,b)=>a.worldId.localeCompare(b.worldId)||a.sort-b.sort)
+        .sort((a,b)=>order.get(a.worldId)-order.get(b.worldId)||a.sort-b.sort)
         .flatMap(area=>area.levelIds)];
   }
   function getStage(catalog,levelId){
