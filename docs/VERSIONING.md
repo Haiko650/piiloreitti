@@ -1,36 +1,66 @@
-# Pathle development version label
+# Pathle development versions and mobile update checks
 
-The Pathle home screen shows a deliberately compact version label in
-the top-center, between the Settings and DEV controls:
+## Release identity
 
-**DEV · v1.4.0**
+The main menu shows a compact **tappable** build label at the top center,
+between Settings and the DEV toggle:
 
-The single source of truth is `js/version.js`:
+**DEV · v1.4.1**
 
-- `VERSION`: currently `1.4.0`
-- `CHANNEL`: currently `DEV`
+The installed version is defined in `js/version.js`. The published
+GitHub Pages version is described by `version.json` in the repo root.
+The version and channel must match on every release. The CI test
+`tests/version-label.test.cjs` checks the match.
 
-The module updates the main-menu label (`homeBuildBadge`), HTML document
-title and Daily Adventure footer (`gameVersionFooter`). The initial
-HTML label is a readable fallback if JavaScript has not loaded yet.
+## How the player checks
 
-The label is **a release version, not a live Git commit SHA**. It must
-be intentionally incremented when shipping the next meaningful
-development milestone. It does **not** claim to guarantee that the
-phone has reloaded the latest GitHub Pages deployment.
+- Opening the main menu makes a **silent, read-only** request to
+  `version.json` on the same origin. A small dot appears beside the
+  version label if a newer published version is available.
+- Tapping the version label opens a short status dialog and triggers
+  a fresh check, with a **Check again** action.
+- If a newer release exists, the player can choose **Load vX.Y.Z**.
+  Nothing reloads automatically; the button only works from the home
+  menu, not while the game is active.
+- If offline or the manifest is missing/malformed, show a safe retry
+  message rather than claiming that the current build is the newest.
+- The update request uses `cache:'no-store'` and a unique query
+  parameter; the voluntary navigation appends `pathle-update=vX.Y.Z`
+  to the same-origin page URL to bypass cached HTML.
+- Updates do not write to or clear IndexedDB. Completed Daily and
+  Treasure Hunt progress stays at the **same domain**.
 
-When updating the version:
-1. Change `VERSION` in `js/version.js`.
-2. Update the version-script query string in `index.html`.
-3. Update the fallback label and aria-label in `index.html`.
-4. If the badge's CSS changes, increment the `home-reef.css`
-   query string in `index.html`.
-5. Check the development CI run, then verify the number in the
-   actual installed Android browser shortcut.
+**Important:** Existing Android shortcuts opened on the older v1.4.0
+page lack the new checker. Refresh once to load v1.4.1. Subsequent
+published versions can be detected by the v1.4.1 checker.
 
-The badge does not change the menu content layout, reward data,
-Treasure Hunt maps, gameplay or player saves.
+## Checklist for each new player-facing update
 
-The already-planned future **Check for updates** feature is separate:
-it should compare the loaded deployment against the current published
-version and never interrupt a live game without the player's consent.
+1. Test feature changes and commit to `pathle-modular-dev` only.
+2. Increment `VERSION` in `js/version.js`.
+3. Update `version.json` to the **same** version/channel.
+4. Update the fallback button text and aria-label in `index.html`.
+5. Update `js/version.js?v=X.Y.Z` in `index.html`. Increment CSS
+   query strings if styles changed.
+6. Update `tests/version-label.test.cjs` for the newly released
+   version or make its assertions reference the manifest values.
+7. Wait until GitHub Actions regression checks and the Pages deployment
+   have both completed successfully before asking for manual testing.
+8. On Android, tap the version label and verify that it identifies
+   the published version without disturbing existing saves.
+
+The manifest is deliberately static and is not a Git commit monitor.
+**Any player-facing update needing detection must increment the release
+version and the published manifest**, even when it is a small bug fix.
+If a patch keeps the same version, this feature cannot detect that
+patch merely by comparing version numbers.
+
+The full update checker only runs on the main menu; it does not
+automatically reload while Daily or Treasure Hunt is in progress.
+
+## Release policy
+
+- Do not change `main` before explicit authorization.
+- GitHub Pages on the existing site serves the development game.
+- The canonical Android shortcut URL remains
+  `https://haiko650.github.io/piiloreitti/`.
