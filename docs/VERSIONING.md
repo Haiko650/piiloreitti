@@ -5,7 +5,7 @@
 The main menu shows a compact **tappable** build label at the top center,
 between Settings and the DEV toggle:
 
-**DEV · v1.4.1**
+**DEV · v1.5.0**
 
 The installed version is defined in `js/version.js`. The published
 GitHub Pages version is described by `version.json` in the repo root.
@@ -31,8 +31,8 @@ The version and channel must match on every release. The CI test
   Treasure Hunt progress stays at the **same domain**.
 
 **Important:** Existing Android shortcuts opened on the older v1.4.0
-page lack the new checker. Refresh once to load v1.4.1. Subsequent
-published versions can be detected by the v1.4.1 checker.
+page lack the new checker. Refresh once to load v1.5.0. Subsequent
+published versions can be detected by the v1.5.0 checker.
 
 ## Checklist for each new player-facing update
 
