@@ -1,0 +1,64 @@
+/* Pathle TH.6A.2 – presentation-only map section layout.
+ * No puzzle identities, scores or stored unlocks are affected by this file.
+ * Changing background art never changes the nodes or the game rules.
+ */
+(function(root){
+  'use strict';
+  const MAX_SECTION_NODES=10;
+  const FINITE01=n=>typeof n==='number'&&Number.isFinite(n)&&n>=0&&n<=1;
+  function getSections(area){
+    if(!area||!Array.isArray(area.levelIds)||!area.map)
+      throw new TypeError('Invalid map area');
+    const size=Number.isSafeInteger(area.map.sectionTarget)&&area.map.sectionTarget>0?
+      area.map.sectionTarget:MAX_SECTION_NODES;
+    const result=[];
+    for(let i=0;i<area.levelIds.length;i++){
+      const id=area.levelIds[i];
+      const declared=area.map.nodes?.[id];
+      const sectionId=declared?.sectionId||area.id+'-section-'+
+        String(Math.floor(i/size)+1).padStart(2,'0');
+      const within=i%size;
+      // Stable fallback location, even before individual art is finished.
+      const node={
+        levelId:id,index:i,
+        x:declared?.x??(within%2===0?0.28:0.72),
+        y:declared?.y??(0.09+0.82*(within+0.5)/size)
+      };
+      if(!FINITE01(node.x)||!FINITE01(node.y))
+        throw new RangeError('Invalid node coordinates for '+id);
+      let section=result[result.length-1];
+      if(!section||section.id!==sectionId){
+        section={id:sectionId,areaId:area.id,nodes:[]};
+        result.push(section);
+      }
+      section.nodes.push(Object.freeze(node));
+    }
+    return Object.freeze(result.map(section=>Object.freeze({
+      id:section.id,areaId:section.areaId,
+      nodes:Object.freeze(section.nodes),
+      firstIndex:section.nodes[0].index,
+      lastIndex:section.nodes[section.nodes.length-1].index
+    })));
+  }
+  function pathFor(nodes,connectTop=false,connectBottom=false){
+    if(!Array.isArray(nodes)||!nodes.length)return '';
+    const coords=nodes.map(node=>({x:node.x*1000,y:node.y*1300}));
+    let result='M'+(connectTop?500:coords[0].x)+' '+(connectTop?0:coords[0].y);
+    if(connectTop){
+      const first=coords[0];
+      result+=' C500 '+Math.round(first.y/2)+' '+first.x+' '+Math.round(first.y/2)+' '+first.x+' '+first.y;
+    }
+    for(let i=1;i<coords.length;i++){
+      const a=coords[i-1],b=coords[i],mid=(a.y+b.y)/2;
+      result+=' C'+a.x+' '+mid+' '+b.x+' '+mid+' '+b.x+' '+b.y;
+    }
+    if(connectBottom){
+      const last=coords[coords.length-1],mid=(last.y+1300)/2;
+      result+=' C'+last.x+' '+mid+' 500 '+mid+' 500 1300';
+    }
+    return result;
+  }
+  const api=Object.freeze({MAX_SECTION_NODES,getSections,pathFor});
+  if(typeof module==='object'&&module.exports)module.exports=api;
+  if(root)root.PathleTreasureMapLayout=api;
+})(typeof window!=='undefined'?window:null);
