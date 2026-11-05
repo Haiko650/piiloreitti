@@ -132,7 +132,7 @@
       const section=sections[sectionIndex];
       const images=art.forSection(area.id,section.id);
       const sectionElement=document.createElement('section');
-      sectionElement.className='th-v2-map-section';
+      sectionElement.className='th-v2-map-section th-v2-area-section';
       sectionElement.dataset.sectionId=section.id;
       sectionElement.setAttribute('aria-label',area.title+' map section '+(sectionIndex+1));
       art.applyLayer(sectionElement,'--th-base-art',images?.base);
