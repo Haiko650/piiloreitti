@@ -49,18 +49,20 @@ function makeStorage(start=baseSave()){
 function makePage(storage){
   const keys=['thCampaignMap','thMapRegions','thMapSummary','thMapReturn','thWinMap','thLeaveDialog','thLeaveStay','thLeaveConfirm','thCampaignError','thCampaignErrorTitle','thCampaignErrorText','thCampaignRetry','thVictory'];
   const elements=Object.fromEntries(keys.map(id=>[id,el(id)]));
+  elements.thLeaveDialog.hidden=true;
   const special={'.th-shell':el('shell'),'.th-panel':el('panel'),'.th-level-tabs':el('tabs'),'.th-footnote':el('note')};
   const document={getElementById:id=>elements[id],querySelector:s=>special[s],
     createElement:tag=>el(tag),createElementNS:(_ns,tag)=>el(tag)};
   const chosen=[];
+  let unfinished=false;
   const root={PathleTreasureCampaignMode:true,PathleTreasureLevels:levels,
     PathleTreasureGenerator:generator,PathleTreasureProgress:model,
     PathleTreasureSolver:solver,PathleTreasureGrading:grading,
     PathleTreasureEngine:engine,PathleStorage:storage,
     PathleSaveSchema:{createEmptySave:baseSave},
-    PathleTreasureUI:{selectLevel:i=>chosen.push(i),fitBoard(){}}};
+    PathleTreasureUI:{selectLevel:i=>chosen.push(i),fitBoard(){},leaveLevel(){return true},hasUnfinishedProgress:()=>unfinished}};
   vm.runInNewContext(js,{window:root,document,requestAnimationFrame:cb=>cb()},{filename:'treasure-campaign.js'});
-  return {root,storage,elements,special,chosen};
+  return {root,storage,elements,special,chosen,setUnfinished:value=>{unfinished=value}};
 }
 function optimalRun(level){
   const path=solver.solve(level).path;
@@ -146,4 +148,35 @@ test('temporary database read failure offers Retry and restores the map',async()
   await p.elements.thCampaignRetry.onclick();
   assert.equal(p.root.PathleTreasureCampaign.isReady(),true);
   assert.equal(p.elements.thCampaignError.hidden,true);
+});
+
+test('map button asks before discarding an unfinished run and Keep playing preserves it',async()=>{
+  const p=makePage(makeStorage());await idle();
+  p.root.PathleTreasureCampaign.openLevel(0);
+  p.setUnfinished(true);
+  p.elements.thMapReturn.click();
+  assert.equal(p.elements.thLeaveDialog.hidden,false);
+  assert.equal(p.special['.th-shell'].inert,true);
+  assert.equal(p.special['.th-panel'].hidden,false);
+  p.elements.thLeaveStay.click();
+  assert.equal(p.elements.thLeaveDialog.hidden,true);
+  assert.equal(p.special['.th-shell'].inert,false);
+  assert.equal(p.special['.th-panel'].hidden,false);
+  assert.equal(p.storage.writes,0);
+});
+test('confirming Leave returns to map, but an untouched run needs no prompt',async()=>{
+  const p=makePage(makeStorage());await idle();
+  p.root.PathleTreasureCampaign.openLevel(0);
+  p.elements.thMapReturn.click();
+  assert.equal(p.elements.thLeaveDialog.hidden,true);
+  assert.equal(p.elements.thCampaignMap.hidden,false);
+  p.root.PathleTreasureCampaign.openLevel(0);
+  p.setUnfinished(true);
+  p.elements.thMapReturn.click();
+  assert.equal(p.elements.thLeaveDialog.hidden,false);
+  p.elements.thLeaveConfirm.click();
+  assert.equal(p.elements.thLeaveDialog.hidden,true);
+  assert.equal(p.elements.thCampaignMap.hidden,false);
+  assert.equal(p.special['.th-panel'].hidden,true);
+  assert.equal(p.storage.writes,0);
 });
