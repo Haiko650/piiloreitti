@@ -142,7 +142,7 @@ test('three tutorial finishes unlock Water World and first Coral Coast stage',as
   pins[0].click();
   assert.equal(h.root.PathleTreasureCampaign.getView(),'area');
   const area=h.$('thV2AreaCanvas');
-  const sections=area.children.filter(x=>x.classList.contains('th-v2-area-section'));
+  const sections=area.children.filter(x=>x.classList.contains('th-v2-map-section'));
   assert.equal(sections.length,1);
   assert.equal(sections[0].children.filter(x=>x.classList.contains('th-v2-node')).length,4);
   assert.ok(sections[0].properties['--th-base-art'].includes('section-01-base.svg'));
