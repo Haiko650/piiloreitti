@@ -1,0 +1,105 @@
+/* TH.6A.2 – modular illustrated maps.
+ * The artwork images come from js/treasure-map-art.js. This CSS controls
+ * only presentation, touch targets and layer order: gameplay, saved scores
+ * and node coordinates do not depend on image pixels.
+ */
+.th-campaign [hidden],.th-v2-campaign-map [hidden]{display:none!important}
+.th-v2-campaign-map{padding:10px;scroll-behavior:auto}
+.th-v2-map-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:4px 1px 8px}
+.th-v2-map-heading h2{margin:0;color:#fff6cf;font-size:23px;line-height:1.15}
+.th-v2-map-heading small{display:block;color:#d0fbff;font-size:10px;font-weight:900;letter-spacing:.11em;margin-bottom:4px}
+.th-v2-map-caption{font-size:9px;letter-spacing:.06em;font-weight:900;color:#ceffff;text-align:right;max-width:110px}
+.th-v2-map-explain{font-size:12px;line-height:1.45;color:#e3f9ff;margin:7px 0 12px}
+.th-v2-map-secondary{background:#124f75;color:#fff;border:1px solid #97e9ec;border-radius:12px;min-height:40px;padding:7px 12px;font-weight:850;font-size:12px}
+.th-v2-map-secondary:focus-visible,
+.th-v2-node:focus-visible,
+.th-v2-world-pin:focus-visible{outline:3px solid #ffe59b;outline-offset:3px}
+.th-v2-world-canvas{
+  position:relative;min-height:680px;aspect-ratio:600/760;
+  border-radius:22px;border:2px solid #91e6e5;
+  background:linear-gradient(145deg,#56d0df,#057caa 60%,#06436f);
+  overflow:hidden;isolation:isolate;
+  box-shadow:inset 0 0 40px #0c3d5f4d,0 10px 24px #00152c6b;
+}
+.th-v2-world-art{
+  position:absolute;inset:0;z-index:0;pointer-events:none;
+  background-image:var(--th-world-art,none);
+  background-size:100% 100%;background-repeat:no-repeat;background-position:center;
+}
+.th-v2-world-pins{position:absolute;inset:0;z-index:3;pointer-events:none}
+.th-v2-world-pin{
+  position:absolute;transform:translate(-50%,-50%);pointer-events:auto;
+  width:min(43%,190px);min-height:53px;padding:8px 9px;
+  border:2px solid #fff4b6;background:#0a517ccd;color:#fff8d4;
+  box-shadow:0 5px 0 #083a5c,0 8px 13px #062f5999;
+  border-radius:19px;font-size:11px;line-height:1.2;text-align:center;font-weight:900;
+}
+.th-v2-world-pin.is-current{background:#f5c96b;color:#173b50}
+.th-v2-world-pin.is-locked:disabled{background:#194b69d9;color:#bbd9e0;border-color:#81abb8;opacity:.9}
+.th-v2-area-controls{display:flex;justify-content:flex-end;margin:6px 2px 9px}
+.th-v2-area-canvas{
+  --th-base-art:none;--th-detail-art:none;
+  position:relative;height:1300px;max-width:100%;
+  border:2px solid #8ae4e9;border-radius:19px;
+  background:linear-gradient(#7ae9e8,#228ebb 65%,#116a99);
+  overflow:hidden;isolation:isolate;
+  box-shadow:0 11px 24px #001e3677,inset 0 1px #e0ffff99;
+}
+.th-v2-art-base,.th-v2-art-details{
+  position:absolute;inset:0;width:100%;height:100%;
+  background-size:100% 100%;background-repeat:no-repeat;
+  pointer-events:none;
+}
+.th-v2-art-base{z-index:0;background-image:var(--th-base-art)}
+.th-v2-art-details{z-index:2;background-image:var(--th-detail-art)}
+.th-v2-route-svg{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;filter:drop-shadow(0 2px 2px #07526a)}
+.th-v2-node{
+  position:absolute;z-index:5;transform:translate(-50%,-50%);
+  width:58px;min-height:61px;display:flex;flex-direction:column;
+  gap:1px;align-items:center;justify-content:center;
+  padding:5px 3px;border-radius:50%;
+  border:3px solid #fff2aa;background:#08628dda;color:#fff;
+  box-shadow:0 4px 0 #064567,0 7px 12px #0750709a;
+  font-variant-numeric:tabular-nums;
+}
+.th-v2-node strong{font-size:21px;line-height:1;font-weight:950}
+.th-v2-node small{font-size:9px;line-height:1.2;font-weight:850}
+.th-v2-node.is-next{background:#ffe089;color:#17415b;border-color:#fffdf0;box-shadow:0 0 0 6px #e9f8b977,0 4px 0 #a37a33}
+.th-v2-node.is-complete{background:#17826d;border-color:#a4ffe5}
+.th-v2-node.is-locked:disabled{opacity:.85;background:#335d75;border-color:#99c6cc;color:#cee0e8}
+.th-v2-map-haiko{
+  position:absolute;z-index:6;width:100px;height:82px;
+  transform:translate(-50%,-42%);pointer-events:none;
+  background-size:contain;background-position:center;background-repeat:no-repeat;
+  filter:drop-shadow(0 7px 8px #0c456881);
+  animation:thV2HaikoSwim 2.8s ease-in-out infinite alternate;
+}
+@keyframes thV2HaikoSwim{from{translate:0 2px}to{translate:0 -6px}}
+.th-v2-tutorial{
+  min-height:330px;padding:24px 17px;
+  border-radius:21px;border:2px solid #aef3e5;
+  background:radial-gradient(circle at 50% 0,#56cbd6,#12678e 55%,#0a396d 100%);
+  display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:11px;
+}
+.th-v2-tutorial-hero{display:flex;flex-direction:column;gap:9px;font-size:21px;color:#fff4c8;font-weight:950}
+.th-v2-tutorial-hero span{font-size:64px;line-height:1.2}
+.th-v2-tutorial p{margin:3px 0;color:#e2fafd;font-size:14px;line-height:1.5}
+#thV2TutorialStart{
+  width:100%;max-width:290px;min-height:52px;background:#ffdb79;color:#154360;
+  border:2px solid #fff5c9;border-radius:14px;font-size:16px;font-weight:900;margin-top:8px
+}
+.th-v2-level-guide{
+  margin:0;padding:6px 10px;text-align:center;
+  border:1px solid #c6f6f198;border-radius:10px;
+  background:#074c6bba;color:#eafffa;font-size:12px;font-weight:750;line-height:1.25;
+}
+@media(max-width:370px){
+ .th-v2-world-canvas{min-height:600px}
+ .th-v2-world-pin{font-size:10px;padding:5px 6px;min-height:48px}
+ .th-v2-node{width:54px;min-height:58px}
+}
+@media(max-height:650px){
+ .th-v2-level-guide{font-size:10px;padding:4px 7px}
+ .th-v2-map-heading h2{font-size:20px}
+}
+@media(prefers-reduced-motion:reduce){.th-v2-map-haiko{animation:none}}
