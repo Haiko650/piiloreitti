@@ -81,9 +81,14 @@
   function paintMap(){
     if(!progress)return;
     const cleared=progressModel.completedCount(progress,levels);
-    summary.textContent=cleared===levels.length
+    const earnedFins=levels.reduce((sum,level)=>{
+      const best=progressModel.bestFor(progress,level);
+      return best===null?sum:sum+medalName(best,level).fins;
+    },0);
+    summary.textContent=(cleared===levels.length
       ? 'All '+levels.length+' levels complete · Replay to improve your scores!'
-      : cleared+' / '+levels.length+' complete · Next level: '+(cleared+1);
+      : cleared+' / '+levels.length+' complete · Next level: '+(cleared+1))+
+      ' · Fins: '+earnedFins+' / '+(3*levels.length);
     regions.replaceChildren();
     const zoneCount=Math.ceil(levels.length/10);
     for(let zone=0;zone<zoneCount;zone++){
