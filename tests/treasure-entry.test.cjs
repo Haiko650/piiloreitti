@@ -21,7 +21,7 @@ function newSave(){
 }
 function element(id){
   const handlers=new Map(),children=[],classes=new Set();
-  return {id,hidden:id==='thVictory'||id==='thCampaignError'||id==='thCampaignMap',
+  return {id,hidden:id==='thVictory'||id==='thCampaignError'||id==='thCampaignMap'||id==='thLeaveDialog',
     disabled:false,inert:false,textContent:'',className:'',dataset:{},style:{},children,
     classList:{add(x){classes.add(x)},remove(x){classes.delete(x)}},
     setAttribute(){},append(...x){children.push(...x)},
