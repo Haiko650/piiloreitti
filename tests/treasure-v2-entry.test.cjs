@@ -23,7 +23,7 @@ function element(id){
     style:{setProperty(name,value){properties[name]=value}},
     classList:{
       add(c){classes.add(c)},remove(c){classes.delete(c)},
-      contains(c){return classes.has(c)}
+      contains(c){return classes.has(c)||item.className.split(/\s+/).includes(c)}
     },
     setAttribute(name,value){this[name]=value},
     append(...more){children.push(...more)},
