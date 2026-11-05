@@ -49,6 +49,11 @@
   const TUTORIAL=Object.freeze({id:'tutorial',worldId:'water-world',title:'Haiko\'s First Steps',
     status:'ready-for-ui',visualMode:'surface',visualOverrides:Object.freeze({}),
     levelIds:Object.freeze(TUTORIAL_LEVELS.map(level=>level.id))});
+  // Future mechanic experiments belong to a separate DEV registry, never
+  // to released world/area lists and never to the player progress sequence.
+  const DEV_TEST_LAB=Object.freeze({id:'haiko-test-reef',title:'Haiko\'s Test Reef',
+    purpose:'mechanics',released:false,persistentScores:false,
+    levelIds:Object.freeze([])});
   const DEFAULT_CATALOG=Object.freeze({version:VERSION,worlds:WORLDS,areas:AREAS,
     tutorial:TUTORIAL,tutorialLevels:TUTORIAL_LEVELS});
 
@@ -156,7 +161,7 @@
       mapNode:area.map.nodes?.[levelId]||null}:null;
   }
   assertValid(DEFAULT_CATALOG);
-  const api=Object.freeze({VERSION,MODES,DEFAULT_CATALOG,
+  const api=Object.freeze({VERSION,MODES,DEFAULT_CATALOG,DEV_TEST_LAB,
     TUTORIAL_LEVELS,TUTORIAL_LESSONS,getWorld,getAreas,playableIds,getStage,
     validate,assertValid});
   if(typeof module==='object'&&module.exports)module.exports=api;
