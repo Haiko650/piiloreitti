@@ -162,3 +162,20 @@ test('bad new scores, gaps, unknown IDs and invalid fin awards fail closed',()=>
   const finished=clearTutorial(progress.empty(),published);
   assert.throws(()=>progress.earnedFins(finished,[first],()=>5),RangeError);
 });
+
+test('future worlds use stable numeric world order, never alphabetic world IDs',()=>{
+  const c=base();
+  releaseArea(c,'coral-coast',1);
+  c.areas.push({
+    id:'moon-ocean',title:'Moon Ocean',worldId:'space-adventure',sort:1,
+    status:'released',targetLevelCount:60,levelIds:['th-space-001'],
+    unlock:{afterAreaId:'tutorial',minimumFins:0},
+    map:{mode:'vertical-scroll'},visualMode:'underwater'
+  });
+  assert.equal(catalog.validate(c).valid,true);
+  assert.deepEqual(catalog.playableIds(c),[
+    ...c.tutorial.levelIds,'th-coral-coast-001','th-space-001'
+  ]);
+  const bad=clone(c);bad.worlds[1].sort=bad.worlds[0].sort;
+  assert.equal(catalog.validate(bad).valid,false);
+});
