@@ -180,3 +180,15 @@ test('confirming Leave returns to map, but an untouched run needs no prompt',asy
   assert.equal(p.special['.th-panel'].hidden,true);
   assert.equal(p.storage.writes,0);
 });
+
+test('map totals earned fins without showing the optimum before clearing a level',async()=>{
+  const p=makePage(makeStorage());await idle();
+  assert.match(p.elements.thMapSummary.textContent,/Fins: 0 \/ 90/);
+  const run=optimalRun(levels[0]);
+  await p.root.PathleTreasureCampaign.handleCompletion(
+    {level:levels[0],run,levelIndex:0},()=>{}
+  );
+  assert.match(p.elements.thMapSummary.textContent,/Fins: 3 \/ 90/);
+  assert.match(p.elements.thMapSummary.textContent,/1 \/ 30 complete/);
+  assert.doesNotMatch(p.elements.thMapSummary.textContent,/optimal|minimum moves/i);
+});
