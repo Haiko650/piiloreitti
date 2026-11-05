@@ -15,7 +15,11 @@
 .th-v2-node:focus-visible,
 .th-v2-world-pin:focus-visible{outline:3px solid #ffe59b;outline-offset:3px}
 .th-v2-world-canvas{
-  position:relative;min-height:680px;aspect-ratio:600/760;
+  /* World map must fit narrow phones. A min-height plus aspect ratio
+     forces an oversized width and clips the map in overflow-x:hidden. */
+  box-sizing:border-box;position:relative;
+  width:100%;min-width:0;max-width:100%;
+  height:auto;min-height:0;aspect-ratio:600/760;
   border-radius:22px;border:2px solid #91e6e5;
   background:linear-gradient(145deg,#56d0df,#057caa 60%,#06436f);
   overflow:hidden;isolation:isolate;
@@ -107,7 +111,6 @@
   background:#074c6bba;color:#eafffa;font-size:12px;font-weight:750;line-height:1.25;
 }
 @media(max-width:370px){
- .th-v2-world-canvas{min-height:600px}
  .th-v2-world-pin{font-size:10px;padding:5px 6px;min-height:48px}
  .th-v2-node{width:54px;min-height:58px}
 }
