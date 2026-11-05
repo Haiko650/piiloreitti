@@ -102,3 +102,29 @@
  .th-map-level{min-height:56px;}
  .th-map-intro h2{font-size:19px;}
 }
+
+/* Confirmation is shown only when returning to the map would erase
+   an unfinished set of moves. It is a separate accessible modal. */
+.th-leave-dialog[hidden]{display:none!important;}
+.th-leave-dialog{
+  position:fixed;inset:0;z-index:1250;
+  display:flex;align-items:center;justify-content:center;
+  padding:calc(18px + env(safe-area-inset-top)) 18px calc(18px + env(safe-area-inset-bottom));
+  background:rgba(0,30,50,.87);
+}
+.th-leave-card{
+  width:min(100%,390px);padding:22px 18px;
+  background:#e8f6fb;color:#143d55;border:2px solid #8be1e9;
+  border-radius:19px;text-align:center;
+  box-shadow:0 15px 38px #001c32a8;
+}
+.th-leave-card h2{margin:0 0 10px;font-size:22px;}
+.th-leave-card p{font-size:14px;line-height:1.45;margin:0 0 20px;}
+.th-leave-actions{display:flex;flex-direction:column;gap:9px;}
+.th-leave-actions button{
+  width:100%;min-height:46px;padding:8px 14px;
+  border-radius:12px;font-weight:800;
+}
+#thLeaveStay{background:#1788b4;color:#fff;}
+#thLeaveConfirm{background:#d7e9ee;color:#214b60;border:1px solid #7d9daa;}
+.th-leave-actions button:focus-visible{outline:3px solid #dba43a;outline-offset:3px;}
