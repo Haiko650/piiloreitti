@@ -73,3 +73,37 @@
     animation:none !important;
   }
 }
+
+/* Development build number: centered between Settings (left) and DEV toggle
+   (right), outside the hero/menu flow so all approved artwork stays put. */
+#welcomeScreen .welcomeTop .homeBuildBadge {
+  position:fixed;
+  top:calc(env(safe-area-inset-top,0px) + 16px);
+  left:50%;
+  transform:translateX(-50%);
+  z-index:20;
+  pointer-events:none;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:25px;
+  padding:4px 9px;
+  border-radius:999px;
+  border:1px solid rgba(190,238,255,.7);
+  background:rgba(5,40,80,.76);
+  color:#edfaff;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  font-size:11px;
+  line-height:1;
+  font-weight:800;
+  letter-spacing:.035em;
+  white-space:nowrap;
+  font-variant-numeric:tabular-nums;
+  text-shadow:0 1px 3px rgba(0,20,50,.6);
+}
+@media (max-width:360px){
+  #welcomeScreen .welcomeTop .homeBuildBadge {
+    font-size:10px;
+    padding:4px 6px;
+  }
+}
