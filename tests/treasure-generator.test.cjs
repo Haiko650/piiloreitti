@@ -99,20 +99,23 @@ test('browser global loads without Node imports and returns identical campaign',
   const answer=context.window.PathleTreasureGenerator.generateLevel(8);
   assert.equal(JSON.stringify(answer),JSON.stringify(generator.generateLevel(8)));
 });
-test('the normal Treasure Hunt entrypoint always loads the generated campaign map',()=>{
+test('canonical Treasure Hunt loads v2 release after worlds and before the board renderer',()=>{
   const html=source('treasure-hunt.html');
-  assert.ok(html.indexOf('js/treasure-generator.js')<html.indexOf('js/treasure-bootstrap.js'));
-  assert.ok(html.indexOf('js/treasure-bootstrap.js')<html.indexOf('js/treasure-ui.js'));
-  assert.ok(html.indexOf('js/treasure-ui.js')<html.indexOf('js/treasure-campaign.js'));
+  const scripts=['js/treasure-generator.js','js/treasure-worlds.js',
+    'js/treasure-release-v2.js','js/treasure-bootstrap-v2.js',
+    'js/treasure-ui.js','js/treasure-progress-v2.js',
+    'js/treasure-save-v2.js','js/treasure-campaign-v2.js'];
+  const positions=scripts.map(file=>html.indexOf(file));
+  assert.ok(positions.every(x=>x>=0));
+  assert.ok(positions.every((x,i)=>i===0||x>positions[i-1]));
+  assert.ok(!html.includes('src="js/treasure-bootstrap.js'));
+  assert.ok(!html.includes('src="js/treasure-campaign.js'));
   assert.ok(!html.includes('js/treasure-preview.js'));
   assert.ok(!html.includes('js/treasure-levels.js'));
-  assert.ok(!html.includes('Select test level'));
-  const bootstrap=source('js/treasure-bootstrap.js');
-  assert.match(bootstrap,/root.PathleTreasureLevels=levels/);
+  const bootstrap=source('js/treasure-bootstrap-v2.js');
+  assert.match(bootstrap,/root.PathleTreasureLevels=release.levels/);
   assert.match(bootstrap,/root.PathleTreasureCampaignMode=true/);
-  assert.match(bootstrap,/generator.generateCampaign\(\)/);
   const home=source('index.html');
   assert.match(home,/id="playTreasure" href="treasure-hunt.html"/);
-  assert.doesNotMatch(home,/3 playable test levels/);
   assert.match(source('js/treasure-ui.js'),/const levels = window.PathleTreasureLevels/);
 });
