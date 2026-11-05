@@ -69,6 +69,10 @@
       fin.innerHTML = FIN_SVG;
       finsEl.append(fin);
     }
+    // TH.6A.2: after the third lesson, enter the Water World overview
+    // instead of silently jumping straight into the Coral Coast board.
+    next.textContent = root.PathleTreasureCampaignV2 && index===2
+      ? 'Explore Water World →' : 'Next Level →';
     next.hidden = index === levels.length - 1;
     $('thWinFinal').hidden = index !== levels.length - 1;
 
@@ -87,7 +91,9 @@
     if(root.PathleTreasureCampaignMode){
       // The finished game has no hidden test tabs. Navigate through the
       // same controller as the numbered map, preserving unlock checks.
-      root.PathleTreasureCampaign.openLevel(to);
+      if(typeof root.PathleTreasureCampaign.advance==='function')
+        root.PathleTreasureCampaign.advance(completedIndex,to);
+      else root.PathleTreasureCampaign.openLevel(to);
     }else{
       // Backwards compatibility for the original isolated TH.3 unit tests.
       const tab=document.querySelector('[data-th-level="' + to + '"]');
