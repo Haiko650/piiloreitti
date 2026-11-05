@@ -37,8 +37,9 @@
     return Object.freeze({id,worldId:'water-world',title,sort,
       targetLevelCount:60,status:'planned',levelIds:Object.freeze([]),
       unlock:Object.freeze({afterAreaId:requires,minimumFins:0}),
-      map:Object.freeze({mode:'vertical-scroll',artStyle:'2.5d',sectionTarget:10}),
-      visualMode,featureAtEnd:mechanic});
+      map:Object.freeze({mode:'vertical-scroll',artStyle:'2.5d',sectionTarget:10,
+        nodes:Object.freeze({})}),
+      visualMode,visualOverrides:Object.freeze({}),featureAtEnd:mechanic});
   }
   const AREAS=Object.freeze([
     plannedArea('coral-coast','Coral Coast',1,'tutorial','currents','surface'),
@@ -46,7 +47,7 @@
     plannedArea('open-ocean','Open Ocean',3,'tropical-islands','whirlpools','surface')
   ]);
   const TUTORIAL=Object.freeze({id:'tutorial',worldId:'water-world',title:'Haiko\'s First Steps',
-    status:'ready-for-ui',visualMode:'surface',
+    status:'ready-for-ui',visualMode:'surface',visualOverrides:Object.freeze({}),
     levelIds:Object.freeze(TUTORIAL_LEVELS.map(level=>level.id))});
   const DEFAULT_CATALOG=Object.freeze({version:VERSION,worlds:WORLDS,areas:AREAS,
     tutorial:TUTORIAL,tutorialLevels:TUTORIAL_LEVELS});
@@ -98,6 +99,17 @@
       }
       if(area.status==='released'&&area.levelIds.length===0)
         errors.push('Released area must contain a playable level');
+      const overrides=area.visualOverrides||{};
+      if(!overrides||typeof overrides!=='object'||Array.isArray(overrides)||
+         Object.entries(overrides).some(([id,mode])=>!area.levelIds.includes(id)||!MODES.includes(mode)))
+        errors.push('Invalid per-level visual mode for '+area.id);
+      const nodes=area.map.nodes||{};
+      if(!nodes||typeof nodes!=='object'||Array.isArray(nodes)||
+         Object.entries(nodes).some(([id,node])=>!area.levelIds.includes(id)||!node||
+           !safeId(node.sectionId)||typeof node.x!=='number'||typeof node.y!=='number'||
+           !Number.isFinite(node.x)||!Number.isFinite(node.y)||
+           node.x<0||node.x>1||node.y<0||node.y>1))
+        errors.push('Invalid map node position for '+area.id);
     }
     for(const area of areas){
       const predecessor=area.unlock?.afterAreaId;
@@ -139,7 +151,9 @@
         position:catalog.tutorial.levelIds.indexOf(levelId),visualMode:'surface'};
     const area=catalog.areas.find(item=>item.levelIds.includes(levelId));
     return area?{worldId:area.worldId,areaId:area.id,
-      position:area.levelIds.indexOf(levelId),visualMode:area.visualMode}:null;
+      position:area.levelIds.indexOf(levelId),
+      visualMode:area.visualOverrides?.[levelId]||area.visualMode,
+      mapNode:area.map.nodes?.[levelId]||null}:null;
   }
   assertValid(DEFAULT_CATALOG);
   const api=Object.freeze({VERSION,MODES,DEFAULT_CATALOG,
