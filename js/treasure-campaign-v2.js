@@ -17,8 +17,9 @@
   const storage=root.PathleStorage;
   const schema=root.PathleSaveSchema;
   const art=root.PathleTreasureMapArt;
+  const layout=root.PathleTreasureMapLayout;
   if(!release||!worlds||!model||!save||!grading||!solver||!engine||
-     !ui||!storage||!schema||!art)throw Error('Missing TH.6A.2 modules');
+     !ui||!storage||!schema||!art||!layout)throw Error('Missing TH.6A.2 modules');
   const catalog=release.catalog,levels=release.levels;
   const $=id=>document.getElementById(id);
   const shell=document.querySelector('.th-shell');
@@ -114,80 +115,85 @@
       ?'Choose an unlocked area. More destinations will arrive in future updates.'
       :'Complete Haiko\'s 3 lessons before exploring.';
   }
-  function pathData(nodes){
-    const coords=nodes.map(node=>({x:node.x*1000,y:node.y*1300}));
-    if(coords.length<2)return '';
-    let d='M'+coords[0].x+' '+coords[0].y;
-    for(let i=1;i<coords.length;i++){
-      const a=coords[i-1],b=coords[i];
-      const mid=(a.y+b.y)/2;
-      d+=' C'+a.x+' '+mid+' '+b.x+' '+mid+' '+b.y;
-    }
-    return d;
-  }
   function renderArea(){
     const area=catalog.areas.find(item=>item.id===currentArea);
     if(!area||area.status!=='released')return;
     areaTitle.textContent=area.title;
     const cleared=area.levelIds.filter(id=>Boolean(progress.records[id])).length;
     const earned=model.earnedFins(progress,area.levelIds,finsFor);
-    areaSummary.textContent=cleared+' / '+area.levelIds.length+' playable levels complete · '+earned+' fins · Area goal: '+area.targetLevelCount+' levels';
-    const sectionId=area.map.nodes[area.levelIds[0]]?.sectionId;
-    const assets=art.forSection(area.id,sectionId);
-    art.applyLayer(areaCanvas,'--th-base-art',assets?.base);
-    art.applyLayer(areaCanvas,'--th-detail-art',assets?.details);
+    areaSummary.textContent=cleared+' / '+area.levelIds.length+
+      ' playable levels complete · '+earned+' fins · Area goal: '+area.targetLevelCount+' levels';
     areaCanvas.replaceChildren();
-    const base=document.createElement('div');base.className='th-v2-art-base';base.setAttribute('aria-hidden','true');
-    const detail=document.createElement('div');detail.className='th-v2-art-details';detail.setAttribute('aria-hidden','true');
-    areaCanvas.append(base);
-    const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
-    svg.classList.add('th-v2-route-svg');
-    svg.setAttribute('viewBox','0 0 1000 1300');
-    svg.setAttribute('preserveAspectRatio','none');
-    svg.setAttribute('aria-hidden','true');
-    const path=document.createElementNS('http://www.w3.org/2000/svg','path');
-    path.setAttribute('d',pathData(area.levelIds.map(id=>area.map.nodes[id])));
-    path.setAttribute('fill','none');
-    path.setAttribute('stroke','#fff1ac');
-    path.setAttribute('stroke-width','16');
-    path.setAttribute('stroke-linecap','round');
-    path.setAttribute('stroke-dasharray','2 28');
-    svg.append(path);
-    areaCanvas.append(svg,detail);
-    let currentNode=null;
-    for(let i=0;i<area.levelIds.length;i++){
-      const id=area.levelIds[i],node=area.map.nodes[id];
-      const score=progress.records[id]?.bestMoves??null;
-      const available=model.canPlay(progress,catalog,id,finsFor);
-      const button=document.createElement('button');
-      button.type='button';
-      button.className='th-v2-node';
-      button.classList.add(score!==null?'is-complete':available?'is-next':'is-locked');
-      button.style.left=(node.x*100)+'%';
-      button.style.top=(node.y*100)+'%';
-      button.disabled=!available;
-      const number=document.createElement('strong');
-      number.textContent=String(i+1);
-      const medal=document.createElement('small');
-      medal.textContent=score===null?(available?'PLAY':'LOCKED'):finsFor(id,score)+' fins';
-      button.append(number,medal);
-      button.setAttribute('aria-label','Level '+(i+1)+', '+(score===null?(available?'ready to play':'locked'):'best '+score+' moves'));
-      button.addEventListener('click',()=>openLevel(levels.findIndex(item=>item.id===id)));
-      areaCanvas.append(button);
-      if(available&&score===null)currentNode=node;
+    const sections=layout.getSections(area);
+    const currentId=area.levelIds.find(id=>!progress.records[id])||
+      area.levelIds[area.levelIds.length-1];
+    let currentNodeElement=null;
+    for(let sectionIndex=0;sectionIndex<sections.length;sectionIndex++){
+      const section=sections[sectionIndex];
+      const images=art.forSection(area.id,section.id);
+      const sectionElement=document.createElement('section');
+      sectionElement.className='th-v2-map-section';
+      sectionElement.dataset.sectionId=section.id;
+      sectionElement.setAttribute('aria-label',area.title+' map section '+(sectionIndex+1));
+      art.applyLayer(sectionElement,'--th-base-art',images?.base);
+      art.applyLayer(sectionElement,'--th-detail-art',images?.details);
+      const base=document.createElement('div');
+      base.className='th-v2-art-base';base.setAttribute('aria-hidden','true');
+      const detail=document.createElement('div');
+      detail.className='th-v2-art-details';detail.setAttribute('aria-hidden','true');
+      sectionElement.append(base);
+      const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+      svg.classList.add('th-v2-route-svg');
+      svg.setAttribute('viewBox','0 0 1000 1300');
+      svg.setAttribute('preserveAspectRatio','none');
+      svg.setAttribute('aria-hidden','true');
+      const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+      path.setAttribute('d',layout.pathFor(section.nodes,sectionIndex>0,sectionIndex<sections.length-1));
+      path.setAttribute('fill','none');
+      path.setAttribute('stroke','#fff1ac');
+      path.setAttribute('stroke-width','16');
+      path.setAttribute('stroke-linecap','round');
+      path.setAttribute('stroke-dasharray','2 28');
+      svg.append(path);
+      sectionElement.append(svg,detail);
+      for(const node of section.nodes){
+        const id=node.levelId;
+        const score=progress.records[id]?.bestMoves??null;
+        const available=model.canPlay(progress,catalog,id,finsFor);
+        const button=document.createElement('button');
+        button.type='button';
+        button.className='th-v2-node';
+        button.classList.add(score!==null?'is-complete':available?'is-next':'is-locked');
+        button.style.left=(node.x*100)+'%';
+        button.style.top=(node.y*100)+'%';
+        button.disabled=!available;
+        const number=document.createElement('strong');
+        number.textContent=String(node.index+1);
+        const medal=document.createElement('small');
+        medal.textContent=score===null?(available?'PLAY':'LOCKED'):finsFor(id,score)+' fins';
+        button.append(number,medal);
+        button.setAttribute('aria-label','Level '+(node.index+1)+', '+
+          (score===null?(available?'ready to play':'locked'):'best '+score+' moves'));
+        button.addEventListener('click',()=>openLevel(levels.findIndex(item=>item.id===id)));
+        sectionElement.append(button);
+        if(id===currentId){
+          currentNodeElement=button;
+          const haiko=document.createElement('div');
+          haiko.className='th-v2-map-haiko';
+          haiko.setAttribute('role','img');
+          haiko.setAttribute('aria-label','Haiko the Shark at your current position');
+          haiko.style.left=(node.x*100)+'%';
+          haiko.style.top='calc('+(node.y*100)+'% - 60px)';
+          // Haiko is independent from every map background and can be replaced
+          // in the artwork registry without touching puzzle or campaign code.
+          art.applyLayer(haiko,'--th-haiko-art',art.forArea(area.id)?.haiko);
+          sectionElement.append(haiko);
+        }
+      }
+      areaCanvas.append(sectionElement);
     }
-    currentNode??=area.map.nodes[area.levelIds[area.levelIds.length-1]];
-    const haiko=document.createElement('div');
-    haiko.className='th-v2-map-haiko';
-    haiko.setAttribute('role','img');
-    haiko.setAttribute('aria-label','Haiko the Shark at your current position');
-    haiko.style.left=(currentNode.x*100)+'%';
-    haiko.style.top='calc('+(currentNode.y*100)+'% - 60px)';
-    haiko.style.backgroundImage='url("images/maps/water-world/haiko-map.svg")';
-    areaCanvas.append(haiko);
-    const current=areaCanvas.querySelector('.is-next');
-    if(current&&typeof current.scrollIntoView==='function'){
-      requestAnimationFrame(()=>current.scrollIntoView({block:'center',behavior:'auto'}));
+    if(currentNodeElement&&typeof currentNodeElement.scrollIntoView==='function'){
+      requestAnimationFrame(()=>currentNodeElement.scrollIntoView({block:'center',behavior:'auto'}));
     }
   }
   function showWorld(){
