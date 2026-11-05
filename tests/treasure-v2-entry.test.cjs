@@ -12,6 +12,7 @@ const release=require('../js/treasure-release-v2.js');
 const model=require('../js/treasure-progress-v2.js');
 const saver=require('../js/treasure-save-v2.js');
 const art=require('../js/treasure-map-art.js');
+const layout=require('../js/treasure-map-layout.js');
 const source=fs.readFileSync(path.join(__dirname,'../js/treasure-campaign-v2.js'),'utf8');
 const clone=o=>JSON.parse(JSON.stringify(o));
 const idle=()=>new Promise(resolve=>setImmediate(resolve));
@@ -81,6 +82,7 @@ function harness(initial=original()){
       leaveLevel(){return true},hasUnfinishedProgress:()=>false
     },
     PathleStorage:storageInstance,PathleTreasureMapArt:art,
+    PathleTreasureMapLayout:layout,
     PathleSaveSchema:{createEmptySave:()=>({
       schemaVersion:1,extensions:{},progress:{chapters:{}},
       collection:{items:{}},settings:{sound:true}
@@ -140,11 +142,13 @@ test('three tutorial finishes unlock Water World and first Coral Coast stage',as
   pins[0].click();
   assert.equal(h.root.PathleTreasureCampaign.getView(),'area');
   const area=h.$('thV2AreaCanvas');
-  assert.equal(area.children.filter(x=>x.classList.contains('th-v2-node')).length,4);
-  assert.ok(area.properties['--th-base-art'].includes('section-01-base.svg'));
-  assert.ok(area.properties['--th-detail-art'].includes('section-01-details.svg'));
-  assert.equal(area.children.filter(x=>x.classList.contains('th-v2-map-haiko')).length,1);
-  const first=area.children.find(x=>x.classList.contains('is-next'));
+  const sections=area.children.filter(x=>x.classList.contains('th-v2-area-section'));
+  assert.equal(sections.length,1);
+  assert.equal(sections[0].children.filter(x=>x.classList.contains('th-v2-node')).length,4);
+  assert.ok(sections[0].properties['--th-base-art'].includes('section-01-base.svg'));
+  assert.ok(sections[0].properties['--th-detail-art'].includes('section-01-details.svg'));
+  assert.equal(sections[0].children.filter(x=>x.classList.contains('th-v2-map-haiko')).length,1);
+  const first=sections[0].children.find(x=>x.classList.contains('is-next'));
   first.click();
   assert.equal(h.selected.at(-1),3);
   assert.deepEqual(h.storage.data.progress.chapters['ocean-01'],{dailyMarker:'preserve'});
@@ -160,7 +164,7 @@ test('Coral Coast current stage changes only after a successful saved victory',a
   await clear(h,3);
   h.root.PathleTreasureCampaign.openArea('coral-coast');
   const area=h.$('thV2AreaCanvas');
-  const next=area.children.find(x=>x.classList.contains('is-next'));
+  const next=area.children.flatMap(section=>section.children).find(x=>x.classList.contains('is-next'));
   assert.equal(next.children[0].textContent,'2');
   assert.equal(h.root.PathleTreasureCampaign.canEnter(4),true);
   assert.equal(h.root.PathleTreasureCampaign.canEnter(5),false);
