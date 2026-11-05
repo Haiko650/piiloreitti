@@ -38,13 +38,25 @@
 .th-v2-world-pin.is-locked:disabled{background:#194b69d9;color:#bbd9e0;border-color:#81abb8;opacity:.9}
 .th-v2-area-controls{display:flex;justify-content:flex-end;margin:6px 2px 9px}
 .th-v2-area-canvas{
-  --th-base-art:none;--th-detail-art:none;
-  position:relative;height:1300px;max-width:100%;
-  border:2px solid #8ae4e9;border-radius:19px;
-  background:linear-gradient(#7ae9e8,#228ebb 65%,#116a99);
-  overflow:hidden;isolation:isolate;
-  box-shadow:0 11px 24px #001e3677,inset 0 1px #e0ffff99;
+  position:relative;display:flex;flex-direction:column;gap:0;
+  width:100%;height:auto;max-width:100%;
+  border:0;overflow:visible;isolation:isolate;
 }
+.th-v2-map-section{
+  --th-base-art:none;--th-detail-art:none;--th-haiko-art:none;
+  position:relative;flex:none;height:1300px;width:100%;
+  overflow:hidden;isolation:isolate;
+  border-left:2px solid #8ae4e9;border-right:2px solid #8ae4e9;
+  background:linear-gradient(#7ae9e8,#228ebb 65%,#116a99);
+  box-shadow:inset 0 1px #e0ffff99;
+}
+.th-v2-map-section:first-child{
+  border-top:2px solid #8ae4e9;border-radius:19px 19px 0 0;
+}
+.th-v2-map-section:last-child{
+  border-bottom:2px solid #8ae4e9;border-radius:0 0 19px 19px;
+}
+.th-v2-map-section:only-child{border-radius:19px}
 .th-v2-art-base,.th-v2-art-details{
   position:absolute;inset:0;width:100%;height:100%;
   background-size:100% 100%;background-repeat:no-repeat;
@@ -70,6 +82,7 @@
 .th-v2-map-haiko{
   position:absolute;z-index:6;width:100px;height:82px;
   transform:translate(-50%,-42%);pointer-events:none;
+  background-image:var(--th-haiko-art,none);
   background-size:contain;background-position:center;background-repeat:no-repeat;
   filter:drop-shadow(0 7px 8px #0c456881);
   animation:thV2HaikoSwim 2.8s ease-in-out infinite alternate;
