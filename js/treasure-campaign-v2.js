@@ -187,7 +187,7 @@
     areaCanvas.append(haiko);
     const current=areaCanvas.querySelector('.is-next');
     if(current&&typeof current.scrollIntoView==='function'){
-      requestAnimationFrame(()=>current.scrollIntoView({block:'center',behavior:'instant'}));
+      requestAnimationFrame(()=>current.scrollIntoView({block:'center',behavior:'auto'}));
     }
   }
   function showWorld(){
@@ -272,7 +272,7 @@
         if(improved)result=await save.commitBest(storage,catalog,level.id,
           rating.score,rating.optimalMoves,finsFor);
         progress=result.progress;
-        busy=false;shell.inert=false;hideError();
+        ready=true;busy=false;shell.inert=false;hideError();
         showVictory({firstClear:result.firstClear,improved:result.improved,
           previousBest:previous,bestMoves:progress.records[level.id].bestMoves});
       }catch(error){
