@@ -108,7 +108,7 @@ test('a newer published build offers voluntary refresh with cache-busting query'
   assert.equal(h.nodes.homeBuildBadge.classList.contains('has-update'),true);
   assert.equal(h.navigation.length,0);
   h.nodes.homeBuildBadge.fire('click');await idle();
-  assert.match(h.nodes.updateMessage.textContent,/1\.5\.0/);
+  assert.match(h.nodes.updateMessage.textContent,/1\.5\.1/);
   assert.equal(h.nodes.updateInstall.hidden,false);
   assert.equal(h.nodes.updateInstall.textContent,'Load v1.5.1');
   h.nodes.updateInstall.fire('click');
