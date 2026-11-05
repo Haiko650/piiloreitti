@@ -9,22 +9,44 @@
   <link rel="stylesheet" href="css/treasure.css">
   <link rel="stylesheet" href="css/visual-assets.css?v=th3d1">
   <link rel="stylesheet" href="css/treasure-campaign.css?v=th5c1">
+  <link rel="stylesheet" href="css/treasure-world-v2.css?v=th6a2a">
 </head>
 <body class="th-page">
   <main class="th-shell">
     <header class="th-header">
       <a class="th-back" href="index.html" aria-label="Back to Pathle home">←</a>
       <div class="th-heading"><small>HAIKO’S ADVENTURE</small><h1>Treasure Hunt</h1></div>
-      <span class="th-test-badge" id="thMapTotal" aria-label="Available adventure levels">30 LEVELS</span>
+      <span class="th-test-badge" id="thMapTotal" aria-label="Available adventure levels">WATER WORLD</span>
     </header>
-    <section id="thCampaignMap" class="th-campaign-map" aria-label="Treasure Hunt adventure map" hidden>
-      <div class="th-map-intro">
-        <h2>Choose a level</h2>
-        <p>Complete a level to unlock the next. Replay completed levels to improve your score.</p>
-        <strong class="th-map-summary" id="thMapSummary" aria-live="polite">Loading your Treasure Hunt progress…</strong>
-      </div>
-      <div id="thMapRegions"></div>
-      <p class="th-map-footnote">New regions and map graphics can be added later without changing your progress.</p>
+    <section id="thCampaignMap" class="th-campaign-map th-v2-campaign-map" aria-label="Treasure Hunt adventure map" hidden>
+      <section id="thV2Tutorial" class="th-v2-tutorial" aria-label="First-time Treasure Hunt tutorial" hidden>
+        <div class="th-v2-tutorial-hero"><span aria-hidden="true">🦈</span><strong id="thV2TutorialTitle">Welcome, explorer!</strong></div>
+        <p>Haiko will show you the basics in three short treasure puzzles.</p>
+        <p id="thV2TutorialSummary" aria-live="polite">Loading tutorial progress…</p>
+        <button id="thV2TutorialStart" type="button">Start tutorial →</button>
+      </section>
+      <section id="thV2World" class="th-v2-world" aria-label="Water World overview" hidden>
+        <div class="th-v2-map-heading">
+          <div><small>WORLD 1</small><h2 id="thV2WorldTitle">Water World</h2></div>
+          <span class="th-v2-map-caption">NEW AREAS COMING</span>
+        </div>
+        <p class="th-v2-map-explain" id="thV2WorldStatus">Choose an area to explore.</p>
+        <div id="thV2WorldCanvas" class="th-v2-world-canvas" aria-label="Geographic Water World map">
+          <div class="th-v2-world-art" aria-hidden="true"></div>
+          <div id="thV2WorldPins" class="th-v2-world-pins"></div>
+        </div>
+        <button id="thV2WorldBack" type="button" class="th-v2-map-secondary">↻ Show my World</button>
+      </section>
+      <section id="thV2Area" class="th-v2-area" aria-label="Region adventure map" hidden>
+        <div class="th-v2-map-heading">
+          <div><small>WATER WORLD</small><h2 id="thV2AreaTitle">Coral Coast</h2></div>
+          <button id="thV2AreaWorld" type="button" class="th-v2-map-secondary">← World</button>
+        </div>
+        <p class="th-v2-map-explain" id="thV2AreaSummary" aria-live="polite"></p>
+        <div class="th-v2-area-controls"><button id="thV2AreaHere" type="button" class="th-v2-map-secondary">Find Haiko <span aria-hidden="true">🦈</span></button></div>
+        <div id="thV2AreaCanvas" class="th-v2-area-canvas" aria-label="Illustrated, vertically scrollable Coral Coast adventure trail"></div>
+        <p class="th-v2-map-explain">Explore the winding reef path. Future map sections and levels will be added here.</p>
+      </section>
     </section>
     <section class="th-panel" aria-label="Treasure Hunt level" hidden>
       <div class="th-stats" aria-live="polite">
@@ -32,6 +54,7 @@
         <div><small>TREASURES</small><strong id="thTreasures">0 / 2</strong></div>
         <div><small>LEVEL</small><strong id="thLevel">1 / 3</strong></div>
       </div>
+      <p id="thV2LevelGuide" class="th-v2-level-guide">Collect every treasure, then reach X.</p>
       <div class="th-board-container">
         <div id="thBoard" class="th-board" aria-label="Treasure Hunt board. Move to adjacent water tiles, or drag a path." role="grid"></div>
       </div>
@@ -61,7 +84,7 @@
   </div>
   <div class="th-victory" id="thVictory" hidden>
     <section class="th-win-card" role="dialog" aria-modal="true" aria-labelledby="thWinTitle" aria-describedby="thWinTier">
-      <div class="th-win-heading" id="thWinLevel">LEVEL 1 / 30</div>
+      <div class="th-win-heading" id="thWinLevel">LEVEL 1</div>
       <h2 id="thWinTitle">TREASURE COMPLETE!</h2>
       <div id="thWinFins" class="th-win-fins th-win-gold" aria-label="Three golden fins"></div>
       <p class="th-win-tier" id="thWinTier">GOLDEN PERFORMANCE!</p>
@@ -83,13 +106,17 @@
   <script src="js/treasure-solver.js"></script>
   <script src="js/treasure-grading.js"></script>
   <script src="js/treasure-generator.js?v=th4a1"></script>
-  <script src="js/treasure-bootstrap.js?v=th5b1"></script>
+  <script src="js/treasure-worlds.js?v=th6a2a"></script>
+  <script src="js/treasure-release-v2.js?v=th6a2a"></script>
+  <script src="js/treasure-bootstrap-v2.js?v=th6a2a"></script>
+  <script src="js/treasure-map-art.js?v=th6a2a"></script>
   <script src="js/visual-assets.js?v=th3d1"></script>
   <script src="js/treasure-ui.js?v=th5c1"></script>
   <script src="js/save-schema.js"></script>
   <script src="js/storage.js"></script>
-  <script src="js/treasure-progress.js?v=th5a1"></script>
-  <script src="js/treasure-victory.js?v=th5b1"></script>
-  <script src="js/treasure-campaign.js?v=th5c2"></script>
+  <script src="js/treasure-progress-v2.js?v=th6a2a"></script>
+  <script src="js/treasure-save-v2.js?v=th6a2a"></script>
+  <script src="js/treasure-victory.js?v=th6a2a"></script>
+  <script src="js/treasure-campaign-v2.js?v=th6a2a"></script>
 </body>
 </html>
