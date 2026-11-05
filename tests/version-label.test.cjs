@@ -62,8 +62,8 @@ test('home screen version label is an accessible small update button',()=>{
   const badge=html.indexOf('id="homeBuildBadge"',start);
   const tools=html.indexOf('class="topTools"',start);
   assert.ok(start>=0&&badge>start&&tools>badge);
-  assert.match(html,/<button[^>]*id="homeBuildBadge"[^>]*>DEV · v1\.4\.3<\/button>/);
-  assert.match(html,/js\/version\.js\?v=1\.4\.3/);
+  assert.match(html,/<button[^>]*id="homeBuildBadge"[^>]*>DEV · v1\.4\.2<\/button>/);
+  assert.match(html,/js\/version\.js\?v=1\.4\.2/);
   assert.match(html,/css\/home-reef\.css\?v=20261105-2/);
   assert.match(html,/id="gameVersionFooter"/);
   assert.match(html,/id="updateModal"/);
@@ -73,7 +73,7 @@ test('published manifest matches the installed version, and no duplicates linger
   const json=JSON.parse(read('version.json'));
   assert.equal(json.version,'1.4.2');
   assert.equal(json.channel,'DEV');
-  assert.match(read('js/version.js'),/const VERSION='1\.4\.3'/);
+  assert.match(read('js/version.js'),/const VERSION='1\.4\.2'/);
   assert.doesNotMatch(read('index.html'),/DEV · v1\.4\.0/);
 });
 
@@ -108,7 +108,7 @@ test('a newer published build offers voluntary refresh with cache-busting query'
   assert.equal(h.nodes.homeBuildBadge.classList.contains('has-update'),true);
   assert.equal(h.navigation.length,0);
   h.nodes.homeBuildBadge.fire('click');await idle();
-  assert.match(h.nodes.updateMessage.textContent,/1\.4\.3/);
+  assert.match(h.nodes.updateMessage.textContent,/1\.4\.2/);
   assert.equal(h.nodes.updateInstall.hidden,false);
   assert.equal(h.nodes.updateInstall.textContent,'Load v1.4.2');
   h.nodes.updateInstall.fire('click');
