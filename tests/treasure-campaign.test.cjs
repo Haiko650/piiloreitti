@@ -47,7 +47,7 @@ function makeStorage(start=baseSave()){
   };return store;
 }
 function makePage(storage){
-  const keys=['thCampaignMap','thMapRegions','thMapSummary','thMapReturn','thWinMap','thCampaignError','thCampaignErrorTitle','thCampaignErrorText','thCampaignRetry','thVictory'];
+  const keys=['thCampaignMap','thMapRegions','thMapSummary','thMapReturn','thWinMap','thLeaveDialog','thLeaveStay','thLeaveConfirm','thCampaignError','thCampaignErrorTitle','thCampaignErrorText','thCampaignRetry','thVictory'];
   const elements=Object.fromEntries(keys.map(id=>[id,el(id)]));
   const special={'.th-shell':el('shell'),'.th-panel':el('panel'),'.th-level-tabs':el('tabs'),'.th-footnote':el('note')};
   const document={getElementById:id=>elements[id],querySelector:s=>special[s],
