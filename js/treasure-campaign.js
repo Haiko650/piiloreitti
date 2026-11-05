@@ -24,6 +24,9 @@
   const regions=$('thMapRegions');
   const summary=$('thMapSummary');
   const mapButton=$('thMapReturn');
+  const leaveDialog=$('thLeaveDialog');
+  const leaveStay=$('thLeaveStay');
+  const leaveConfirm=$('thLeaveConfirm');
   const mapWin=$('thWinMap');
   const errorBox=$('thCampaignError');
   const errorTitle=$('thCampaignErrorTitle');
@@ -143,6 +146,24 @@
     const target=map.querySelector('.is-next')||map.querySelector('.th-map-level.is-complete:last-of-type');
     if(target&&next<levels.length&&typeof target.scrollIntoView==='function')target.scrollIntoView({block:'nearest',behavior:'auto'});
   }
+  function dismissLeaveDialog(){
+    if(leaveDialog.hidden)return;
+    leaveDialog.hidden=true;
+    shell.inert=false;
+    mapButton.focus();
+  }
+  function requestMap(){
+    if(!ready||busy||!leaveDialog.hidden)return;
+    // No confirmation when the player has not moved. Otherwise a map tap
+    // would discard an unfinished route without warning.
+    if(typeof ui.hasUnfinishedProgress==='function'&&ui.hasUnfinishedProgress()){
+      leaveDialog.hidden=false;
+      shell.inert=true;
+      leaveStay.focus();
+      return;
+    }
+    showMap();
+  }
   function openLevel(index){
     if(!ready||busy||!progressModel.canEnter(progress,levels,index))return;
     clearError();shell.inert=false;
@@ -220,7 +241,27 @@
     isReady:()=>ready
   });
   mapButton.hidden=false;
-  mapButton.addEventListener('click',showMap);
+  mapButton.addEventListener('click',requestMap);
+  leaveStay.addEventListener('click',dismissLeaveDialog);
+  leaveConfirm.addEventListener('click',()=>{
+    leaveDialog.hidden=true;
+    shell.inert=false;
+    showMap();
+  });
+  leaveDialog.addEventListener('keydown',event=>{
+    if(leaveDialog.hidden)return;
+    if(event.key==='Escape'){
+      event.preventDefault();
+      dismissLeaveDialog();
+    }else if(event.key==='Tab'){
+      // Keep keyboard focus inside the two-button confirmation.
+      if(event.shiftKey&&document.activeElement===leaveStay){
+        event.preventDefault();leaveConfirm.focus();
+      }else if(!event.shiftKey&&document.activeElement===leaveConfirm){
+        event.preventDefault();leaveStay.focus();
+      }
+    }
+  });
   mapWin.hidden=false;
   mapWin.addEventListener('click',()=>{
     $('thVictory').hidden=true;
