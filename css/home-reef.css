@@ -107,3 +107,62 @@
     padding:4px 6px;
   }
 }
+
+/* The small home version label doubles as a manual update check.
+   Preserve its established font size and top-center position. */
+#welcomeScreen .welcomeTop button.homeBuildBadge {
+  pointer-events:auto;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+#welcomeScreen .welcomeTop button.homeBuildBadge:focus-visible {
+  outline:2px solid #ffe28b;
+  outline-offset:3px;
+}
+#welcomeScreen .welcomeTop button.homeBuildBadge.has-update::after {
+  content:"";
+  position:absolute;
+  width:8px;
+  height:8px;
+  right:-3px;
+  top:-3px;
+  border-radius:50%;
+  background:#ffe288;
+  border:1px solid #15415e;
+}
+#updateModal .pathleUpdateCard {
+  max-width:390px;
+  text-align:center;
+}
+#updateModal .pathleUpdateCard #updateMessage {
+  margin:18px 0;
+  font-size:14px;
+  line-height:1.5;
+}
+#updateModal .pathleUpdateActions {
+  display:flex;
+  flex-direction:column;
+  gap:9px;
+  margin-top:16px;
+}
+#updateModal .pathleUpdateActions button {
+  min-height:45px;
+  border-radius:12px;
+  padding:9px 12px;
+}
+#updateModal .pathleUpdateActions #updateInstall {
+  background:linear-gradient(130deg,#49ecb5,#08ae87);
+  color:#103d45;
+}
+#updateModal .pathleUpdateActions #updateRetry {
+  background:#315d84;
+  color:#fff;
+}
+#updateModal .pathleUpdateActions #updateClose {
+  background:#382e61;
+  color:#e8f7ff;
+}
+#updateModal .pathleUpdateActions button:focus-visible {
+  outline:3px solid #ffe28b;
+  outline-offset:2px;
+}
