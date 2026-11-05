@@ -17,29 +17,38 @@ automatically verified Android tests.
 6. Map shows completed level 1 and unlocked level 2: PASS.
 7. Closing and reopening retains completed progress: PASS.
 
-## Android round 2 – pending manual checks
+## 2026-11-05 – Treasure Hunt Android round 2 (user-reported)
 
-Use the SAME GitHub Pages origin and do not clear application/site data.
-Do not modify already published map layouts merely for these checks.
+**Outcome: PASS 7/7.** This is a second player-reported manual Android
+acceptance result, not a simulation or CI result. Both rounds total
+**14/14 player-reported checks passed** with no reported failures.
 
-- [ ] Complete levels 2 and 3, then confirm **Next Level** opens
-      level **4 / 30** with a playable board.
-- [ ] Return to the map after finishing level 3; level 4 should be
-      unlocked, and level 5 locked until level 4 is cleared.
-- [ ] Replay an already cleared level with **more** moves than the saved
-      best. Map score / fins must not worsen. Victory shows current
-      moves and saved personal best separately.
-- [ ] Press **Restart** after moves. Position, treasure collection and
-      attempt move count should reset, without clearing the best score.
-- [ ] Swipe/drag through several adjacent water tiles, including around
-      an obstacle. No skipping through blockers or unexpected teleporting.
-- [ ] Switch briefly to another app while a run is in progress,
-      return to Pathle and continue. A background/foreground transition
-      should not corrupt the running board.
-- [ ] Open Daily Challenge, return to Treasure Hunt. Treasure Hunt
-      records and unlocks should still be intact.
-- [ ] Close/reopen the GitHub Pages page after a new completion and
-      confirm the number of unlocked levels and personal best persists.
+1. Clear level 2 and advance via Next Level to level 3: PASS.
+2. Clear level 3, advance to level 4, confirm map unlocks 4 but locks 5: PASS.
+3. Clear level 4, unlock level 5 and retain progress after reopening: PASS.
+4. Replay a cleared level with more moves; saved best and fins do not worsen: PASS.
+5. Restart after making moves; attempt resets without deleting stored best: PASS.
+6. Drag/swipe rapidly through adjacent cells and around blockers; no illegal moves: PASS.
+7. Suspend app briefly and resume, then switch to Daily Challenge and back;
+   Treasure Hunt progress remains intact: PASS.
+
+Note: The prior internal draft listed an extra redundant reload check;
+round 2's actual **seven-item** player-facing checklist included reload
+persistence under item 3. Do not inflate the manual test count.
+
+### Suggested Android round 3 – not yet run
+
+- [ ] Verify 8×12 (levels 11–20) and 10×15 (levels 21–30)
+      boards fit the actual phone without zoom, and touch targets are usable.
+      Reach these stages through the normal campaign; avoid manipulating
+      production save data just to unlock them.
+- [ ] Test the 3/2/1-fin boundaries with multiple legitimate replays.
+- [ ] Verify a longer session (e.g., 20+ minutes) and several app suspensions.
+- [ ] Test game reopen after exiting during an incomplete run; this may
+      intentionally restart the incomplete attempt, but must preserve
+      previously completed levels.
+- [ ] Check the visible version/build info and update-check flow
+      **after** these are implemented (currently pending).
 
 ### Explicitly not yet tested
 
