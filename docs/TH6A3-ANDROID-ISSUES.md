@@ -1,0 +1,74 @@
+# Pathle TH.6A.3 – Android observations and one-change-at-a-time worklist
+Date: 2026-11-05
+Branch: `pathle-modular-dev`. Do not modify `main` without approval.
+The player tests the same GitHub Pages URL after EACH visible fix.
+
+## Android feedback from v1.5.0
+
+- Tutorial completes and leads to the map: **works**, but requires
+  improved content, presentation and tutorial-specific usability.
+- **Water World overview map is too wide and clipped** on mobile.
+- Coral Coast's vertical scrolling **works**, but level 1 should sit
+  at the **bottom** and the journey should proceed **upward**.
+- Only four Coral Coast puzzles exist: **intentional limited content
+  slice**, not a missing-level bug. Area's ~60-puzzle initial target
+  remains in force.
+- DEV toggle from the main menu should provide proper Treasure Hunt
+  testing: all *published* puzzles immediately selectable; replay the
+  3-part tutorial on every new visit; never pollute real best scores.
+
+## Fix order and acceptance gates
+
+1. **TH.6A.3a: overview clipping – implemented; Android confirmation pending.**
+   The earlier `min-height:680px` (and `600px` on narrow phones)
+   interacted with `aspect-ratio:600/760` to produce an oversized
+   world-map box whose right side was cut by the scrolling parent.
+   Use width:100%, min-width:0, max-width:100%, height:auto,
+   min-height:0, box-sizing:border-box and the same aspect ratio.
+   Retain independently replaceable map artwork and clickable pins.
+   Test on Android portrait (especially 320–390 CSS px), no right-side
+   clipping, Coral Coast button accessible. Do not adjust map-art files
+   to work around a layout bug.
+2. **TH.6A.3b: invert Coral Coast map progression – TODO.**
+   The player should start at the bottom of each area, with level
+   numbers increasing upward. Coordinate rendering, section order,
+   paths and initial scroll position must agree in both 4- and
+   60-level maps. All puzzle IDs, stored results, medals and access
+   remain unchanged. Preserve the layered/replaceable artwork model.
+3. **TH.6A.3c: DEV mode Treasure Hunt integration – TODO.**
+   `js/game.js` keeps `devEnabled` only in the home-page JS
+   runtime. The Treasure Hunt page cannot currently see the toggle.
+   Introduce a session-scoped same-origin DEV switch, not permanent
+   save modification. When ON:
+   - Entering Treasure Hunt always presents tutorial lessons 1–3
+     as a fresh test run (do not reset actual completed tutorial data).
+   - Developer can open all **existing released** levels/areas without
+     spending time completing prerequisites; planned / nonexistent
+     levels are not fabricated.
+   - Test completions should be isolated in memory and never write
+     to or erase production `treasureHuntV2` progress.
+   - Include an obvious DEV-only way to move from tutorial to the
+     world/area map without finishing the lessons.
+   - When OFF: restore exactly normal first-visit tutorial and
+     locked-stage behavior; do not leak DEV access across sessions.
+   - Unit tests must cover cross-page toggle, repeated entry,
+     DEV-only level access and save isolation.
+4. **TH.6C: polish the three-step tutorial – TODO (user requested).**
+   Improve Haiko's own step-by-step instruction, keep tips out of
+   board touch controls, and make movement/treasure/obstacle/fin goals
+   discoverable without long walls of text. Validate on Android.
+   The accepted initial tutorial puzzles are only placeholders for
+   final onboarding quality.
+5. **TH.6B: improve illustrations – TODO.** Keep world overview,
+   area image sections (base and detail), nodes, SVG route and Haiko
+   sprites separate as defined in `js/treasure-map-art.js` and
+   `docs/TH6A2-MAP-ART.md`. Do not embed UI or level numbers in art.
+6. **TH.7: extend Coral Coast – TODO.** Four puzzles are now
+   intentional; add meaningful new puzzles incrementally after
+   new mechanics have passed the developer test reef. About 60 levels
+   is an initial area goal, never a fixed game or world limit.
+
+All checks must keep Daily Adventure and Hideout saves intact.
+The retired TH.5 30-level records remain archived separately.
+Fin thresholds, lives and move limits are reserved for later design,
+not activated by these interface fixes.
