@@ -179,3 +179,24 @@ test('future worlds use stable numeric world order, never alphabetic world IDs',
   const bad=clone(c);bad.worlds[1].sort=bad.worlds[0].sort;
   assert.equal(catalog.validate(bad).valid,false);
 });
+
+test('the same area may show fin-only tiles and a full swimming Haiko',()=>{
+  const c=base(),a=releaseArea(c,'coral-coast',2);
+  a.visualMode='surface';
+  a.visualOverrides={'th-coral-coast-002':'underwater'};
+  a.map.nodes={
+    'th-coral-coast-001':{sectionId:'coral-01',x:0.23,y:0.81},
+    'th-coral-coast-002':{sectionId:'coral-01',x:0.67,y:0.22}
+  };
+  assert.equal(catalog.validate(c).valid,true);
+  assert.equal(catalog.getStage(c,a.levelIds[0]).visualMode,'surface');
+  assert.equal(catalog.getStage(c,a.levelIds[1]).visualMode,'underwater');
+  assert.deepEqual(catalog.getStage(c,a.levelIds[1]).mapNode,{
+    sectionId:'coral-01',x:0.67,y:0.22
+  });
+  a.visualOverrides[a.levelIds[0]]='invalid';
+  assert.equal(catalog.validate(c).valid,false);
+  a.visualOverrides[a.levelIds[0]]='surface';
+  a.map.nodes[a.levelIds[0]].x=1.1;
+  assert.equal(catalog.validate(c).valid,false);
+});
