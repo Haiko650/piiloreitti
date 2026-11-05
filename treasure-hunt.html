@@ -42,6 +42,16 @@
       </div>
     </section>
   </main>
+  <div class="th-leave-dialog" id="thLeaveDialog" hidden>
+    <section class="th-leave-card" role="dialog" aria-modal="true" aria-labelledby="thLeaveTitle" aria-describedby="thLeaveText">
+      <h2 id="thLeaveTitle">Return to the map?</h2>
+      <p id="thLeaveText">Your moves in this unfinished level will be lost. Completed levels and personal bests stay saved.</p>
+      <div class="th-leave-actions">
+        <button type="button" id="thLeaveStay">Keep playing</button>
+        <button type="button" id="thLeaveConfirm">Leave level</button>
+      </div>
+    </section>
+  </div>
   <div class="th-campaign-error" id="thCampaignError" hidden>
     <section class="th-campaign-error-card" role="alertdialog" aria-modal="true" aria-labelledby="thCampaignErrorTitle" aria-describedby="thCampaignErrorText">
       <h2 id="thCampaignErrorTitle">Treasure Hunt progress could not be saved</h2>
