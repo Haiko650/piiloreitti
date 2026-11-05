@@ -200,3 +200,13 @@ test('the same area may show fin-only tiles and a full swimming Haiko',()=>{
   a.map.nodes[a.levelIds[0]].x=1.1;
   assert.equal(catalog.validate(c).valid,false);
 });
+
+test('mechanics lab is development-only and never enters player campaign or fin totals',()=>{
+  assert.equal(catalog.DEV_TEST_LAB.id,'haiko-test-reef');
+  assert.equal(catalog.DEV_TEST_LAB.released,false);
+  assert.equal(catalog.DEV_TEST_LAB.persistentScores,false);
+  const c=catalog.DEFAULT_CATALOG;
+  assert.ok(!c.areas.some(a=>a.id===catalog.DEV_TEST_LAB.id));
+  assert.ok(!catalog.playableIds(c).some(id=>catalog.DEV_TEST_LAB.levelIds.includes(id)));
+  assert.equal(progress.canPlay(progress.empty(),c,'th-dev-lab-001'),false);
+});
