@@ -64,7 +64,7 @@ test('home screen version label is an accessible small update button',()=>{
   assert.ok(start>=0&&badge>start&&tools>badge);
   assert.match(html,/<button[^>]*id="homeBuildBadge"[^>]*>DEV · v1\.5\.4<\/button>/);
   assert.match(html,/js\/version\.js\?v=1\.5\.4/);
-  assert.match(html,/css\/home-reef\.css\?v=20261105-2/);
+  assert.match(html,/css\/home-reef\.css\?v=20261106-swim1/);
   assert.match(html,/id="gameVersionFooter"/);
   assert.match(html,/id="updateModal"/);
 });
