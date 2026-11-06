@@ -8,12 +8,19 @@
   const REGISTRY=Object.freeze({
     worlds:Object.freeze({
       'water-world':Object.freeze({
-        overview:BASE+'world-overview.svg',
         theme:'ocean',
+        // Top-to-bottom geographic sections; add new sections without
+        // changing puzzle IDs, level access rules or the map renderer.
+        sections:Object.freeze([
+          Object.freeze({id:'northern-sea',base:BASE+'world-northern-sea.svg'}),
+          Object.freeze({id:'island-passage',base:BASE+'world-island-passage.svg'}),
+          Object.freeze({id:'southern-reef',base:BASE+'world-overview.svg'})
+        ]),
+        // Relative coordinates live in the ART manifest, not save records.
         areas:Object.freeze({
-          'coral-coast':Object.freeze({x:0.25,y:0.70}),
-          'tropical-islands':Object.freeze({x:0.58,y:0.42}),
-          'open-ocean':Object.freeze({x:0.78,y:0.24})
+          'coral-coast':Object.freeze({sectionId:'southern-reef',x:0.32,y:0.69}),
+          'tropical-islands':Object.freeze({sectionId:'island-passage',x:0.64,y:0.49}),
+          'open-ocean':Object.freeze({sectionId:'northern-sea',x:0.69,y:0.34})
         })
       })
     }),
@@ -32,6 +39,14 @@
     })
   });
   function forWorld(id){return REGISTRY.worlds[id]||null;}
+  function worldSections(id){
+    return forWorld(id)?.sections||Object.freeze([]);
+  }
+  function worldAreaPosition(worldId,areaId){
+    const value=forWorld(worldId)?.areas?.[areaId];
+    if(!value)return null;
+    return value;
+  }
   function forArea(id){return REGISTRY.areas[id]||null;}
   function forSection(areaId,sectionId){
     return forArea(areaId)?.sections?.[sectionId]||null;
@@ -45,7 +60,7 @@
       node.style.setProperty(variable,'none');
     }
   }
-  const api=Object.freeze({REGISTRY,forWorld,forArea,forSection,applyLayer});
+  const api=Object.freeze({REGISTRY,forWorld,worldSections,worldAreaPosition,forArea,forSection,applyLayer});
   if(typeof module==='object'&&module.exports)module.exports=api;
   if(root)root.PathleTreasureMapArt=api;
 })(typeof window!=='undefined'?window:null);
