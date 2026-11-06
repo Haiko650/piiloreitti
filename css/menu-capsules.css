@@ -350,3 +350,25 @@
   #welcomeScreen #playDaily{min-height:49px!important}
   #welcomeScreen .adventureCard #journeyQuick.dailyProgressPanel{min-height:32px!important;padding-block:2px!important;margin-bottom:5px!important}
 }
+
+/* Home placement: matching narrower capsules, raised together without
+   changing their flex layout or the Daily progress tier's click areas. */
+#welcomeScreen{
+  --home-capsule-width:min(calc(100% - 64px),360px);
+  --home-capsule-top:-52px;
+}
+#welcomeScreen .adventureCard,
+#welcomeScreen #playTreasure,
+#welcomeScreen #openHideout{
+  width:var(--home-capsule-width)!important;
+  top:var(--home-capsule-top)!important;
+}
+@media(max-width:360px){
+  #welcomeScreen{--home-capsule-width:min(calc(100% - 36px),360px);}
+}
+@media(max-height:700px){
+  #welcomeScreen{--home-capsule-top:-40px;}
+}
+@media(max-height:520px){
+  #welcomeScreen{--home-capsule-top:-20px;}
+}
