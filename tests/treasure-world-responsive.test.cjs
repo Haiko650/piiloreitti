@@ -24,25 +24,30 @@ test('Water World overview uses the available mobile width without forced oversi
   assert.match(world,/max-width\s*:\s*100%\s*;/);
   assert.match(world,/height\s*:\s*auto\s*;/);
   assert.match(world,/min-height\s*:\s*0\s*;/);
-  assert.match(world,/aspect-ratio\s*:\s*600\s*\/\s*760\s*;/);
+  assert.doesNotMatch(world,/aspect-ratio\s*:\s*600\s*\/\s*760\s*;/);
   assert.doesNotMatch(world,/min-height\s*:\s*(?:600|680)px\b/);
+  const section=cssBlock(css,'.th-v2-world-section');
+  assert.match(section,/aspect-ratio\s*:\s*600\s*\/\s*760\s*;/);
+  assert.match(section,/width\s*:\s*100%\s*;/);
+  assert.match(section,/flex\s*:\s*none\s*;/);
+  assert.match(cssBlock(css,'.th-v2-world-sections'),/flex-direction\s*:\s*column/);
   assert.doesNotMatch(css,/@media\s*\(max-width:370px\)\s*\{[^}]*\.th-v2-world-canvas\s*\{/);
   for(const viewport of [320,360,375,390,490]){
     const available=viewport-24-20-4;
     const renderedWidth=available;
     const renderedHeight=available*760/600;
     assert.ok(renderedWidth<=viewport,'World width exceeds viewport');
-    assert.ok(renderedHeight>0&&renderedHeight<680,'Viewport height should scale with width');
+    assert.ok(renderedHeight>0&&renderedHeight<680,'Each section should scale with width');
+    assert.ok(renderedHeight*3>viewport,'Three geographic sections enable vertical scrolling');
   }
 });
 
 test('overview artwork and tappable area pins remain on separate responsive layers',()=>{
   const html=read('treasure-hunt.html'),css=read('css/treasure-world-v2.css');
   assert.match(html,/id="thV2WorldCanvas" class="th-v2-world-canvas"/);
-  assert.match(html,/class="th-v2-world-art"/);
-  assert.match(html,/id="thV2WorldPins"/);
+  assert.match(html,/id="thV2WorldPins" class="th-v2-world-sections"/);
+  assert.match(read('js/treasure-campaign-v2.js'),/picture.className='th-v2-world-art'/);
   assert.match(cssBlock(css,'.th-v2-world-art'),/background-size\s*:\s*100%\s+100%/);
-  assert.match(cssBlock(css,'.th-v2-world-pins'),/position\s*:\s*absolute/);
   assert.match(cssBlock(css,'.th-v2-world-pin'),/position\s*:\s*absolute/);
   assert.match(read('js/treasure-map-art.js'),/world-overview\.svg/);
 });
