@@ -40,6 +40,41 @@
       lastIndex:section.nodes[section.nodes.length-1].index
     })));
   }
+  // Rendering order is separate from published level IDs and map artwork.
+  // Upward travel means the last *logical* section is at the TOP of the
+  // DOM, while the first (level 1) remains at the BOTTOM. Local y values
+  // are mirrored rather than rewriting saved/stable map coordinates.
+  function getDisplaySections(area){
+    const sections=getSections(area);
+    const direction=area.map.travelDirection||'down';
+    if(direction==='down')return sections;
+    if(direction!=='up')throw new RangeError('Invalid area map travel direction');
+    return Object.freeze(sections.slice().reverse().map(section=>Object.freeze({
+      ...section,
+      nodes:Object.freeze(section.nodes.map(node=>Object.freeze({
+        ...node,y:1-node.y
+      })))
+    })));
+  }
+  function pathForUp(nodes,hasLowerSection=false,hasUpperSection=false){
+    if(!Array.isArray(nodes)||!nodes.length)return '';
+    // Nodes remain in game progression order: smallest level is lower.
+    const coords=nodes.map(node=>({x:node.x*1000,y:node.y*1300}));
+    let result=hasLowerSection?'M500 1300':'M'+coords[0].x+' '+coords[0].y;
+    if(hasLowerSection){
+      const first=coords[0],mid=(1300+first.y)/2;
+      result+=' C500 '+mid+' '+first.x+' '+mid+' '+first.x+' '+first.y;
+    }
+    for(let i=1;i<coords.length;i++){
+      const a=coords[i-1],b=coords[i],mid=(a.y+b.y)/2;
+      result+=' C'+a.x+' '+mid+' '+b.x+' '+mid+' '+b.x+' '+b.y;
+    }
+    if(hasUpperSection){
+      const last=coords[coords.length-1],mid=last.y/2;
+      result+=' C'+last.x+' '+mid+' 500 '+mid+' 500 0';
+    }
+    return result;
+  }
   function pathFor(nodes,connectTop=false,connectBottom=false){
     if(!Array.isArray(nodes)||!nodes.length)return '';
     const coords=nodes.map(node=>({x:node.x*1000,y:node.y*1300}));
@@ -58,7 +93,7 @@
     }
     return result;
   }
-  const api=Object.freeze({MAX_SECTION_NODES,getSections,pathFor});
+  const api=Object.freeze({MAX_SECTION_NODES,getSections,getDisplaySections,pathFor,pathForUp});
   if(typeof module==='object'&&module.exports)module.exports=api;
   if(root)root.PathleTreasureMapLayout=api;
 })(typeof window!=='undefined'?window:null);
