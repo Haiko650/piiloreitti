@@ -492,10 +492,10 @@ function sizeBoard(){if(screen!=='game'||!game)return;
 function requestSizeBoard(){if(resizePending)return;resizePending=true;requestAnimationFrame(()=>{resizePending=false;sizeBoard()})}
 
 function renderHome(){const done=adventure.completedDays,locked=adventure.lastCompleteDate===today()||done>=7;
- el('homeChapter').textContent=`Chapter 1 · Coral Reef`;
- el('homeDay').textContent=done>=7?'7 / 7 completed':`Day ${done+1} / 7`;
- el('homeBar').style.width=(done/7*100)+'%';
- el('homeProgress').textContent=done>=7?'Chapter 1 complete! Chapter 2 coming soon.':locked?'Today’s adventure complete! See you tomorrow.':`${done} of 7 adventure days completed`;el('mysteryLine').textContent=done>=7?(chestState.opened?'✦ Treasure added to Hideout':'🎁 Treasure chest waiting to be opened'):'🎁 Mystery reward · Day 7';const dots=el('homeWeekDots');dots.replaceChildren();for(let day=1;day<=7;day++){const dot=document.createElement('span');dot.className=day<=done?'complete':day===done+1?'next':'locked';dot.setAttribute('aria-label',`Adventure day ${day}${day<=done?' completed':''}`);dot.textContent=String(day);dots.append(dot)}equipGold();
+ el('homeDay').textContent=done===0?'0 / 7':`Day ${done} / 7`;
+ el('journeyQuick').setAttribute('aria-label',`View Ocean Journey map. ${done} of 7 days completed.`);
+ el('homeProgress').textContent=done>=7?'Chapter 1 complete! Chapter 2 coming soon.':locked?'Today’s adventure complete! See you tomorrow.':`${done} of 7 adventure days completed`;
+ const dots=el('homeWeekDots');dots.replaceChildren();for(let day=1;day<=7;day++){const dot=document.createElement('span');dot.className=day<=done?'complete':day===done+1?'next':'locked';dots.append(dot)}equipGold();
  el('playDaily').disabled=locked&&!(done>=7&&!chestState.opened);el('dailyButtonTitle').textContent=done>=7&&!chestState.opened?'Open your treasure':done>=7?'Chapter Complete':locked?'Today Complete!':'Daily Adventure';
  el('dailyButtonHint').textContent=done>=7?'Chapter 2 is in development':locked?'Come back tomorrow':'3 levels · 3 chances each · Best score wins';
  el('devPanel').hidden=!devEnabled;el('devToggle').checked=devEnabled;el('devDaySelect').value=String(devDay);
