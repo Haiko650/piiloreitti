@@ -23,7 +23,7 @@ test('a single dedicated stylesheet owns the main-menu button visuals',()=>{
   const html=read('index.html');
   const legacy=read('css/styles.css');
   const capsules=read('css/menu-capsules.css');
-  assert.match(html,/css\/menu-capsules\.css\?v=20261106-progress/);
+  assert.match(html,/css\/menu-capsules\.css\?v=20261106-compact/);
   assert.doesNotMatch(legacy,/\.(?:menuButton|menuDaily|menuTreasure|menuPractice|menuHideout|menuIcon)\b|#(?:playDaily|playTreasure|playPractice|openHideout)\b/);
   for(const id of IDs){
     assert.ok(capsules.includes('#'+id+'{'),'Missing '+id+' styling');
@@ -100,4 +100,19 @@ test('Daily progress is integrated into the golden button as a lower map tier',(
   assert.match(game,/for\(let day=1;day<=7;day\+\+\)/);
   assert.match(game,/el\('journeyQuick'\)\.onclick=\(\)=>showScreen\('journey'\)/);
   assert.match(game,/el\('playDaily'\)\.onclick=/);
+});
+
+test('home capsules share a narrower width and move up together without resizing the Daily map tier',()=>{
+  const css=read('css/menu-capsules.css');
+  assert.match(css,/--home-capsule-width:min\(calc\(100% - 64px\),360px\)/);
+  assert.match(css,/--home-capsule-top:-52px/);
+  assert.match(css,/#welcomeScreen \.adventureCard,\s*#welcomeScreen #playTreasure,\s*#welcomeScreen #openHideout\s*\{\s*width:var\(--home-capsule-width\)!important;\s*top:var\(--home-capsule-top\)!important;/);
+  assert.match(css,/@media\(max-width:360px\)\{\s*#welcomeScreen\{--home-capsule-width:min\(calc\(100% - 36px\),360px\)/);
+  assert.match(css,/@media\(max-height:700px\)\{\s*#welcomeScreen\{--home-capsule-top:-40px;/);
+  assert.match(css,/@media\(max-height:520px\)\{\s*#welcomeScreen\{--home-capsule-top:-20px;/);
+  // The upper and lower Daily actions remain independently clickable.
+  const html=read('index.html');
+  assert.match(html,/id="playDaily"/);
+  assert.match(html,/id="journeyQuick"/);
+  assert.match(html,/id="homeWeekDots"/);
 });
