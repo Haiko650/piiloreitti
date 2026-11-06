@@ -90,30 +90,59 @@
     tutorialStart.textContent=cleared===0?'Start tutorial →':
       cleared<3?'Continue tutorial · '+(cleared+1)+' / 3 →':'Explore Water World →';
   }
+  let currentWorldPin=null;
   function renderWorld(){
     const world=worlds.getWorld(catalog,'water-world');
     $('thV2WorldTitle').textContent=world.title;
-    art.applyLayer(worldCanvas,'--th-world-art',art.forWorld('water-world')?.overview);
     worldPins.replaceChildren();
+    currentWorldPin=null;
+    const sectionNodes=new Map();
+    // One separate, replaceable artwork panel per geographic section.
+    // Both the artwork and the number of panels are data-driven.
+    for(const section of art.worldSections(world.id)){
+      const box=document.createElement('section');
+      box.className='th-v2-world-section';
+      box.dataset.sectionId=section.id;
+      box.setAttribute('aria-label',section.label||'Water World map section: '+section.id);
+      art.applyLayer(box,'--th-world-art',section.base);
+      const picture=document.createElement('div');
+      picture.className='th-v2-world-art';
+      picture.setAttribute('aria-hidden','true');
+      box.append(picture);
+      worldPins.append(box);
+      sectionNodes.set(section.id,box);
+    }
+    if(!sectionNodes.size)throw new Error('Water World has no map artwork sections');
     for(const area of worlds.getAreas(catalog,world.id)){
-      const loc=art.forWorld(world.id)?.areas?.[area.id]||{x:0.5,y:0.5};
+      const position=art.worldAreaPosition(world.id,area.id);
+      const section=position&&sectionNodes.get(position.sectionId);
+      if(!section||!Number.isFinite(position.x)||!Number.isFinite(position.y)||
+         position.x<0||position.x>1||position.y<0||position.y>1){
+        throw new Error('Missing valid map section/location for area '+area.id);
+      }
       const access=model.areaAccess(progress,catalog,area.id,finsFor);
       const button=document.createElement('button');
       button.type='button';
       button.className='th-v2-world-pin';
       button.classList.add(access.available?'is-current':'is-locked');
-      button.style.left=(loc.x*100)+'%';
-      button.style.top=(loc.y*100)+'%';
+      button.style.left=(position.x*100)+'%';
+      button.style.top=(position.y*100)+'%';
       button.disabled=!access.available;
       button.textContent=area.title+(access.available?' · Explore':' · Soon');
       button.setAttribute('aria-label',area.title+(access.available?', explore area':', coming in a future update'));
       button.addEventListener('click',()=>openArea(area.id));
-      worldPins.append(button);
+      section.append(button);
+      if(access.available)currentWorldPin=button;
     }
     const done=catalog.tutorial.levelIds.every(id=>progress.records[id]);
     $('thV2WorldStatus').textContent=done
-      ?'Choose an unlocked area. More destinations will arrive in future updates.'
+      ?'Swipe up or down to explore Water World. Tap an unlocked area.'
       :'Complete Haiko\'s 3 lessons before exploring.';
+    // Return from a level to the player's active region instead of leaving
+    // them stranded at the far northern edge of a future huge map.
+    if(currentWorldPin&&typeof currentWorldPin.scrollIntoView==='function'){
+      requestAnimationFrame(()=>currentWorldPin.scrollIntoView({block:'center',behavior:'auto'}));
+    }
   }
   function renderArea(){
     const area=catalog.areas.find(item=>item.id===currentArea);
@@ -300,7 +329,9 @@
     const index=catalog.tutorial.levelIds.findIndex(id=>!progress.records[id]);
     if(index<0)showWorld();else openLevel(index);
   });
-  $('thV2WorldBack').addEventListener('click',()=>showWorld());
+  $('thV2WorldBack').addEventListener('click',()=>{
+    currentWorldPin?.scrollIntoView?.({block:'center',behavior:'smooth'});
+  });
   $('thV2AreaWorld').addEventListener('click',()=>showWorld());
   $('thV2AreaHere').addEventListener('click',()=>{
     const current=areaCanvas.querySelector('.is-next')||
