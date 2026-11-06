@@ -155,7 +155,7 @@
   outline:3px solid #fff!important;outline-offset:3px!important;
 }
 /* Preserve progress and settings controls while keeping the menu compact. */
-#welcomeScreen .homeQuickTools{order:5!important}
+
 @media(max-width:360px){
   #welcomeScreen :is(#playDaily,#playTreasure,#openHideout){
     gap:5px!important;padding-inline:9px!important;
@@ -209,7 +209,7 @@
   #welcomeScreen :is(#playDaily,#playTreasure,#openHideout) small{
     font-size:clamp(8px,2.35vw,10px)!important;
   }
-  #welcomeScreen .homeQuickTools{margin-top:2px!important;}
+  
 }
 @media(max-height:520px){
   #welcomeScreen .homeBrand{margin-top:8px!important;}
