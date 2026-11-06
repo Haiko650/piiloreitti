@@ -94,7 +94,6 @@
   let currentAreaNode=null;
   function renderWorld(){
     const world=worlds.getWorld(catalog,'water-world');
-    $('thV2WorldTitle').textContent=world.title;
     worldPins.replaceChildren();
     currentWorldPin=null;
     const sectionNodes=new Map();
@@ -135,10 +134,6 @@
       section.append(button);
       if(access.available)currentWorldPin=button;
     }
-    const done=catalog.tutorial.levelIds.every(id=>progress.records[id]);
-    $('thV2WorldStatus').textContent=done
-      ?'Swipe up or down to explore Water World. Tap an unlocked area.'
-      :'Complete Haiko\'s 3 lessons before exploring.';
     // Return from a level to the player's active region instead of leaving
     // them stranded at the far northern edge of a future huge map.
     if(currentWorldPin&&typeof currentWorldPin.scrollIntoView==='function'){
