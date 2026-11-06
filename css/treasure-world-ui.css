@@ -220,53 +220,11 @@ body.th-page:has(#thV2World:not([hidden])) .th-header :is(.th-back):focus-visibl
   font-size:20px;
   text-shadow:0 1px 0 #fff;
 }
-#thV2World .th-v2-world-controls{
-  position:sticky;
-  top:0;
-  z-index:10;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:8px;
-  min-height:58px;
-  margin:0 0 10px;
-  padding:8px 9px;
-  border:2px solid #b3faff;
-  border-radius:20px;
-  background:linear-gradient(180deg,#35d8deeb 0%,#0aa5c3ed 50%,#0376a8f5 100%);
-  box-shadow:inset 0 2px 0 #ffffff75,0 3px 0 #075779,0 6px 10px #003d6580;
-}
-#thV2World .th-v2-world-toolbar-label{
-  flex:1;
-  min-width:0;
-  padding-left:4px;
-  color:#f7ffff;
-  font-family:"Trebuchet MS",system-ui,sans-serif;
-  font-size:clamp(11px,3.1vw,14px);
-  font-weight:1000;
-  text-shadow:0 2px 1px #075b89;
-}
-#thV2World #thV2WorldBack.th-v2-map-secondary{
-  flex:0 0 auto;
-  min-height:42px;
-  padding:8px clamp(9px,2.5vw,16px);
-  border:3px solid #fff4bd;
-  border-radius:999px;
-  background:linear-gradient(180deg,#fff6b8 0%,#ffe567 35%,#ffc32c 100%);
-  color:#794107;
-  box-shadow:inset 0 2px 0 #fff,inset 0 -2px 0 #f3a83a,0 3px 0 #ac7517;
-  font-size:clamp(10px,2.7vw,12px);
-  font-weight:1000;
-  white-space:nowrap;
-}
-#thV2World #thV2WorldBack:active{
-  transform:translateY(2px);
-  box-shadow:inset 0 2px 0 #fff,0 1px 0 #ac7517;
-}
-#thV2World #thV2WorldBack:focus-visible{
-  outline:3px solid #fff;
-  outline-offset:3px;
-}
+
+
+
+
+
 @media(max-width:360px){
   body.th-page:has(#thV2World:not([hidden])) .th-header{padding:7px;gap:5px;}
   body.th-page:has(#thV2World:not([hidden])) .th-back{width:35px;height:35px;}
@@ -276,14 +234,105 @@ body.th-page:has(#thV2World:not([hidden])) .th-header :is(.th-back):focus-visibl
   #thV2World .th-v2-world-emblem{flex-basis:43px;width:43px;height:43px;}
   #thV2World .th-v2-world-brand-copy h2{font-size:23px;}
   #thV2World .th-v2-map-caption{flex-basis:78px;}
-  #thV2World .th-v2-world-toolbar-label{font-size:11px;}
-  #thV2World #thV2WorldBack.th-v2-map-secondary{padding:7px 9px;font-size:10px;}
 }
 @media(max-height:650px){
   body.th-page:has(#thV2World:not([hidden])) .th-header{min-height:55px;padding-block:5px;}
   #thV2World .th-v2-world-hero{padding-block:10px;}
-  #thV2World .th-v2-world-controls{min-height:49px;padding:5px 7px;}
 }
 @media(prefers-reduced-motion:reduce){
   #thV2World #thV2WorldBack{transition:none;}
+}
+
+/* Return to Haiko: one shared fixed overlay on both illustrated maps.
+   It follows the phone viewport, rather than the scrollable map sections.
+   The controls stay separate from map art, nodes and save logic. */
+#thV2World .th-v2-world-controls,
+#thV2Area .th-v2-area-controls{
+  position:fixed!important;
+  z-index:90!important;
+  left:max(16px,calc((100vw - 490px)/2 + 22px))!important;
+  bottom:calc(16px + env(safe-area-inset-bottom,0px))!important;
+  top:auto!important;
+  right:auto!important;
+  display:block!important;
+  width:auto!important;
+  height:auto!important;
+  min-height:0!important;
+  padding:0!important;
+  margin:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  pointer-events:none!important;
+}
+#thV2World #thV2WorldBack.th-v2-haiko-return,
+#thV2Area #thV2AreaHere.th-v2-haiko-return{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:8px!important;
+  width:auto!important;
+  max-width:calc(100vw - 32px)!important;
+  min-height:52px!important;
+  margin:0!important;
+  padding:7px 16px 7px 8px!important;
+  border:3px solid #fff4bc!important;
+  border-radius:999px!important;
+  background:linear-gradient(180deg,#fff4ac 0%,#ffe66d 35%,#ffbc20 80%,#f3a313 100%)!important;
+  box-shadow:inset 0 2px 0 #ffffffdf,inset 0 -3px 0 #e5961b,0 5px 0 #b36d11,0 9px 16px #002e58a8!important;
+  color:#743b05!important;
+  font-family:"Trebuchet MS",system-ui,-apple-system,sans-serif!important;
+  font-size:clamp(13px,3.6vw,16px)!important;
+  font-weight:1000!important;
+  line-height:1.2!important;
+  letter-spacing:-.025em!important;
+  text-shadow:0 1px 0 #fff5c1!important;
+  white-space:nowrap!important;
+  pointer-events:auto!important;
+  cursor:pointer!important;
+  -webkit-tap-highlight-color:transparent;
+}
+#thV2World .th-v2-haiko-return-icon,
+#thV2Area .th-v2-haiko-return-icon{
+  display:grid;
+  place-items:center;
+  flex:0 0 35px;
+  width:35px;
+  height:35px;
+  border:2px solid #fff!important;
+  border-radius:50%;
+  background:linear-gradient(150deg,#abfcff,#42d9ee 60%,#16add5);
+  box-shadow:inset 0 1px 0 #ffffffd6,0 2px 0 #0b80b0;
+  font-size:21px;
+  line-height:1;
+  text-shadow:none;
+}
+#thV2World #thV2WorldBack.th-v2-haiko-return:active,
+#thV2Area #thV2AreaHere.th-v2-haiko-return:active{
+  transform:translateY(3px)!important;
+  box-shadow:inset 0 2px 0 #ffffffc9,0 2px 0 #b36d11,0 5px 8px #002e587c!important;
+}
+#thV2World #thV2WorldBack.th-v2-haiko-return:focus-visible,
+#thV2Area #thV2AreaHere.th-v2-haiko-return:focus-visible{
+  outline:3px solid #fff!important;
+  outline-offset:4px!important;
+}
+@media(max-width:360px){
+  #thV2World #thV2WorldBack.th-v2-haiko-return,
+  #thV2Area #thV2AreaHere.th-v2-haiko-return{
+    min-height:48px!important;
+    padding-right:12px!important;
+    font-size:13px!important;
+  }
+  #thV2World .th-v2-haiko-return-icon,
+  #thV2Area .th-v2-haiko-return-icon{
+    flex-basis:31px;width:31px;height:31px;font-size:19px;
+  }
+}
+@media(max-height:550px){
+  #thV2World .th-v2-world-controls,
+  #thV2Area .th-v2-area-controls{
+    bottom:calc(10px + env(safe-area-inset-bottom,0px))!important;
+  }
 }
