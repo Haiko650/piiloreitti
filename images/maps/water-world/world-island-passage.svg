@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="760" viewBox="0 0 600 760">
+<defs>
+ <linearGradient id="sea" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#64d7e3"/><stop offset=".48" stop-color="#179fc0"/><stop offset="1" stop-color="#0e618f"/></linearGradient>
+ <linearGradient id="island" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#c7f5a8"/><stop offset=".6" stop-color="#62bd8e"/><stop offset="1" stop-color="#297d7b"/></linearGradient>
+ <linearGradient id="sand" x1="0" y1="0" x2=".6" y2="1"><stop stop-color="#ffedbb"/><stop offset="1" stop-color="#f7d39a"/></linearGradient>
+</defs>
+<rect width="600" height="760" fill="url(#sea)"/>
+<path d="M-35 83Q46 23 120 74Q162 108 149 167Q115 214 35 196L-35 214Z" fill="url(#sand)" stroke="#fff1c9" stroke-width="9"/>
+<path d="M-35 96Q47 49 108 88Q137 109 130 158Q95 193 26 176L-35 190Z" fill="url(#island)"/>
+<path d="M470 146Q544 101 634 167V374Q580 392 537 348Q475 314 453 247Q429 191 470 146Z" fill="url(#sand)" stroke="#fff4d0" stroke-width="9"/>
+<path d="M493 170Q551 131 630 189V352Q578 361 551 327Q491 299 477 237Q462 192 493 170Z" fill="url(#island)"/>
+<path d="M-30 568Q36 526 111 550Q191 575 176 638Q150 695 44 707L-30 678Z" fill="url(#sand)" stroke="#fff4c0" stroke-width="8"/>
+<path d="M-30 590Q32 549 101 570Q160 596 155 629Q129 668 39 683L-30 655Z" fill="url(#island)"/>
+<g fill="url(#sand)" stroke="#fff6d7" stroke-width="7">
+  <path d="M216 326Q246 295 291 310Q324 343 294 370Q255 386 227 364Z"/>
+  <path d="M365 575Q403 546 438 572Q466 608 432 635Q392 644 370 618Z"/>
+</g>
+<g fill="url(#island)"><path d="M233 330q25-20 50-7l18 25-21 15-42-7z"/><path d="M381 585q24-21 45-9l17 28-20 14-34-5z"/></g>
+<path d="M329 87Q353 64 379 87L395 115L358 144L327 122Z" fill="#c3f9ed" opacity=".4"/>
+<g stroke="#e2ffff" stroke-width="4" fill="none" opacity=".4">
+ <path d="M190 183q50-25 105 0M220 211q44-23 87 0M295 445q56-25 109 0M300 471q56-25 110 0M221 702q57-25 112 0"/>
+</g>
+<g stroke="#e98a9c" stroke-width="9" stroke-linecap="round" fill="none">
+ <path d="M53 243l-7-38m7 26 20-12m-21 0-16-11"/><path d="M520 451l5-36m-5 25-21-14m20-5 20-18"/>
+</g>
+<g fill="#fdf7d8" opacity=".48"><circle cx="175" cy="490" r="7"/><circle cx="197" cy="506" r="4"/><circle cx="350" cy="260" r="6"/></g>
+</svg>
