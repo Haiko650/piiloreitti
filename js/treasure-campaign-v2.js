@@ -91,6 +91,7 @@
       cleared<3?'Continue tutorial · '+(cleared+1)+' / 3 →':'Explore Water World →';
   }
   let currentWorldPin=null;
+  let currentAreaNode=null;
   function renderWorld(){
     const world=worlds.getWorld(catalog,'water-world');
     $('thV2WorldTitle').textContent=world.title;
@@ -153,7 +154,8 @@
     areaSummary.textContent=cleared+' / '+area.levelIds.length+
       ' playable levels complete · '+earned+' fins · Area goal: '+area.targetLevelCount+' levels';
     areaCanvas.replaceChildren();
-    const sections=layout.getSections(area);
+    currentAreaNode=null;
+    const sections=layout.getDisplaySections(area);
     const currentId=area.levelIds.find(id=>!progress.records[id])||
       area.levelIds[area.levelIds.length-1];
     let currentNodeElement=null;
@@ -177,7 +179,10 @@
       svg.setAttribute('preserveAspectRatio','none');
       svg.setAttribute('aria-hidden','true');
       const path=document.createElementNS('http://www.w3.org/2000/svg','path');
-      path.setAttribute('d',layout.pathFor(section.nodes,sectionIndex>0,sectionIndex<sections.length-1));
+      const up=area.map.travelDirection==='up';
+      path.setAttribute('d',up
+        ?layout.pathForUp(section.nodes,sectionIndex<sections.length-1,sectionIndex>0)
+        :layout.pathFor(section.nodes,sectionIndex>0,sectionIndex<sections.length-1));
       path.setAttribute('fill','none');
       path.setAttribute('stroke','#fff1ac');
       path.setAttribute('stroke-width','16');
@@ -221,8 +226,9 @@
       }
       areaCanvas.append(sectionElement);
     }
-    if(currentNodeElement&&typeof currentNodeElement.scrollIntoView==='function'){
-      requestAnimationFrame(()=>currentNodeElement.scrollIntoView({block:'center',behavior:'auto'}));
+    currentAreaNode=currentNodeElement;
+    if(currentAreaNode&&typeof currentAreaNode.scrollIntoView==='function'){
+      requestAnimationFrame(()=>currentAreaNode.scrollIntoView({block:'center',behavior:'auto'}));
     }
   }
   function showWorld(){
@@ -334,9 +340,7 @@
   });
   $('thV2AreaWorld').addEventListener('click',()=>showWorld());
   $('thV2AreaHere').addEventListener('click',()=>{
-    const current=areaCanvas.querySelector('.is-next')||
-      areaCanvas.querySelector('.th-v2-node.is-complete:last-of-type');
-    current?.scrollIntoView?.({block:'center',behavior:'smooth'});
+    currentAreaNode?.scrollIntoView?.({block:'center',behavior:'smooth'});
   });
   mapButton.addEventListener('click',requestMap);
   leaveStay.addEventListener('click',dismissLeave);
