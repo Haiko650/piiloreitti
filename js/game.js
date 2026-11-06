@@ -63,7 +63,7 @@ function validBoard(b,i){const n=CONFIG[i].size;return b&&Array.isArray(b.path)&
 function validRun(r){return r&&typeof r.date==='string'&&Number.isInteger(r.day)&&r.day>=1&&r.day<=7&&Number.isInteger(r.activeLevel)&&r.activeLevel>=0&&r.activeLevel<3&&Array.isArray(r.boards)&&r.boards.length===3&&r.boards.every(validBoard)&&Array.isArray(r.levels)&&r.levels.length===3&&r.levels.every((s,i)=>s&&Number.isInteger(s.attemptsUsed)&&s.attemptsUsed>=0&&s.attemptsUsed<=3&&Array.isArray(s.attemptScores)&&s.attemptScores.length===s.attemptsUsed&&s.attemptScores.every(v=>Number.isSafeInteger(v)&&v>=r.boards[i].path.length-1)&&Array.isArray(s.visited)&&s.visited.length>0&&s.visited.every((v,j)=>v===r.boards[i].path[j])&&s.clicks>=0&&s.wrongByStep&&typeof s.wrongByStep==='object'&&typeof s.completed==='boolean'&&(s.bestClicks===null||s.bestClicks===Math.min(...s.attemptScores)))}
 /* Pathle 5B.2C.3: Daily Adventure, earned treasures, sound settings and
    completed Haiko guides use the shared IndexedDB record on HTTPS.
-   Practice/DEV logic remains unchanged. Local file previews use legacy saves. */
+   Developer test runs remain separate. Local file previews use legacy saves. */
 const useIndexedDaily=pathleInitialSave!==null;
 const dailyChapterId='ocean-01';
 const savedDailyChapter=useIndexedDaily?pathleInitialSave.progress.chapters[dailyChapterId]:undefined;
@@ -307,17 +307,8 @@ const guideIntro=[
 const guidePearl=[{heading:'Ooh! A shiny pearl!',text:'I want to collect that pearl! Every pearl is on our hidden path. Let’s find a way to swim right through it!',target:'pearl'}];
 const guideCoral=[{heading:'Watch out, coral!',text:'That reef is getting thicker! We can’t swim through coral. Let’s navigate around it to reach our treasure!',target:'coral'}];
 
-let practiceNonce=0;
-const makePracticeBoard=(i,old)=>{
- let b;for(let j=0;j<24;j++){
-  let salt;if(window.crypto?.getRandomValues){const arr=new Uint32Array(2);crypto.getRandomValues(arr);salt=Array.from(arr).join('-')}else salt=`${Date.now()}-${Math.random()}`;
-  const d=2+Math.floor(Math.random()*6);b=makeBoard(d,i,`practice-${++practiceNonce}-${salt}`);
-  if(!old||b.path.join()!=old.path.join())break;
- }return b;
-};
-const newPractice=()=>({activeLevel:0,levels:CONFIG.map(blank),boards:CONFIG.map((_,i)=>makePracticeBoard(i))});
-const allDone=()=>game&&game.levels.every(s=>mode==='practice'?s.completed:s.bestClicks!==null);
-const bestTotal=()=>game.levels.reduce((s,l)=>s+(mode==='practice'?l.clicks:(l.bestClicks||0)),0);
+const allDone=()=>game&&game.levels.every(s=>s.bestClicks!==null);
+const bestTotal=()=>game.levels.reduce((sum,level)=>sum+(level.bestClicks||0),0);
 const optimalTotal=()=>game.boards.reduce((s,b)=>s+b.path.length-1,0);
 const grade=(t,opt)=>{if(t<=opt)return'S';const r=(t-opt)/opt;return r<=.25?'A':r<=.5?'B':r<=1?'C':'D'};
 const finSVG='<svg class="fin-icon" viewBox="0 0 100 100" aria-hidden="true"><path d="M10 78Q30 67 39 68Q41 35 78 13Q64 44 79 67Q84 74 91 78Z" fill="#128bd7" stroke="#d6f8ff" stroke-width="5" stroke-linejoin="round"/><path d="M37 62Q45 30 72 23" stroke="#67dcff" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M11 85Q26 78 41 85T73 85T93 85" stroke="#f5ffff" stroke-width="5" fill="none" stroke-linecap="round"/></svg>';
@@ -380,14 +371,27 @@ function celebrate(isFinal){if(matchMedia('(prefers-reduced-motion: reduce)').ma
  const banner=document.createElement('div');banner.className='victory-banner';banner.textContent=isFinal?'DAILY VICTORY! ✨':'LEVEL COMPLETE! ★';layer.append(banner);
  if(isFinal){const face=document.createElement('div');face.className='victory-mascot';face.append(el('welcomeScreen').querySelector('.home-haiko').cloneNode(true));layer.append(face)}clearTimeout(celebrationTimer);celebrationTimer=setTimeout(()=>layer.replaceChildren(),4100)}
 function afterRush(finalVictory,data){celebrate(finalVictory);if(finalVictory)heroFanfare();else levelChime();clearTimeout(resultTimer);const delay=matchMedia('(prefers-reduced-motion: reduce)').matches?40:(finalVictory?4550:2500);resultTimer=setTimeout(()=>{if(screen==='game'&&mode===data.mode&&game.activeLevel===data.level&&game.levels[data.level].completed){el('celebration').replaceChildren();showResult(data)}},delay)}
-function showResult(data){const isDaily=mode==='daily'||mode==='dev';el('resultTitle').textContent=data.finalVictory?'Daily Victory!':'Level Complete!';el('resultSubtitle').textContent=`${CONFIG[data.level].name} · ${mode==='practice'?'Practice run':`Attempt ${data.used} of 3`}`;el('resultTaps').textContent=data.taps;el('resultBest').textContent=data.best;el('recordTag').hidden=!isDaily||!data.record;el('resultAttemptsLabel').textContent=isDaily?'YOUR THREE CHANCES':'PRACTICE MODE';const fins=el('resultFins');fins.replaceChildren();for(let j=0;j<(isDaily?3:1);j++){const x=document.createElement('span');x.className='fin'+(j<(isDaily?data.used:1)?' used':'');fins.append(x)}
- el('resultRemaining').textContent=isDaily?(data.remaining===0?'All 3 chances used · Best score saved!':`${data.remaining} ${data.remaining===1?'attempt':'attempts'} remaining`):'Unlimited practice · A new route every run';
- el('resultRetry').hidden=isDaily&&data.remaining===0;el('resultRetry').textContent=mode==='practice'?'↻ New random route':'↻ Try again';
- const next=el('resultNext');next.hidden=data.level===2&&!(mode==='dev'&&devDay<7);next.textContent=data.level===2?'Next test day →':`Next: ${CONFIG[data.level+1].name} →`;
- el('resultWarning').hidden=!isDaily||data.level===2||data.remaining===0;el('resultWarning').textContent=`Continuing gives up ${data.remaining} remaining ${data.remaining===1?'attempt':'attempts'} on this level.`;
- el('resultHome').textContent=data.reward?'🎁 Open treasure & menu':'⌂ Main menu';el('resultShare').hidden=mode!=='daily'||!data.finalVictory;
+function showResult(data){
+ el('resultTitle').textContent=data.finalVictory?'Daily Victory!':'Level Complete!';
+ el('resultSubtitle').textContent=`${CONFIG[data.level].name} · Attempt ${data.used} of 3`;
+ el('resultTaps').textContent=data.taps;
+ el('resultBest').textContent=data.best;
+ el('recordTag').hidden=!data.record;
+ el('resultAttemptsLabel').textContent='YOUR THREE CHANCES';
+ const fins=el('resultFins');fins.replaceChildren();
+ for(let j=0;j<3;j++){const fin=document.createElement('span');fin.className='fin'+(j<data.used?' used':'');fins.append(fin)}
+ el('resultRemaining').textContent=data.remaining===0?'All 3 chances used · Best score saved!':`${data.remaining} ${data.remaining===1?'attempt':'attempts'} remaining`;
+ el('resultRetry').hidden=data.remaining===0;
+ el('resultRetry').textContent='↻ Try again';
+ const next=el('resultNext');next.hidden=data.level===2&&!(mode==='dev'&&devDay<7);
+ next.textContent=data.level===2?'Next test day →':`Next: ${CONFIG[data.level+1].name} →`;
+ el('resultWarning').hidden=data.level===2||data.remaining===0;
+ el('resultWarning').textContent=`Continuing gives up ${data.remaining} remaining ${data.remaining===1?'attempt':'attempts'} on this level.`;
+ el('resultHome').textContent=data.reward?'🎁 Open treasure & menu':'⌂ Main menu';
+ el('resultShare').hidden=mode!=='daily'||!data.finalVictory;
  el('resultModal').hidden=false;
- if(data.reward){el('resultNext').hidden=true;el('rewardNote').hidden=false}else el('rewardNote').hidden=true;
+ if(data.reward){el('resultNext').hidden=true;el('rewardNote').hidden=false}
+ else el('rewardNote').hidden=true;
 }
 function equipGold(){document.body.classList.remove('gold-unlocked');document.body.dataset.sceneItem='none';document.body.dataset.chapter='coral-reef';}
 let chestTimer=null,rewardPreview=false;
@@ -518,14 +522,15 @@ function renderHideout(){
 }
 function showScreen(s){screen=s;document.body.classList.toggle('game-active',s==='game');['welcomeScreen','gameScreen','journeyScreen','hideoutScreen'].forEach(id=>el(id).hidden=(id!==({home:'welcomeScreen',game:'gameScreen',journey:'journeyScreen',hideout:'hideoutScreen'}[s])));if(s==='home')renderHome();if(s==='journey')renderJourney();if(s==='hideout')renderHideout();window.scrollTo(0,0);if(s==='game'){requestSizeBoard();dailyPeek.reset()}else dailyPeek.cancel();updateAudioScene()}
 function toHome(){cancelEffects();if(mode==='daily')persist();showScreen('home')}
-function startGame(which){cancelEffects();if(which==='daily'){
+function startGame(which){
+ if(which!=='daily'&&which!=='dev')return;
+ cancelEffects();
+ if(which==='daily'){
   if(!canPlayToday()){showScreen('home');return}
   mode='daily';game=ensureRun();
- }else if(which==='dev'){
+ }else{
   if(!devEnabled)return;
   mode='dev';devGame=blankRun(devDay,'DEV',`dev|${devDay}`);game=devGame;
- }else{
-  mode='practice';game=newPractice();
  }
  render();showScreen('game');activateAudio();tutorialWhenNeeded();
 }
@@ -537,30 +542,29 @@ function choose(id){if(!game)return;if(mode==='daily'&&today()!==game.date){aler
  dailyPeek.cancel();s.clicks++;const right=id===b.path[step+1];
  if(right){s.visited.push(id);if(id===CONFIG[idx].size**2-1){
   s.completed=true;const oldBest=s.bestClicks;
-  if(mode!=='practice'){s.attemptsUsed++;s.attemptScores.push(s.clicks);s.bestClicks=Math.min(...s.attemptScores)}
-  const finale=idx===2&&allDone(),reward=finale&&game.day===7&&mode!=='practice';
+  s.attemptsUsed++;s.attemptScores.push(s.clicks);s.bestClicks=Math.min(...s.attemptScores)
+  const finale=idx===2&&allDone(),reward=finale&&game.day===7;
   if(finale&&mode==='daily'&&adventure.lastCompleteDate!==game.date){
    adventure.completedDays++;
    adventure.lastCompleteDate=game.date;
    adventure.history.push({date:game.date,day:game.day,best:game.levels.map(x=>x.bestClicks),tries:game.levels.map(x=>x.attemptsUsed)});
    // The final board stays visible for review until the user goes home.
   }
-  const data={mode,level:idx,used:mode==='practice'?1:s.attemptsUsed,remaining:mode==='practice'?null:3-s.attemptsUsed,taps:s.clicks,best:mode==='practice'?s.clicks:s.bestClicks,record:mode!=='practice'&&(oldBest===null||s.clicks<oldBest),finalVictory:finale,reward};
+  const data={mode,level:idx,used:s.attemptsUsed,remaining:3-s.attemptsUsed,taps:s.clicks,best:s.bestClicks,record:oldBest===null||s.clicks<oldBest,finalVictory:finale,reward};
   const token=rushToken,path=b.path.slice();setTimeout(()=>{if(mode===data.mode&&game.activeLevel===idx&&s.completed&&token===rushToken)rush(path,finale,data)},75);
  }}else{(s.wrongByStep[step]??=[]).push(id)}
  flash={id,right};beep(right);persist();render();if(!s.completed)dailyPeek.reset();clearTimeout(flashTimer);flashTimer=setTimeout(()=>{flash=null;if(screen==='game')render()},290);
 }
-function render(){if(!game)return;const idx=game.activeLevel,cfg=CONFIG[idx],s=game.levels[idx],b=game.boards[idx],step=s.visited.length-1,here=s.visited[step],isDaily=mode!=='practice';
- el('gameTitle').textContent=mode==='daily'?'DAILY ADVENTURE':mode==='dev'?'DEV · TEST ADVENTURE':'PRACTICE MODE';
- el('dateLabel').textContent=mode==='daily'?`Day ${game.day}/7 · ${game.date}`:mode==='dev'?`Chapter 1 · Day ${devDay}/7`:'Random reef paths';
- el('practiceNote').classList.toggle('hidden',mode==='daily');el('practiceNote').textContent=mode==='dev'?'⚠ DEV TEST – This practice adventure does not change your official progress.':'PRACTICE MODE – Unlimited random paths. Your official progress is safe.';
- el('puzzleHeading').textContent=mode==='practice'?'Practice puzzles':`Day ${game.day} · ${INTRO[game.day-1]}`;
+function render(){if(!game)return;const idx=game.activeLevel,cfg=CONFIG[idx],s=game.levels[idx],b=game.boards[idx],step=s.visited.length-1,here=s.visited[step];
+ el('gameTitle').textContent=mode==='dev'?'DEV · TEST ADVENTURE':'DAILY ADVENTURE';
+ el('dateLabel').textContent=mode==='dev'?`Chapter 1 · Day ${devDay}/7`:`Day ${game.day}/7 · ${game.date}`;
+ el('puzzleHeading').textContent=`Day ${game.day} · ${INTRO[game.day-1]}`;
  el('levelHint').textContent='';
- const tabs=el('tabs');tabs.replaceChildren();CONFIG.forEach((conf,j)=>{const t=document.createElement('button');const completed=isDaily?game.levels[j].bestClicks!==null:game.levels[j].completed;t.type='button';t.textContent=`${j+1}. ${conf.name}${completed?' ✓':''}`;t.className=[j===idx?'active':'',completed?'finished':'',isDaily&&j!==idx?'locked':''].filter(Boolean).join(' ');t.disabled=isDaily;t.setAttribute('aria-pressed',String(j===idx));if(!isDaily)t.onclick=()=>{cancelEffects();game.activeLevel=j;game.levels[j]=blank();game.boards[j]=makePracticeBoard(j,game.boards[j]);render()};tabs.append(t)});
- const best=isDaily?s.bestClicks:(s.completed?s.clicks:null);
+ const tabs=el('tabs');tabs.replaceChildren();CONFIG.forEach((conf,j)=>{const t=document.createElement('button');const completed=game.levels[j].bestClicks!==null;t.type='button';t.textContent=`${j+1}. ${conf.name}${completed?' ✓':''}`;t.className=[j===idx?'active':'',completed?'finished':'',j!==idx?'locked':''].filter(Boolean).join(' ');t.disabled=true;t.setAttribute('aria-pressed',String(j===idx));tabs.append(t)});
+ const best=s.bestClicks;
  el('clicks').textContent=s.clicks;el('best').textContent=best===null?'—':best;el('optimal').textContent=b.path.length-1;el('grade').textContent=best===null?'—':grade(best,b.path.length-1);
- el('attemptInfo').classList.toggle('hidden',!isDaily);
- if(isDaily)el('attemptInfo').textContent=s.completed?`Completed attempts: ${s.attemptsUsed}/3 · ${3-s.attemptsUsed} left · Best ${s.bestClicks} taps`:`Attempt ${Math.min(3,s.attemptsUsed+1)} of 3 · ${s.attemptsUsed} finished`;
+ el('attemptInfo').classList.remove('hidden');
+ el('attemptInfo').textContent=s.completed?`Completed attempts: ${s.attemptsUsed}/3 · ${3-s.attemptsUsed} left · Best ${s.bestClicks} taps`:`Attempt ${Math.min(3,s.attemptsUsed+1)} of 3 · ${s.attemptsUsed} finished`;
  const board=el('board');board.style.setProperty('--size',cfg.size);board.replaceChildren();visualAssets.applyBoard(board,'coral-reef');const adjacent=neighbors(here,cfg.size);
  for(let id=0;id<cfg.size*cfg.size;id++){
   const t=document.createElement('button');t.type='button';t.className='tile';const visited=s.visited.includes(id),wrong=(s.wrongByStep[step]||[]).includes(id),obstacle=b.blocks.includes(id),pearl=b.pearls.includes(id),possible=!s.completed&&!obstacle&&adjacent.includes(id)&&!visited&&!wrong;
@@ -571,25 +575,25 @@ function render(){if(!game)return;const idx=game.activeLevel,cfg=CONFIG[idx],s=g
   t.onclick=()=>choose(id);board.append(t);
  }
  requestSizeBoard();if(!el('storyModal').hidden)requestAnimationFrame(positionStoryFocus);
- if(s.completed)el('message').textContent=`Level complete! This run: ${s.clicks} taps. ${isDaily?`Best: ${s.bestClicks}.`:''}`;
+ if(s.completed)el('message').textContent=`Level complete! This run: ${s.clicks} taps. Best: ${s.bestClicks}.`;
  else if(flash&&!flash.right)el('message').textContent='Not this tile. Try another adjacent tile.';
  else el('message').textContent=`Follow the route from the shark fin to the treasure X. ${step} of ${b.path.length-1} steps completed.`;
- el('next').disabled=!s.completed||idx===2;el('next').textContent=idx===2?'Final level':'Next level →';el('reset').disabled=isDaily?(!s.completed||s.attemptsUsed>=3):false;el('reset').textContent=isDaily?'Retry level':'New random route';
- el('progressHeading').textContent=mode==='daily'?'Adventure progress':mode==='dev'?'Test day progress':'Practice progress';
- el('streak').textContent=mode==='daily'?`🗺️ Day ${game.day}/7`:mode==='dev'?'🔧 DEV TEST':'🎮 Unlimited';
- el('progress').textContent=isDaily?`Best taps — ${game.levels.map((l,j)=>`${CONFIG[j].name}: ${l.bestClicks??'—'}`).join(' · ')}. ${game.levels.filter(l=>l.bestClicks!==null).length}/3 complete.`:`${game.levels.filter(l=>l.completed).length}/3 practice levels completed.`;
+ el('next').disabled=!s.completed||idx===2;el('next').textContent=idx===2?'Final level':'Next level →';el('reset').disabled=!s.completed||s.attemptsUsed>=3;el('reset').textContent='Retry level';
+ el('progressHeading').textContent=mode==='dev'?'Test day progress':'Adventure progress';
+ el('streak').textContent=mode==='dev'?'🔧 DEV TEST':`🗺️ Day ${game.day}/7`;
+ el('progress').textContent=`Best taps — ${game.levels.map((l,j)=>`${CONFIG[j].name}: ${l.bestClicks??'—'}`).join(' · ')}. ${game.levels.filter(l=>l.bestClicks!==null).length}/3 complete.`;
  const summary=el('summary');summary.classList.toggle('hidden',!allDone());if(allDone()){
-  summary.replaceChildren();const h=document.createElement('h2');h.textContent=mode==='practice'?'Practice complete!':mode==='dev'?'DEV Day Complete!':'Daily Victory!';summary.append(h);
+  summary.replaceChildren();const h=document.createElement('h2');h.textContent=mode==='dev'?'DEV Day Complete!':'Daily Victory!';summary.append(h);
   const d=document.createElement('p');d.textContent=`Total best: ${bestTotal()} taps · Perfect: ${optimalTotal()} · Grade ${grade(bestTotal(),optimalTotal())}`;summary.append(d);
   if(mode==='daily'){const x=document.createElement('p');x.textContent=game.day===7?'🎁 Chapter 1 complete · Treasure discovered!':`🦈 Haiko advanced to Day ${game.day+1}. Come back tomorrow!`;summary.append(x)}
  }
  el('share').disabled=mode!=='daily'||!allDone();
 }
 function shareText(){return [`Pathle · Haiko's Ocean Adventure`,`Chapter 1 · Day ${game.day} · ${game.date}`,`Best of 3 attempts`,...game.levels.map((s,i)=>`${CONFIG[i].name}: ${s.bestClicks} taps (${s.attemptsUsed}/3 tries)`),`Total: ${bestTotal()} taps · Grade ${grade(bestTotal(),optimalTotal())}`].join('\n')}
-function resetLevel(){cancelEffects();const i=game.activeLevel,s=game.levels[i];if(mode==='practice'){game.levels[i]=blank();game.boards[i]=makePracticeBoard(i,game.boards[i])}else{if(!s.completed||s.attemptsUsed>=3)return;s.visited=[0];s.wrongByStep={};s.clicks=0;s.completed=false}persist();render()}
+function resetLevel(){cancelEffects();const s=game.levels[game.activeLevel];if(!s.completed||s.attemptsUsed>=3)return;s.visited=[0];s.wrongByStep={};s.clicks=0;s.completed=false;persist();render()}
 function nextLevel(){const i=game.activeLevel,s=game.levels[i];if(i===2){if(mode==='dev'&&allDone()&&devDay<7){devDay++;el('devDaySelect').value=String(devDay);startGame('dev')}return}if(!s.completed)return;
- if(mode!=='practice'&&s.attemptsUsed<3){const left=3-s.attemptsUsed;if(!confirm(`Continue to ${CONFIG[i+1].name}? You have ${left} ${left===1?'try':'tries'} left on ${CONFIG[i].name}. You cannot return today.`))return}
- cancelEffects();game.activeLevel++;if(mode==='practice'){game.levels[game.activeLevel]=blank();game.boards[game.activeLevel]=makePracticeBoard(game.activeLevel,game.boards[game.activeLevel])}persist();render()}
+ if(s.attemptsUsed<3){const left=3-s.attemptsUsed;if(!confirm(`Continue to ${CONFIG[i+1].name}? You have ${left} ${left===1?'try':'tries'} left on ${CONFIG[i].name}. You cannot return today.`))return}
+ cancelEffects();game.activeLevel++;persist();render()}
 el('homeSettings').onclick=settingsOpen;el('gameSettings').onclick=settingsOpen;
 el('journeyQuick').onclick=()=>showScreen('journey');el('openHideout').onclick=()=>showScreen('hideout');el('hideoutBack').onclick=()=>showScreen('home');el('hideoutDone').onclick=()=>showScreen('home');el('homeGuideBtn').onclick=()=>openStory(guideIntro);el('homeMusicBtn').onclick=()=>{musicOn=!musicOn;recordPreferenceChange('settings','music',musicOn);activateAudio();renderHome()};el('homeAmbientBtn').onclick=()=>{ambientOn=!ambientOn;recordPreferenceChange('settings','ambient',ambientOn);activateAudio();renderHome()};
 el('storyPrev').onclick=()=>{if(storyIndex>0){storyIndex--;paintStory()}};
@@ -600,7 +604,7 @@ el('resultShare').onclick=()=>el('share').click();
 window.addEventListener('resize',()=>{requestSizeBoard();positionStoryFocus()});
 el('closeSettings').onclick=settingsClose;el('doneSettings').onclick=settingsClose;el('settingsModal').onclick=e=>{if(e.target===el('settingsModal'))settingsClose()};el('soundSwitch').onchange=e=>{sound=e.target.checked;recordPreferenceChange('settings','sound',sound)};el('musicSwitch').onchange=e=>{musicOn=e.target.checked;recordPreferenceChange('settings','music',musicOn);activateAudio()};el('ambientSwitch').onchange=e=>{ambientOn=e.target.checked;recordPreferenceChange('settings','ambient',ambientOn);activateAudio()};
 el('devToggle').onchange=e=>{devEnabled=e.target.checked;renderHome()};el('devDaySelect').onchange=e=>{devDay=Number(e.target.value)};el('launchDev').onclick=()=>startGame('dev');
-el('playDaily').onclick=()=>{if(adventure.completedDays>=7&&!chestState.opened){mode='daily';showReward()}else startGame('daily')};el('playPractice').onclick=()=>startGame('practice');el('journeyButton').onclick=()=>showScreen('journey');el('journeyBack').onclick=()=>showScreen('home');el('homeBack').onclick=toHome;
+el('playDaily').onclick=()=>{if(adventure.completedDays>=7&&!chestState.opened){mode='daily';showReward()}else startGame('daily')};el('journeyButton').onclick=()=>showScreen('journey');el('journeyBack').onclick=()=>showScreen('home');el('homeBack').onclick=toHome;
 el('reset').onclick=resetLevel;el('next').onclick=nextLevel;el('resultHome').onclick=()=>{const wasReward=(mode==='dev'||mode==='daily')&&game.day===7&&allDone()&&(mode==='dev'||!chestState.opened);toHome();if(wasReward)showReward()};el('resultRetry').onclick=resetLevel;el('resultNext').onclick=nextLevel;
 el('resultModal').onclick=e=>{if(e.target===el('resultModal'))el('resultModal').hidden=true};el('openChest').onclick=unlockChest;el('rewardClose').onclick=()=>{clearTimeout(chestTimer);el('rewardModal').hidden=true;equipGold();showScreen(rewardPreview?'home':'hideout')};
 el('share').onclick=async()=>{if(mode!=='daily'||!allDone())return;const text=shareText();try{if(navigator.share){await navigator.share({title:'Pathle',text});return}if(navigator.clipboard){await navigator.clipboard.writeText(text);alert('Results copied!');return}}catch(e){if(e.name==='AbortError')return}prompt('Copy:',text)};
