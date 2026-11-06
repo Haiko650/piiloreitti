@@ -54,6 +54,8 @@
   max-height:100% !important;
   margin:0 !important;
   position:relative !important;
+  /* Move Haiko nearer the logo while preserving the existing bob animation. */
+  top:-28px !important;
   z-index:2 !important;
   animation:haikoHomeBob 4s ease-in-out infinite alternate;
   filter:drop-shadow(0 9px 13px #003b6480);
@@ -66,6 +68,7 @@
   #welcomeScreen .illustratedHero {min-height:120px !important;}
   #welcomeScreen .illustratedHero .homeStage > .home-haiko {
     width:min(68%,30dvh,240px) !important;
+    top:-14px !important;
   }
 }
 @media (prefers-reduced-motion:reduce) {
