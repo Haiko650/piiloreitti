@@ -1,5 +1,5 @@
 # Pathle TH.6A.3 – Android observations and one-change-at-a-time worklist
-Date: 2026-11-05
+Updated: 2026-11-06
 Branch: `pathle-modular-dev`. Do not modify `main` without approval.
 The player tests the same GitHub Pages URL after EACH visible fix.
 
@@ -7,7 +7,7 @@ The player tests the same GitHub Pages URL after EACH visible fix.
 
 - Tutorial completes and leads to the map: **works**, but requires
   improved content, presentation and tutorial-specific usability.
-- **Water World overview map is too wide and clipped** on mobile.
+- **Water World overview map no longer clips on Android (confirmed 2026-11-06).**
 - Coral Coast's vertical scrolling **works**, but level 1 should sit
   at the **bottom** and the journey should proceed **upward**.
 - Only four Coral Coast puzzles exist: **intentional limited content
@@ -19,7 +19,7 @@ The player tests the same GitHub Pages URL after EACH visible fix.
 
 ## Fix order and acceptance gates
 
-1. **TH.6A.3a: overview clipping – implemented; Android confirmation pending.**
+1. **TH.6A.3a: overview clipping – fixed, Android confirmed 2026-11-06.**
    The earlier `min-height:680px` (and `600px` on narrow phones)
    interacted with `aspect-ratio:600/760` to produce an oversized
    world-map box whose right side was cut by the scrolling parent.
@@ -29,6 +29,22 @@ The player tests the same GitHub Pages URL after EACH visible fix.
    Test on Android portrait (especially 320–390 CSS px), no right-side
    clipping, Coral Coast button accessible. Do not adjust map-art files
    to work around a layout bug.
+1a. **TH.6A.3a2: vertically scrollable Water World overview – implemented in DEV v1.5.2; Android check pending.**
+   The world map now consists of independent portrait map sections,
+   currently `northern-sea`, `island-passage` and `southern-reef`
+   in top-to-bottom order. The actual scroll is performed by the
+   existing `thCampaignMap` scroll container. All available area
+   buttons are positioned inside their own local map section, and
+   the **Find my area** control returns to the player's unlocked area.
+   Adding a new region requires an area definition, an art-manifest
+   section/location entry and its background image, not any change
+   to scores, unlock logic or stored level IDs.
+   The initial unlocked Coral Coast region is located toward the
+   southern end of the world map. Swipe toward the top to explore
+   further regions. All art is provisional and replaceable.
+   **Android acceptance:** verify smooth vertical scroll with no
+   horizontal clipping, all three area markers correctly aligned,
+   return-to-Coral Coast button and previous progress unchanged.
 2. **TH.6A.3b: invert Coral Coast map progression – TODO.**
    The player should start at the bottom of each area, with level
    numbers increasing upward. Coordinate rendering, section order,
