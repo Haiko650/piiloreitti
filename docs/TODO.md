@@ -2,6 +2,10 @@
 
 Tähän tiedostoon kerätään sovitut myöhemmin toteutettavat tehtävät. Työt tehdään ensin kehityshaarassa `pathle-modular-dev`; `main`-haaraa ei muuteta ilman erillistä hyväksyntää.
 
+## Water Worldin kartat – erillinen graafinen vaihe
+
+- [ ] **Water Worldin ja sen alueiden karttagrafiikan viimeistely.** World-overview-kartta ja aluekartat (esim. Coral Coast) tehdään myöhemmin omana graafisena työnään. Karttakuvat, reitit, tasosolmut ja Haikon karttamerkki pysyvät erillisinä vaihdettavina tasoina. Nykyinen Water Worldin otsake-, ohje- ja navigointikehys uudistettiin DEV v1.5.17:ssa, mutta karttasisältöön ei vielä tehty muutoksia.
+
 ## Viimeistelyvaihe
 
 - [ ] **Asetukset → How to Play: erillinen ohjesivu.**
