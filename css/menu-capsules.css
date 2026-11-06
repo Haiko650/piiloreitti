@@ -1,20 +1,26 @@
 /* Pathle main-menu capsules — canonical styling for three menu actions.
    Approved image 6 Nov 2026. Keep button visuals here, not in styles.css.
    Does not modify gameplay or saved progress. */
+/* A single golden capsule with two visually integrated interactive tiers. */
 #welcomeScreen .adventureCard{
   order:1!important;
   display:flex!important;
   flex:0 0 auto!important;
   flex-direction:column!important;
-  gap:2px!important;
+  gap:0!important;
+  box-sizing:border-box!important;
+  position:relative!important;
+  isolation:isolate!important;
   width:min(100%,430px)!important;
-  padding:3px 0 2px!important;
-  margin-inline:auto!important;
-  border:0!important;
-  border-radius:0!important;
-  background:transparent!important;
-  box-shadow:none!important;
+  padding:0!important;
+  margin:4px auto 0!important;
+  border:4px solid #fff2a2!important;
+  border-radius:clamp(30px,9vw,49px)!important;
+  background:linear-gradient(180deg,#fff3a0 0%,#ffdf41 33%,#ffc21b 77%,#f99400 100%)!important;
+  box-shadow:inset 0 2px 0 #ffffeb,inset 0 -3px 0 #ffae19,0 5px 0 #c9780b,0 10px 16px #0034549e!important;
   backdrop-filter:none!important;
+  overflow:hidden!important;
+  z-index:4!important;
 }
 #welcomeScreen :is(#playDaily,#playTreasure,#openHideout){
   --capsule-ink:#6c310e;
@@ -133,6 +139,103 @@
   --capsule-ink:#783008;
   border-color:#fff5b8!important;
 }
+/* Upper action: Daily gameplay; the parent owns the capsule outline and shine. */
+#welcomeScreen #playDaily{
+  box-sizing:border-box!important;
+  flex:0 0 auto!important;
+  width:100%!important;
+  min-height:clamp(70px,8dvh,88px)!important;
+  margin:0!important;
+  padding:8px clamp(12px,3vw,20px) 4px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  z-index:1!important;
+}
+#welcomeScreen #playDaily::before{top:2px!important;left:9px!important;right:9px!important;height:46%!important}
+#welcomeScreen #playDaily::after{top:6px!important}
+/* Lower, recessed tier is a separate accessible map button, not a nested button. */
+#welcomeScreen .adventureCard #journeyQuick.dailyProgressPanel{
+  box-sizing:border-box!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:clamp(3px,1vw,8px)!important;
+  width:calc(100% - 16px)!important;
+  min-height:clamp(39px,4.8dvh,49px)!important;
+  margin:0 8px 9px!important;
+  padding:5px clamp(7px,2vw,12px)!important;
+  border:2px solid #fff7bf!important;
+  border-radius:999px!important;
+  background:linear-gradient(180deg,#ffe7a1,#ffe9b7 58%,#ffd67d)!important;
+  color:#792c0c!important;
+  box-shadow:inset 0 2px 3px #b5682755,0 1px 1px #fff2b3!important;
+  font-family:system-ui,-apple-system,sans-serif!important;
+  cursor:pointer!important;
+  position:relative!important;
+  z-index:2!important;
+  -webkit-tap-highlight-color:transparent;
+}
+#welcomeScreen .adventureCard #journeyQuick.dailyProgressPanel:focus-visible{
+  outline:3px solid #064d8f!important;outline-offset:2px!important;
+}
+#welcomeScreen .dailyProgressCaption{
+  flex:0 0 clamp(64px,19vw,91px)!important;
+  display:block!important;
+  padding-right:5px!important;
+  border-right:2px solid #d8963d!important;
+  font-size:clamp(9px,2.45vw,12px)!important;
+  font-weight:900!important;
+  letter-spacing:-.035em!important;
+  line-height:1.05!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+}
+#welcomeScreen .dailyProgressCaption span{display:block!important}
+#welcomeScreen .adventureCard .dailyProgressPanel .weekDots{
+  display:flex!important;
+  flex:1 1 auto!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:clamp(2px,.55vw,5px)!important;
+  min-width:0!important;
+  width:auto!important;
+  margin:0!important;
+  padding:0!important;
+}
+#welcomeScreen .adventureCard .dailyProgressPanel .weekDots span{
+  box-sizing:border-box!important;
+  flex:0 1 clamp(11px,3.45vw,19px)!important;
+  width:clamp(11px,3.45vw,19px)!important;
+  height:clamp(11px,3.45vw,19px)!important;
+  border:2px solid #dca253!important;
+  border-radius:50%!important;
+  background:#eed6a5!important;
+  box-shadow:inset 0 1px 3px #b870296b!important;
+  color:transparent!important;
+  font-size:0!important;
+}
+#welcomeScreen .adventureCard .dailyProgressPanel .weekDots span.complete{
+  border-color:#cf720b!important;
+  background:radial-gradient(circle at 30% 25%,#fff7b4 0%,#ffdd37 34%,#f9ac00 70%,#e17d06 100%)!important;
+  box-shadow:inset 0 1px 1px #fff7c6,0 1px 2px #944100b8!important;
+}
+#welcomeScreen .adventureCard .dailyProgressPanel .weekDots span.next{
+  border-color:#d99530!important;
+  background:linear-gradient(150deg,#ffe7a3,#f3c984)!important;
+}
+#welcomeScreen .dailyProgressDay{
+  flex:0 0 auto!important;
+  padding-left:clamp(5px,1.2vw,11px)!important;
+  border-left:2px solid #d8963d!important;
+  font-size:clamp(10px,2.7vw,14px)!important;
+  font-weight:1000!important;
+  line-height:1.15!important;
+  letter-spacing:-.045em!important;
+  white-space:nowrap!important;
+  text-align:center!important;
+}
 #welcomeScreen #playTreasure{
   order:1!important;
   --capsule-ink:#004b6c;
@@ -154,7 +257,7 @@
 #welcomeScreen :is(#playDaily,#playTreasure,#openHideout):focus-visible{
   outline:3px solid #fff!important;outline-offset:3px!important;
 }
-/* Preserve progress and settings controls while keeping the menu compact. */
+/* The progress tier is sized with the Daily action for compact screens. */
 
 @media(max-width:360px){
   #welcomeScreen :is(#playDaily,#playTreasure,#openHideout){
@@ -190,7 +293,7 @@
   }
 }
 
-/* Compact portrait devices: protect logo, Haiko and all four tap targets. */
+/* Compact portrait devices: protect logo, Haiko and the three actions. */
 @media(max-height:620px){
   #welcomeScreen .homeBrand{margin-top:14px!important;}
   #welcomeScreen .homeBrand .pathleHomeLogoHeading{width:clamp(200px,68vw,275px)!important;}
@@ -224,4 +327,26 @@
 #welcomeScreen #playDaily:disabled{
   cursor:default!important;
   filter:saturate(.78)!important;
+}
+
+/* Responsive adjustments for the taller two-tier Daily capsule. */
+@media(max-width:360px){
+  #welcomeScreen .dailyProgressCaption{flex-basis:60px!important;font-size:9px!important;padding-right:3px!important}
+  #welcomeScreen .dailyProgressDay{font-size:10px!important;padding-left:4px!important}
+  #welcomeScreen .adventureCard .dailyProgressPanel .weekDots{gap:2px!important}
+  #welcomeScreen .adventureCard .dailyProgressPanel .weekDots span{
+    flex-basis:11px!important;width:11px!important;height:11px!important;border-width:1.5px!important;
+  }
+}
+@media(max-height:700px){
+  #welcomeScreen #playDaily{min-height:62px!important;padding-top:5px!important;padding-bottom:3px!important}
+  #welcomeScreen .adventureCard #journeyQuick.dailyProgressPanel{min-height:36px!important;padding-block:3px!important;margin-bottom:7px!important}
+}
+@media(max-height:620px){
+  #welcomeScreen #playDaily{min-height:55px!important}
+  #welcomeScreen .adventureCard #journeyQuick.dailyProgressPanel{min-height:34px!important;margin-bottom:6px!important}
+}
+@media(max-height:520px){
+  #welcomeScreen #playDaily{min-height:49px!important}
+  #welcomeScreen .adventureCard #journeyQuick.dailyProgressPanel{min-height:32px!important;padding-block:2px!important;margin-bottom:5px!important}
 }
