@@ -24,7 +24,7 @@ function node(id){
     fire(k,more={}){for(const f of callbacks[k]??[])f({target:this,...more})}
   };
 }
-function harness({published='1.5.14',fetchError=false,fetchProvided=true}={}){
+function harness({published='1.5.15',fetchError=false,fetchProvided=true}={}){
   const ids=[
     'homeBuildBadge','gameVersionFooter','updateModal','updateMessage',
     'updateLoadedVersion','updateRetry','updateInstall','updateClose','welcomeScreen'
@@ -62,27 +62,27 @@ test('home screen version label is an accessible small update button',()=>{
   const badge=html.indexOf('id="homeBuildBadge"',start);
   const tools=html.indexOf('class="topTools"',start);
   assert.ok(start>=0&&badge>start&&tools>badge);
-  assert.match(html,/<button[^>]*id="homeBuildBadge"[^>]*>DEV · v1\.5\.14<\/button>/);
-  assert.match(html,/js\/version\.js\?v=1\.5\.14/);
-  assert.match(html,/css\/home-reef\.css\?v=20261106-logo4/);
+  assert.match(html,/<button[^>]*id="homeBuildBadge"[^>]*>DEV · v1\.5\.15<\/button>/);
+  assert.match(html,/js\/version\.js\?v=1\.5\.15/);
+  assert.match(html,/css\/home-reef\.css\?v=20261106-haiko-up1/);
   assert.match(html,/id="gameVersionFooter"/);
   assert.match(html,/id="updateModal"/);
 });
 
 test('published manifest matches the installed version, and no duplicates linger',()=>{
   const json=JSON.parse(read('version.json'));
-  assert.equal(json.version,'1.5.14');
+  assert.equal(json.version,'1.5.15');
   assert.equal(json.channel,'DEV');
-  assert.match(read('js/version.js'),/const VERSION='1\.5\.14'/);
+  assert.match(read('js/version.js'),/const VERSION='1\.5\.15'/);
   assert.doesNotMatch(read('index.html'),/DEV · v1\.4\.0/);
 });
 
 test('version module updates label, title and Daily footer',async()=>{
   const h=harness();await idle();
-  assert.equal(h.root.PathleVersion.version,'1.5.14');
-  assert.equal(h.nodes.homeBuildBadge.textContent,'DEV · v1.5.14');
-  assert.equal(h.document.title,'Pathle v1.5.14 · Ocean Journey');
-  assert.equal(h.nodes.gameVersionFooter.textContent,'Pathle v1.5.14 · Ocean Journey (DEV)');
+  assert.equal(h.root.PathleVersion.version,'1.5.15');
+  assert.equal(h.nodes.homeBuildBadge.textContent,'DEV · v1.5.15');
+  assert.equal(h.document.title,'Pathle v1.5.15 · Ocean Journey');
+  assert.equal(h.nodes.gameVersionFooter.textContent,'Pathle v1.5.15 · Ocean Journey (DEV)');
   assert.equal(h.nodes.updateModal.hidden,true);
 });
 
@@ -104,23 +104,23 @@ test('update check uses fresh same-origin manifest without interrupting the game
 });
 
 test('a newer published build offers voluntary refresh with cache-busting query',async()=>{
-  const h=harness({published:'1.5.15'});await idle();
+  const h=harness({published:'1.5.16'});await idle();
   assert.equal(h.nodes.homeBuildBadge.classList.contains('has-update'),true);
   assert.equal(h.navigation.length,0);
   h.nodes.homeBuildBadge.fire('click');await idle();
-  assert.match(h.nodes.updateMessage.textContent,/1\.5\.15/);
+  assert.match(h.nodes.updateMessage.textContent,/1\.5\.16/);
   assert.equal(h.nodes.updateInstall.hidden,false);
-  assert.equal(h.nodes.updateInstall.textContent,'Load v1.5.15');
+  assert.equal(h.nodes.updateInstall.textContent,'Load v1.5.16');
   h.nodes.updateInstall.fire('click');
   assert.equal(h.navigation.length,1);
   const dest=new URL(h.navigation[0]);
   assert.equal(dest.origin,'https://haiko650.github.io');
   assert.equal(dest.pathname,'/piiloreitti/index.html');
-  assert.equal(dest.searchParams.get('pathle-update'),'1.5.15');
+  assert.equal(dest.searchParams.get('pathle-update'),'1.5.16');
 });
 
 test('no page refresh when game screen is open, even if update was discovered',async()=>{
-  const h=harness({published:'1.5.15'});await idle();
+  const h=harness({published:'1.5.16'});await idle();
   h.nodes.homeBuildBadge.fire('click');await idle();
   h.nodes.welcomeScreen.hidden=true;
   h.nodes.updateInstall.fire('click');
@@ -141,7 +141,7 @@ test('version script safely works on older pages without update controls',()=>{
   const window={};
   const document={title:'',getElementById:()=>null};
   vm.runInNewContext(read('js/version.js'),{window,document});
-  assert.equal(window.PathleVersion.version,'1.5.14');
+  assert.equal(window.PathleVersion.version,'1.5.15');
 });
 
 test('closing the update dialog returns focus to the version button',async()=>{
