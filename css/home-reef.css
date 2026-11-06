@@ -191,10 +191,8 @@
   }
 }
 
-/* DEV 1.5.5: The user-approved Pathle logo is independent transparent
-   artwork extracted from Haiko's character sheet. Only the home screen
-   brand changes; all other game titles, Haiko assets and backgrounds stay.
-   The logo is a single swappable image, not lettering baked into the reef. */
+/* DEV 1.5.8: The supplied Pathle logo is a transparent independent artwork.
+   Replacing images/pathle-logo.webp does not affect the reef or Haiko. */
 /* A legacy rule in styles.css hides .homeBrand with display:none!important.
    Explicitly restore the brand at the last-loaded home-reef layer.
    The previous v1.5.5 logo was correctly deployed but INVISIBLE. */
@@ -210,7 +208,7 @@
 #welcomeScreen .homeBrand .pathleHomeLogoHeading{
   display:block;
   overflow:visible !important;
-  width:clamp(185px,60vw,268px);
+  width:clamp(235px,88vw,375px);
   max-width:100%;
   height:auto;
   margin:0 auto !important;
@@ -224,7 +222,7 @@
   display:block;
   width:100%;
   height:auto;
-  aspect-ratio:574/326;
+  aspect-ratio:1807/696;
   object-fit:contain;
   pointer-events:none;
   user-select:none;
@@ -239,6 +237,6 @@
     margin-top:36px !important;
   }
   #welcomeScreen .homeBrand .pathleHomeLogoHeading{
-    width:clamp(166px,52vw,220px);
+    width:clamp(220px,80vw,330px);
   }
 }
