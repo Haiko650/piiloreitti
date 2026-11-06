@@ -1,0 +1,304 @@
+/* Ocean Journey / Settings — 2.5D reef styling, scoped to the settings dialog.
+   The audio controls and IndexedDB preference handlers are unchanged. */
+#settingsModal{
+  padding:max(12px,env(safe-area-inset-top,0px)) 12px max(12px,env(safe-area-inset-bottom,0px));
+  background:radial-gradient(ellipse at 50% 22%,#0b6c85c4,#053965ec 70%,#031d43f2);
+  backdrop-filter:blur(7px);
+}
+#settingsModal .oceanSettingsCard{
+  position:relative;
+  isolation:isolate;
+  box-sizing:border-box;
+  width:min(100%,440px);
+  max-height:calc(100dvh - 24px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));
+  padding:clamp(14px,3.8vw,22px);
+  overflow-y:auto;
+  overflow-x:hidden;
+  overscroll-behavior:contain;
+  border:4px solid #fff0ab;
+  border-radius:clamp(24px,6vw,34px);
+  background:
+    radial-gradient(circle at 8% 21%,#d1ffff9c 0 4px,transparent 5px),
+    radial-gradient(circle at 93% 30%,#d1ffff80 0 7px,transparent 8px),
+    radial-gradient(circle at 89% 77%,#d1ffff9e 0 4px,transparent 5px),
+    radial-gradient(ellipse at 50% -8%,#6aeaf1 0%,#1fc4d4 35%,#0877b5 80%,#095a99 100%);
+  box-shadow:inset 0 3px 0 #ffffffba,inset 0 -6px 0 #07518f,0 6px 0 #033d74,0 18px 38px #00284fbd;
+  color:#f4ffff;
+  text-align:left;
+}
+#settingsModal .oceanSettingsCard::before{
+  content:"";
+  position:absolute;
+  inset:4px 5px auto;
+  height:100px;
+  pointer-events:none;
+  border-radius:30px 30px 50% 50%;
+  background:linear-gradient(180deg,#ffffff40,#ffffff00);
+  z-index:0;
+}
+#settingsModal .oceanSettingsCard > *{position:relative;z-index:1;}
+#settingsModal .oceanSettingsHeader{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+  margin:0 0 12px;
+  padding:0 0 3px;
+}
+#settingsModal .oceanSettingsEyebrow{
+  display:block;
+  margin:0 0 1px;
+  color:#fff1a6;
+  font:900 clamp(9px,2.6vw,11px)/1.3 system-ui,-apple-system,sans-serif;
+  letter-spacing:.18em;
+  text-shadow:0 2px 3px #08517c;
+}
+#settingsModal .oceanSettingsHeader h2{
+  margin:0;
+  color:white;
+  font-family:"Trebuchet MS",system-ui,-apple-system,sans-serif;
+  font-size:clamp(27px,7vw,34px);
+  font-weight:1000;
+  line-height:1.08;
+  letter-spacing:-.035em;
+  -webkit-text-stroke:1.1px #005787;
+  paint-order:stroke fill;
+  text-shadow:0 3px 0 #005787,0 5px 5px #06396b88;
+}
+#settingsModal .oceanSettingsHeader p{
+  color:#e8ffff;
+  font-size:clamp(11px,3vw,13px);
+  font-weight:700;
+  margin:5px 0 0;
+  text-shadow:0 1px 3px #043b66;
+}
+#settingsModal #closeSettings.modalClose{
+  display:grid;
+  place-items:center;
+  width:43px;
+  min-width:43px;
+  height:43px;
+  padding:0;
+  border:3px solid #ffe2e2;
+  border-radius:50%;
+  background:linear-gradient(180deg,#ffc1b5 0%,#ff7b86 55%,#f3465c 100%);
+  color:#fff;
+  font:900 27px/1 system-ui,sans-serif;
+  text-shadow:0 2px 0 #9a2543;
+  box-shadow:inset 0 2px 0 #ffffffbf,0 4px 0 #ae2449,0 6px 11px #003e6988;
+}
+#settingsModal #closeSettings:active{transform:translateY(2px);box-shadow:inset 0 2px 0 #ffffffaa,0 2px 0 #ae2449;}
+#settingsModal .oceanSettingsSectionLabel{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  margin:12px 4px 9px;
+  color:#fff5b4;
+  font:900 11px/1.2 system-ui,-apple-system,sans-serif;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  text-shadow:0 1px 2px #004366;
+}
+#settingsModal .oceanSettingsSectionLabel::after{
+  content:"";
+  flex:1;
+  height:2px;
+  border-radius:100px;
+  background:linear-gradient(90deg,#fff1b999,#fff1b911);
+}
+#settingsModal .soundControl.oceanSettingsOption{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:clamp(8px,2.1vw,12px);
+  min-height:76px;
+  margin:0 0 10px;
+  padding:10px clamp(9px,2.5vw,14px);
+  border:3px solid #e7ffff;
+  border-radius:23px;
+  background:linear-gradient(180deg,#e4ffff 0%,#a6f9ee 43%,#6ce0d7 100%);
+  box-shadow:inset 0 2px 0 #ffffffef,inset 0 -3px 0 #41b5b4,0 4px 0 #046b99,0 7px 10px #004b7b73;
+  color:#083d59;
+  cursor:pointer;
+}
+#settingsModal .oceanSettingsOption--music{
+  border-color:#f7e6ff;
+  background:linear-gradient(180deg,#fff0ff 0%,#e9c8ff 40%,#c28cf5 100%)!important;
+  box-shadow:inset 0 2px 0 #ffffffec,inset 0 -3px 0 #a96cdd,0 4px 0 #6557a8,0 7px 10px #004b7b73!important;
+}
+#settingsModal .oceanSettingsOption--sea{
+  border-color:#e9ffff;
+  background:linear-gradient(180deg,#f3ffff 0%,#c5f3ff 41%,#82d9f7 100%)!important;
+  box-shadow:inset 0 2px 0 #ffffffec,inset 0 -3px 0 #53b8e2,0 4px 0 #2376af,0 7px 10px #004b7b73!important;
+}
+#settingsModal .oceanSettingsIcon{
+  flex:0 0 clamp(40px,11vw,48px);
+  display:grid;
+  place-items:center;
+  width:clamp(40px,11vw,48px);
+  height:clamp(40px,11vw,48px);
+  border:2px solid #fffffffa;
+  border-radius:50%;
+  background:linear-gradient(145deg,#fff7c7,#ffe063 60%,#ffc63f);
+  box-shadow:inset 0 2px 0 #fff,0 3px 0 #bd8230,0 4px 7px #254e7355;
+  font-size:clamp(20px,5.6vw,25px);
+  line-height:1;
+  text-align:center;
+}
+#settingsModal .oceanSettingsOption--music .oceanSettingsIcon{
+  background:linear-gradient(145deg,#fff2ff,#e5b4ff 65%,#ce8cf1);
+  box-shadow:inset 0 2px 0 #fff,0 3px 0 #9250bc,0 4px 7px #254e7355;
+}
+#settingsModal .oceanSettingsOption--sea .oceanSettingsIcon{
+  background:linear-gradient(145deg,#e5ffff,#8af3ff 55%,#40bde4);
+  box-shadow:inset 0 2px 0 #fff,0 3px 0 #118fb6,0 4px 7px #254e7355;
+}
+#settingsModal .oceanSettingsCopy{
+  flex:1 1 auto;
+  min-width:0;
+}
+#settingsModal .oceanSettingsOption strong{
+  display:block;
+  color:#07415d;
+  font:1000 clamp(14px,4vw,18px)/1.15 "Trebuchet MS",system-ui,sans-serif;
+  letter-spacing:-.035em;
+}
+#settingsModal .oceanSettingsOption small{
+  display:block;
+  margin-top:3px;
+  color:#28536c;
+  font:700 clamp(10px,2.7vw,12px)/1.2 system-ui,-apple-system,sans-serif;
+}
+#settingsModal .oceanSettingsOption--music strong{color:#4b2372;}
+#settingsModal .oceanSettingsOption--music small{color:#543977;}
+#settingsModal .oceanSettingsOption--sea strong{color:#07527b;}
+#settingsModal .oceanSettingsOption--sea small{color:#2c6180;}
+#settingsModal .oceanSettingsOption .switch{
+  display:inline-block;
+  flex:none;
+  width:59px;
+  height:36px;
+}
+#settingsModal .oceanSettingsOption .switch input{
+  position:absolute;
+  inset:0;
+  margin:0;
+  width:100%;
+  height:100%;
+  opacity:0;
+  z-index:2;
+  cursor:pointer;
+}
+#settingsModal .oceanSettingsOption .switchKnob{
+  inset:0;
+  border:3px solid #ffffffeb;
+  border-radius:999px;
+  background:linear-gradient(180deg,#6989a6,#4c668d);
+  box-shadow:inset 0 2px 4px #213e6775,0 2px 3px #1c5b8166;
+  transition:background .16s ease;
+}
+#settingsModal .oceanSettingsOption .switchKnob::after{
+  top:3px;
+  left:3px;
+  width:24px;
+  height:24px;
+  border:1px solid #e3f8ff;
+  border-radius:50%;
+  background:radial-gradient(circle at 33% 24%,#ffffff 0%,#f4ffff 38%,#bfe5f7 100%);
+  box-shadow:0 1px 4px #00578288;
+  transition:transform .16s ease;
+}
+#settingsModal .oceanSettingsOption .switch input:checked + .switchKnob{
+  background:linear-gradient(180deg,#20eacb,#09b7c0 100%);
+}
+#settingsModal .oceanSettingsOption .switch input:checked + .switchKnob::after{
+  transform:translateX(23px);
+}
+#settingsModal .oceanSettingsOption .switch input:focus-visible + .switchKnob,
+#settingsModal :is(#closeSettings,#howPlaySettings,#doneSettings):focus-visible{
+  outline:3px solid #fff59f;
+  outline-offset:3px;
+}
+#settingsModal #howPlaySettings.guideSettingsButton{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  width:100%;
+  min-height:59px;
+  margin:0;
+  padding:8px 13px;
+  border:3px solid #ffe3df;
+  border-radius:20px;
+  background:linear-gradient(180deg,#ffd8d1 0%,#ff97a0 45%,#fa607b 100%);
+  color:#fff;
+  font-family:"Trebuchet MS",system-ui,sans-serif;
+  font-size:clamp(16px,4.3vw,20px);
+  font-weight:1000;
+  text-shadow:0 2px 1px #8e2450,0 3px 4px #9e315b70;
+  -webkit-text-stroke:.45px #932857;
+  paint-order:stroke fill;
+  box-shadow:inset 0 2px 0 #fff5ef,inset 0 -3px 0 #e34f72,0 4px 0 #a72758,0 7px 10px #004b7b77;
+}
+#settingsModal .oceanGuideIcon{
+  display:grid;
+  place-items:center;
+  flex:none;
+  width:37px;
+  height:37px;
+  border:2px solid #fff;
+  border-radius:50%;
+  background:linear-gradient(140deg,#80f4ff,#1dbcd7);
+  box-shadow:0 2px 0 #087ca8;
+  font-size:20px;
+  -webkit-text-stroke:0;
+}
+#settingsModal .oceanGuideChevron{
+  margin-left:auto;
+  font-size:32px;
+  line-height:.8;
+  font-family:Arial,sans-serif;
+}
+#settingsModal #howPlaySettings:active,
+#settingsModal #doneSettings:active{transform:translateY(2px);}
+#settingsModal .oceanSettingsFootnote{
+  margin:11px 0 8px;
+  color:#ddf8ff;
+  font:700 11px/1.35 system-ui,-apple-system,sans-serif;
+  text-align:center;
+  text-shadow:0 1px 2px #134b70;
+}
+#settingsModal #doneSettings.primary{
+  display:block;
+  width:min(100%,235px)!important;
+  min-height:52px;
+  margin:8px auto 3px!important;
+  padding:10px 22px;
+  border:3px solid #fff1a8;
+  border-radius:999px;
+  background:linear-gradient(180deg,#fff0a9,#ffdc50 42%,#ffb91e 100%);
+  color:#744008;
+  font:1000 20px/1.2 "Trebuchet MS",system-ui,sans-serif;
+  letter-spacing:-.02em;
+  text-shadow:0 1px 0 #fff2ad;
+  box-shadow:inset 0 2px 0 #fffefa,inset 0 -3px 0 #f3a51d,0 4px 0 #b96c09,0 7px 11px #004b7b90;
+}
+@media(max-width:360px){
+  #settingsModal .oceanSettingsCard{padding:13px 12px;}
+  #settingsModal .oceanSettingsOption{gap:7px;padding:8px!important;}
+  #settingsModal .oceanSettingsOption .switch{width:55px;}
+  #settingsModal .oceanSettingsOption .switch input:checked + .switchKnob::after{transform:translateX(19px);}
+  #settingsModal .oceanSettingsIcon{flex-basis:38px;width:38px;height:38px;}
+}
+@media(max-height:660px){
+  #settingsModal .oceanSettingsCard{padding-top:12px;padding-bottom:12px;}
+  #settingsModal .oceanSettingsHeader{margin-bottom:5px;}
+  #settingsModal .oceanSettingsSectionLabel{margin:7px 4px 6px;}
+  #settingsModal .soundControl.oceanSettingsOption{min-height:62px;margin-bottom:7px;padding-block:7px;}
+  #settingsModal .oceanSettingsIcon{width:40px;height:40px;flex-basis:40px;}
+  #settingsModal .oceanSettingsFootnote{margin:8px 0 5px;}
+  #settingsModal #doneSettings.primary{min-height:45px;margin-top:6px!important;}
+}
+@media(prefers-reduced-motion:reduce){
+  #settingsModal .oceanSettingsOption .switchKnob,
+  #settingsModal .oceanSettingsOption .switchKnob::after{transition:none;}
+}
