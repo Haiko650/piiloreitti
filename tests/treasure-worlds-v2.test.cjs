@@ -70,6 +70,16 @@ test('area counts can exceed 60 without hardcoded blocks of 10',()=>{
   assert.equal(catalog.getAreas(c,'underwater-moon')[0].targetLevelCount,85);
 });
 
+test('region travel direction defaults upward but remains presentation-only',()=>{
+  const c=base();
+  assert.ok(c.areas.every(area=>area.map.travelDirection==='up'));
+  assert.equal(catalog.validate(c).valid,true);
+  c.areas[0].map.travelDirection='down';
+  assert.equal(catalog.validate(c).valid,true);
+  c.areas[0].map.travelDirection='sideways';
+  assert.equal(catalog.validate(c).valid,false);
+});
+
 test('invalid duplicate region IDs and invalid backwards unlock chains are rejected',()=>{
   const c=base();c.areas.push({...c.areas[0]});
   assert.equal(catalog.validate(c).valid,false);
