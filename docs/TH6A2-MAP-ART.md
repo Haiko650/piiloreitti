@@ -28,8 +28,12 @@ Keep these independently editable:
 
 Current first area:
 
-- `images/maps/water-world/world-overview.svg` – Water World geographical
-  overview behind area markers.
+- `images/maps/water-world/world-northern-sea.svg` – northern section
+  of the vertically scrolling Water World overview.
+- `images/maps/water-world/world-island-passage.svg` – middle section,
+  with tropical islands and connecting waterways.
+- `images/maps/water-world/world-overview.svg` – southern reef section;
+  kept at its existing path so its artwork can be updated separately.
 - `images/maps/water-world/coral-coast/section-01-base.svg` – landscape.
 - `images/maps/water-world/coral-coast/section-01-details.svg` – optional
   foreground landscape elements.
@@ -46,6 +50,32 @@ rendering scales the assets to the mobile section's width and height.
 The route SVG and click targets remain independent of image pixels.
 Avoid placing pre-rendered numbers, interactive UI, or Haiko *inside*
 background images.
+
+## Expanding the Water World overview (v1.5.2)
+
+The world overview is also a **continuous vertical, swipeable map**, not
+one monolithic picture. Its artwork is separate from Coral Coast's level
+map. Open `js/treasure-map-art.js`:
+
+- `worlds['water-world'].sections` lists the **top-to-bottom** geographic
+  background segments. Each uses an independent local SVG/WebP/PNG file.
+- `worlds['water-world'].areas` assigns each region to a section by its
+  **stable section ID**, plus independent normalized x/y coordinates.
+- The UI renders one panel per listed section and places the clickable
+  region marker over its own panel. New sections can be appended or
+  inserted without rewriting the page or resetting any achievements.
+
+A world section uses 600×760 design proportions and scales to mobile
+width automatically; the outer Treasure Hunt map scrolls vertically.
+Do **not** bake names, region buttons, locks, level numbers or Haiko
+into any background picture. Use a clear geographic continuation
+between the top/bottom edges of adjacent panels when replacing the
+provisional artwork with final illustration.
+
+At launch, northern sea / island passage / southern reef are the three
+illustrated sections. Coral Coast sits in the southern section so the
+player can scroll north to explore further areas. The **Find my area**
+control returns to the currently available region.
 
 ## Adding sections
 
