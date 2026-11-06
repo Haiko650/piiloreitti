@@ -11,6 +11,12 @@
 .th-v2-map-caption{font-size:9px;letter-spacing:.06em;font-weight:900;color:#ceffff;text-align:right;max-width:110px}
 .th-v2-map-explain{font-size:12px;line-height:1.45;color:#e3f9ff;margin:7px 0 12px}
 .th-v2-map-secondary{background:#124f75;color:#fff;border:1px solid #97e9ec;border-radius:12px;min-height:40px;padding:7px 12px;font-weight:850;font-size:12px}
+.th-v2-world-controls{
+  position:sticky;top:0;z-index:10;
+  display:flex;justify-content:flex-end;
+  padding:5px 2px 9px;
+  background:linear-gradient(#0b4d67 75%,#0b4d6700);
+}
 .th-v2-map-secondary:focus-visible,
 .th-v2-node:focus-visible,
 .th-v2-world-pin:focus-visible{outline:3px solid #ffe59b;outline-offset:3px}
