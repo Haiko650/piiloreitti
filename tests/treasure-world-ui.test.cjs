@@ -9,17 +9,16 @@ test('Water World presentation uses a dedicated final-loaded ocean skin',()=>{
  const html=read('treasure-hunt.html');
  const ui=read('css/treasure-world-ui.css');
  const world=html.slice(html.indexOf('id="thV2World"'),html.indexOf('id="thV2Area"'));
- assert.ok(html.indexOf('css/treasure-world-ui.css?v=20261106-haikoreturn1')>
+ assert.ok(html.indexOf('css/treasure-world-ui.css?v=20261106-mapfirst1')>
            html.indexOf('css/treasure-world-v2.css?v=th6a3d'));
- assert.match(world,/class="th-v2-world-hero"/);
- assert.match(world,/class="th-v2-world-brand"/);
- assert.match(world,/class="th-v2-world-emblem"/);
- assert.match(world,/id="thV2WorldTitle"/);
- assert.match(world,/id="thV2WorldStatus"/);
+ assert.doesNotMatch(world,/th-v2-world-hero|th-v2-world-brand|th-v2-world-emblem/);
+ assert.doesNotMatch(world,/thV2WorldTitle|thV2WorldStatus|Choose an area to explore/);
+ assert.ok(world.indexOf('id="thV2WorldBack"')<world.indexOf('id="thV2WorldCanvas"'),
+   'Floating navigation precedes the first map section');
  assert.match(world,/id="thV2WorldBack"/);
  assert.doesNotMatch(world,/th-v2-world-toolbar-label|Find my area|Explore the ocean/);
  assert.match(world,/class="th-v2-map-secondary th-v2-haiko-return"/);
- assert.match(ui,/#thV2World \.th-v2-world-hero\{/);
+ assert.doesNotMatch(ui,/th-v2-world-hero|th-v2-world-brand|th-v2-world-status/);
  assert.match(ui,/#thV2World \.th-v2-world-controls,/);
  assert.match(ui,/#thV2World #thV2WorldBack\.th-v2-haiko-return,/);
  assert.match(ui,/@media\(max-width:360px\)/);
@@ -51,7 +50,7 @@ test('Water World-specific chrome is isolated from Treasure Hunt gameplay and ar
  const css=read('css/treasure-world-ui.css');
  const html=read('treasure-hunt.html');
  assert.match(css,/body\.th-page:has\(#thV2World:not\(\[hidden\]\)\) \.th-header/);
- assert.match(css,/#thV2World \.th-v2-map-explain\.th-v2-world-status\{/);
+ assert.doesNotMatch(html,/id="thV2WorldTitle"|id="thV2WorldStatus"/);
  assert.match(css,/focus-visible/);
  assert.match(css,/prefers-reduced-motion:reduce/);
  assert.match(html,/<section class="th-panel" aria-label="Treasure Hunt level" hidden>/);
@@ -81,4 +80,18 @@ test('Return to Haiko is the same floating lower-left action on both maps',()=>{
  assert.match(css,/bottom:calc\(16px \+ env\(safe-area-inset-bottom,0px\)\)!important;/);
  assert.match(css,/#thV2Area #thV2AreaHere\.th-v2-haiko-return\{/);
  assert.match(css,/@media\(max-width:360px\)/);
+});
+
+test('Water World opens directly on the geographic map without redundant instructional cards',()=>{
+ const html=read('treasure-hunt.html');
+ const controller=read('js/treasure-campaign-v2.js');
+ const world=html.slice(html.indexOf('<section id="thV2World"'),html.indexOf('<section id="thV2Area"'));
+ assert.doesNotMatch(world,/th-v2-world-hero|th-v2-world-heading|MORE AREAS|COMING SOON|Choose an area to explore/);
+ assert.doesNotMatch(controller,/thV2WorldTitle|thV2WorldStatus/);
+ assert.match(world,/id="thV2WorldBack"/);
+ assert.match(world,/id="thV2WorldCanvas"/);
+ assert.match(world,/id="thV2WorldPins"/);
+ assert.match(world,/Return to Haiko/);
+ assert.match(controller,/function renderWorld\(\)/);
+ assert.match(controller,/worlds\.getAreas\(catalog,world\.id\)/);
 });
