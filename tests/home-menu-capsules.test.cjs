@@ -23,7 +23,7 @@ test('a single dedicated stylesheet owns the main-menu button visuals',()=>{
   const html=read('index.html');
   const legacy=read('css/styles.css');
   const capsules=read('css/menu-capsules.css');
-  assert.match(html,/css\/menu-capsules\.css\?v=20261106-nopractice/);
+  assert.match(html,/css\/menu-capsules\.css\?v=20261106-three/);
   assert.doesNotMatch(legacy,/\.(?:menuButton|menuDaily|menuTreasure|menuPractice|menuHideout|menuIcon)\b|#(?:playDaily|playTreasure|playPractice|openHideout)\b/);
   for(const id of IDs){
     assert.ok(capsules.includes('#'+id+'{'),'Missing '+id+' styling');
