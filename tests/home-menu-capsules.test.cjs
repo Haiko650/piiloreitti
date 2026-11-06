@@ -23,7 +23,7 @@ test('a single dedicated stylesheet owns the main-menu button visuals',()=>{
   const html=read('index.html');
   const legacy=read('css/styles.css');
   const capsules=read('css/menu-capsules.css');
-  assert.match(html,/css\/menu-capsules\.css\?v=20261106-three/);
+  assert.match(html,/css\/menu-capsules\.css\?v=20261106-settings/);
   assert.doesNotMatch(legacy,/\.(?:menuButton|menuDaily|menuTreasure|menuPractice|menuHideout|menuIcon)\b|#(?:playDaily|playTreasure|playPractice|openHideout)\b/);
   for(const id of IDs){
     assert.ok(capsules.includes('#'+id+'{'),'Missing '+id+' styling');
@@ -36,7 +36,7 @@ test('a single dedicated stylesheet owns the main-menu button visuals',()=>{
 
 test('menu progression remains available without altering gameplay files',()=>{
   const html=read('index.html');
-  for(const id of ['adventureCard','homeWeekDots','journeyQuick','homeGuideBtn','homeSettings']){
+  for(const id of ['adventureCard','homeWeekDots','journeyQuick','homeSettings','howPlaySettings','musicSwitch','ambientSwitch']){
     assert.ok(html.includes('id="'+id+'"'),id+' missing');
   }
   assert.match(html,/id="dailyButtonHint"/);
@@ -56,4 +56,21 @@ test('Practice Mode implementation is removed while DEV day testing remains avai
   assert.match(html,/id="launchDev"/);
   assert.match(game,/function ensureRun\(\)/);
   assert.match(game,/function resetLevel\(\)/);
+});
+
+test('home quick tools are removed while Settings owns all three controls',()=>{
+  const html=read('index.html');
+  const game=read('js/game.js');
+  const legacy=read('css/styles.css');
+  const capsules=read('css/menu-capsules.css');
+  const obsolete=/homeQuickTools|homeGuideBtn|homeMusicBtn|homeAmbientBtn|homeMusicState|homeAmbientState/;
+  for(const [name,source] of [['index.html',html],['js/game.js',game],['css/styles.css',legacy],['css/menu-capsules.css',capsules]]){
+    assert.doesNotMatch(source,obsolete,name+' retains removed quick tools');
+  }
+  for(const id of ['homeSettings','howPlaySettings','soundSwitch','musicSwitch','ambientSwitch']){
+    assert.match(html,new RegExp('id="'+id+'"'));
+  }
+  for(const hook of ["el('howPlaySettings').onclick","el('soundSwitch').onchange","el('musicSwitch').onchange","el('ambientSwitch').onchange"]){
+    assert.ok(game.includes(hook),hook+' missing');
+  }
 });
