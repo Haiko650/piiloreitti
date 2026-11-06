@@ -35,7 +35,8 @@ test('new image is a valid transparent WebP in the repository',()=>{
 test('swimming Haiko sits closer to the Pathle logo without losing his animation',()=>{
  const css=read('css/home-reef.css');
  assert.match(css,/#welcomeScreen \.illustratedHero \.homeStage > \.home-haiko\s*\{[^}]*top:-28px !important;/);
- assert.match(css,/@media \(max-height:610px\)\s*\{[^}]*\.homeStage > \.home-haiko\s*\{[^}]*top:-14px !important;/);
+ const compact=css.slice(css.indexOf('@media (max-height:610px)'),css.indexOf('@media (prefers-reduced-motion:reduce)'));
+ assert.match(compact,/#welcomeScreen \.illustratedHero \.homeStage > \.home-haiko\s*\{[^}]*top:-14px !important;/);
  assert.match(css,/animation:haikoHomeBob 4s ease-in-out infinite alternate/);
  assert.match(css,/overflow:visible !important/);
 });
