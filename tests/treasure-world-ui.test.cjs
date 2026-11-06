@@ -9,7 +9,7 @@ test('Water World presentation uses a dedicated final-loaded ocean skin',()=>{
  const html=read('treasure-hunt.html');
  const ui=read('css/treasure-world-ui.css');
  const world=html.slice(html.indexOf('id="thV2World"'),html.indexOf('id="thV2Area"'));
- assert.ok(html.indexOf('css/treasure-world-ui.css?v=20261106-waterworld1')>
+ assert.ok(html.indexOf('css/treasure-world-ui.css?v=20261106-haikoreturn1')>
            html.indexOf('css/treasure-world-v2.css?v=th6a3d'));
  assert.match(world,/class="th-v2-world-hero"/);
  assert.match(world,/class="th-v2-world-brand"/);
@@ -17,10 +17,11 @@ test('Water World presentation uses a dedicated final-loaded ocean skin',()=>{
  assert.match(world,/id="thV2WorldTitle"/);
  assert.match(world,/id="thV2WorldStatus"/);
  assert.match(world,/id="thV2WorldBack"/);
- assert.match(world,/class="th-v2-world-toolbar-label"/);
+ assert.doesNotMatch(world,/th-v2-world-toolbar-label|Find my area|Explore the ocean/);
+ assert.match(world,/class="th-v2-map-secondary th-v2-haiko-return"/);
  assert.match(ui,/#thV2World \.th-v2-world-hero\{/);
- assert.match(ui,/#thV2World \.th-v2-world-controls\{/);
- assert.match(ui,/#thV2World #thV2WorldBack\.th-v2-map-secondary\{/);
+ assert.match(ui,/#thV2World \.th-v2-world-controls,/);
+ assert.match(ui,/#thV2World #thV2WorldBack\.th-v2-haiko-return,/);
  assert.match(ui,/@media\(max-width:360px\)/);
  assert.match(ui,/@media\(max-height:650px\)/);
 });
@@ -57,4 +58,27 @@ test('Water World-specific chrome is isolated from Treasure Hunt gameplay and ar
  assert.match(html,/id="thV2Tutorial"/);
  assert.match(html,/id="thV2AreaTitle"/);
  assert.match(html,/id="thBoard"/);
+});
+
+test('Return to Haiko is the same floating lower-left action on both maps',()=>{
+ const html=read('treasure-hunt.html');
+ const css=read('css/treasure-world-ui.css');
+ const controller=read('js/treasure-campaign-v2.js');
+ const ids=['thV2WorldBack','thV2AreaHere'];
+ for(const id of ids){
+   assert.equal((html.match(new RegExp('id="'+id+'"','g'))||[]).length,1);
+   const match=html.match(new RegExp('<button[^>]*id="'+id+'"[^>]*>[\\s\\S]*?<\\/button>'));
+   assert.ok(match,'Missing '+id);
+   assert.match(match[0],/class="th-v2-map-secondary th-v2-haiko-return"/);
+   assert.match(match[0],/Return to Haiko/);
+   assert.match(match[0],/th-v2-haiko-return-icon/);
+   assert.match(controller,new RegExp("'"+id+"'\\)\\.addEventListener\\('click'"));
+ }
+ assert.equal((html.match(/Return to Haiko/g)||[]).length,2);
+ assert.doesNotMatch(html,/Find my area|Find Haiko|Explore the ocean/);
+ assert.match(css,/#thV2World \.th-v2-world-controls,\s*#thV2Area \.th-v2-area-controls\s*\{\s*position:fixed!important;/);
+ assert.match(css,/left:max\(16px,calc\(\(100vw - 490px\)\/2 \+ 22px\)\)!important;/);
+ assert.match(css,/bottom:calc\(16px \+ env\(safe-area-inset-bottom,0px\)\)!important;/);
+ assert.match(css,/#thV2Area #thV2AreaHere\.th-v2-haiko-return\{/);
+ assert.match(css,/@media\(max-width:360px\)/);
 });
