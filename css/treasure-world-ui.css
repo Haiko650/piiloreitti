@@ -1,0 +1,289 @@
+/* Pathle Treasure Hunt · Water World outer UI (DEV 1.5.17).
+   This file styles the world heading, navigation and page chrome only.
+   Map art, node positions, pin hit areas, route geometry and gameplay
+   are intentionally owned by treasure-world-v2.css and its JS modules. */
+body.th-page:has(#thV2World:not([hidden])){
+  background:
+    radial-gradient(circle at 8% 14%,#c6ffff52 0 7px,transparent 9px),
+    radial-gradient(circle at 86% 8%,#fff8c85a 0 5px,transparent 7px),
+    radial-gradient(ellipse at 50% -9%,#73f8ed 0%,#1dbbd1 30%,#0783ad 58%,#06557f 100%);
+}
+body.th-page:has(#thV2World:not([hidden])) .th-header{
+  position:relative;
+  isolation:isolate;
+  gap:clamp(6px,2.2vw,12px);
+  min-height:65px;
+  padding:8px clamp(8px,2.5vw,13px);
+  border:3px solid #fff0ad;
+  border-radius:23px;
+  background:linear-gradient(180deg,#a7fff2 0%,#3ce9df 28%,#17b7d1 68%,#0b8cac 100%);
+  box-shadow:inset 0 2px 0 #f6ffffe8,inset 0 -3px 0 #087eae,0 4px 0 #07577e,0 8px 14px #00476a88;
+}
+body.th-page:has(#thV2World:not([hidden])) .th-header::before{
+  content:"";
+  position:absolute;
+  inset:4px 12px auto;
+  height:31%;
+  border-radius:70% 70% 40% 40%;
+  background:linear-gradient(180deg,#ffffff7d,#ffffff06);
+  pointer-events:none;
+  z-index:0;
+}
+body.th-page:has(#thV2World:not([hidden])) .th-header > *{
+  position:relative;
+  z-index:1;
+}
+body.th-page:has(#thV2World:not([hidden])) .th-back{
+  width:40px;
+  height:40px;
+  border:3px solid #ffe9d8;
+  border-radius:50%;
+  background:linear-gradient(180deg,#ffcbbd 0%,#ff8b91 55%,#f54c68 100%);
+  color:#fff;
+  font-size:27px;
+  font-weight:1000;
+  text-shadow:0 2px 1px #a62c4d;
+  box-shadow:inset 0 2px 0 #fff6e8,0 3px 0 #ad2753;
+}
+body.th-page:has(#thV2World:not([hidden])) .th-heading{
+  min-width:0;
+  text-align:center;
+}
+body.th-page:has(#thV2World:not([hidden])) .th-heading small{
+  display:block;
+  color:#075475;
+  font-size:clamp(8px,2.2vw,10px);
+  font-weight:950;
+  letter-spacing:.06em;
+  text-shadow:0 1px 0 #e8ffff96;
+}
+body.th-page:has(#thV2World:not([hidden])) .th-heading h1{
+  margin:1px 0 0;
+  color:#fff;
+  font-family:"Trebuchet MS",system-ui,sans-serif;
+  font-size:clamp(18px,5vw,27px);
+  font-weight:1000;
+  letter-spacing:-.048em;
+  line-height:1.05;
+  white-space:nowrap;
+  -webkit-text-stroke:.8px #007c94;
+  paint-order:stroke fill;
+  text-shadow:0 2px 0 #076e95,0 3px 3px #0060807a;
+}
+body.th-page:has(#thV2World:not([hidden])) .th-test-badge{
+  display:grid;
+  place-items:center;
+  flex:0 0 auto;
+  max-width:82px;
+  min-height:37px;
+  padding:5px 7px;
+  border:2px solid #fff9c9;
+  border-radius:999px;
+  background:linear-gradient(180deg,#fff7cd 0%,#ffe679 42%,#ffd044 100%);
+  color:#774308;
+  box-shadow:inset 0 1px 0 #fff,0 3px 0 #c58c20;
+  font-size:clamp(8px,2.2vw,10px);
+  font-weight:1000;
+  line-height:1.1;
+  text-align:center;
+}
+body.th-page:has(#thV2World:not([hidden])) .th-header :is(.th-back):focus-visible{
+  outline:3px solid #fff;
+  outline-offset:3px;
+}
+/* Water World identity is independent of the illustrated geographical map. */
+#thV2World .th-v2-world-hero{
+  position:relative;
+  isolation:isolate;
+  padding:clamp(12px,3.2vw,18px);
+  margin:2px 1px 12px;
+  border:4px solid #fff0b3;
+  border-radius:clamp(24px,7vw,34px);
+  background:
+    radial-gradient(circle at 9% 82%,#eaffff87 0 4px,transparent 6px),
+    radial-gradient(circle at 91% 21%,#eaffff76 0 5px,transparent 7px),
+    linear-gradient(170deg,#93fff1 0%,#44e3df 26%,#1cbdce 58%,#0877b5 100%);
+  box-shadow:inset 0 2px 0 #ffffffdd,inset 0 -5px 0 #0879a4,0 5px 0 #06608c,0 11px 20px #003d6a88;
+}
+#thV2World .th-v2-world-hero::before{
+  content:"";
+  position:absolute;
+  top:5px;
+  left:9px;
+  right:9px;
+  height:38%;
+  border-radius:55% 55% 25% 25%;
+  background:linear-gradient(180deg,#ffffff8a,#ffffff00);
+  z-index:0;
+  pointer-events:none;
+}
+#thV2World .th-v2-world-hero > *{
+  position:relative;
+  z-index:1;
+}
+#thV2World .th-v2-map-heading.th-v2-world-heading{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:8px;
+  margin:0 0 10px;
+}
+#thV2World .th-v2-world-brand{
+  display:flex;
+  flex:1 1 190px;
+  align-items:center;
+  min-width:0;
+  gap:clamp(8px,2.2vw,12px);
+}
+#thV2World .th-v2-world-emblem{
+  display:grid;
+  place-items:center;
+  flex:0 0 clamp(46px,12vw,57px);
+  height:clamp(46px,12vw,57px);
+  width:clamp(46px,12vw,57px);
+  padding:4px;
+  border:3px solid #ffffff;
+  border-radius:50%;
+  background:linear-gradient(155deg,#d8ffff,#68eef1 45%,#1cbbda);
+  box-shadow:inset 0 3px 0 #ffffffb8,inset 0 -3px 0 #0691bd,0 4px 0 #0a7fa4,0 5px 10px #05557972;
+}
+#thV2World .th-v2-world-emblem svg{
+  display:block;
+  width:100%;
+  height:100%;
+  filter:drop-shadow(0 2px 1px #146b958a);
+}
+#thV2World .th-v2-world-brand-copy{
+  min-width:0;
+}
+#thV2World .th-v2-world-brand-copy small{
+  display:block;
+  margin-bottom:2px;
+  color:#045779;
+  font-size:clamp(8px,2.15vw,10px);
+  font-weight:1000;
+  letter-spacing:.075em;
+  text-shadow:0 1px 1px #e4ffff91;
+}
+#thV2World .th-v2-world-brand-copy h2{
+  margin:0;
+  color:#fff;
+  font-family:"Trebuchet MS",system-ui,sans-serif;
+  font-size:clamp(23px,6.4vw,33px);
+  font-weight:1000;
+  line-height:1;
+  letter-spacing:-.035em;
+  -webkit-text-stroke:1.15px #056d9d;
+  paint-order:stroke fill;
+  text-shadow:0 3px 0 #046591,0 5px 4px #03487888;
+}
+#thV2World .th-v2-map-caption{
+  display:grid;
+  place-items:center;
+  max-width:none;
+  flex:0 1 92px;
+  min-height:36px;
+  padding:6px 9px;
+  border:2px solid #ffe8e0;
+  border-radius:999px;
+  background:linear-gradient(180deg,#ffe6db 0%,#ffacac 42%,#ff7792 100%);
+  color:#7d2043;
+  box-shadow:inset 0 2px 0 #fff8e9,0 3px 0 #b64066;
+  font-size:clamp(8px,2vw,9px);
+  font-weight:1000;
+  letter-spacing:0;
+  line-height:1.12;
+  text-align:center;
+  text-shadow:0 1px 0 #fff5ee66;
+}
+#thV2World .th-v2-map-explain.th-v2-world-status{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  min-height:47px;
+  padding:10px clamp(10px,3vw,14px);
+  margin:0;
+  border:2px solid #dfffff;
+  border-radius:19px;
+  background:linear-gradient(180deg,#f7ffff 0%,#d3fdf8 56%,#b0f1eb 100%);
+  color:#07536e;
+  box-shadow:inset 0 2px 1px #ffffff,0 3px 0 #159db6;
+  font-size:clamp(11px,3vw,13px);
+  font-weight:850;
+  line-height:1.35;
+}
+#thV2World .th-v2-world-status::before{
+  content:"✦";
+  color:#dc9014;
+  flex:0 0 auto;
+  font-size:20px;
+  text-shadow:0 1px 0 #fff;
+}
+#thV2World .th-v2-world-controls{
+  position:sticky;
+  top:0;
+  z-index:10;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  min-height:58px;
+  margin:0 0 10px;
+  padding:8px 9px;
+  border:2px solid #b3faff;
+  border-radius:20px;
+  background:linear-gradient(180deg,#35d8deeb 0%,#0aa5c3ed 50%,#0376a8f5 100%);
+  box-shadow:inset 0 2px 0 #ffffff75,0 3px 0 #075779,0 6px 10px #003d6580;
+}
+#thV2World .th-v2-world-toolbar-label{
+  flex:1;
+  min-width:0;
+  padding-left:4px;
+  color:#f7ffff;
+  font-family:"Trebuchet MS",system-ui,sans-serif;
+  font-size:clamp(11px,3.1vw,14px);
+  font-weight:1000;
+  text-shadow:0 2px 1px #075b89;
+}
+#thV2World #thV2WorldBack.th-v2-map-secondary{
+  flex:0 0 auto;
+  min-height:42px;
+  padding:8px clamp(9px,2.5vw,16px);
+  border:3px solid #fff4bd;
+  border-radius:999px;
+  background:linear-gradient(180deg,#fff6b8 0%,#ffe567 35%,#ffc32c 100%);
+  color:#794107;
+  box-shadow:inset 0 2px 0 #fff,inset 0 -2px 0 #f3a83a,0 3px 0 #ac7517;
+  font-size:clamp(10px,2.7vw,12px);
+  font-weight:1000;
+  white-space:nowrap;
+}
+#thV2World #thV2WorldBack:active{
+  transform:translateY(2px);
+  box-shadow:inset 0 2px 0 #fff,0 1px 0 #ac7517;
+}
+#thV2World #thV2WorldBack:focus-visible{
+  outline:3px solid #fff;
+  outline-offset:3px;
+}
+@media(max-width:360px){
+  body.th-page:has(#thV2World:not([hidden])) .th-header{padding:7px;gap:5px;}
+  body.th-page:has(#thV2World:not([hidden])) .th-back{width:35px;height:35px;}
+  body.th-page:has(#thV2World:not([hidden])) .th-test-badge{max-width:70px;min-height:33px;padding:4px;}
+  #thV2World .th-v2-world-hero{padding:11px;}
+  #thV2World .th-v2-world-brand{flex-basis:164px;}
+  #thV2World .th-v2-world-emblem{flex-basis:43px;width:43px;height:43px;}
+  #thV2World .th-v2-world-brand-copy h2{font-size:23px;}
+  #thV2World .th-v2-map-caption{flex-basis:78px;}
+  #thV2World .th-v2-world-toolbar-label{font-size:11px;}
+  #thV2World #thV2WorldBack.th-v2-map-secondary{padding:7px 9px;font-size:10px;}
+}
+@media(max-height:650px){
+  body.th-page:has(#thV2World:not([hidden])) .th-header{min-height:55px;padding-block:5px;}
+  #thV2World .th-v2-world-hero{padding-block:10px;}
+  #thV2World .th-v2-world-controls{min-height:49px;padding:5px 7px;}
+}
+@media(prefers-reduced-motion:reduce){
+  #thV2World #thV2WorldBack{transition:none;}
+}
