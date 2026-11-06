@@ -1,4 +1,4 @@
-/* Pathle main-menu capsules — canonical styling for four menu actions.
+/* Pathle main-menu capsules — canonical styling for three menu actions.
    Approved image 6 Nov 2026. Keep button visuals here, not in styles.css.
    Does not modify gameplay or saved progress. */
 #welcomeScreen .adventureCard{
@@ -16,7 +16,7 @@
   box-shadow:none!important;
   backdrop-filter:none!important;
 }
-#welcomeScreen :is(#playDaily,#playTreasure,#playPractice,#openHideout){
+#welcomeScreen :is(#playDaily,#playTreasure,#openHideout){
   --capsule-ink:#6c310e;
   display:flex!important;
   align-items:center!important;
@@ -42,7 +42,7 @@
   transition:transform .14s ease,filter .14s ease,box-shadow .14s ease!important;
   -webkit-tap-highlight-color:transparent;
 }
-#welcomeScreen :is(#playDaily,#playTreasure,#playPractice,#openHideout)::before{
+#welcomeScreen :is(#playDaily,#playTreasure,#openHideout)::before{
   content:""!important;
   display:block!important;
   pointer-events:none!important;
@@ -54,7 +54,7 @@
   background:linear-gradient(180deg,#ffffff99,#ffffff17)!important;
   opacity:.86!important;
 }
-#welcomeScreen :is(#playDaily,#playTreasure,#playPractice,#openHideout)::after{
+#welcomeScreen :is(#playDaily,#playTreasure,#openHideout)::after{
   content:""!important;
   display:block!important;
   pointer-events:none!important;
@@ -64,11 +64,11 @@
   border-radius:100%;transform:rotate(-18deg);
   background:#ffffffbd;filter:blur(1px);
 }
-#welcomeScreen :is(#playDaily,#playTreasure,#playPractice,#openHideout)>span{
+#welcomeScreen :is(#playDaily,#playTreasure,#openHideout)>span{
   position:relative!important;
   z-index:1!important;
 }
-#welcomeScreen :is(#playDaily,#playTreasure,#playPractice,#openHideout) .menuIcon{
+#welcomeScreen :is(#playDaily,#playTreasure,#openHideout) .menuIcon{
   flex:0 0 clamp(49px,14vw,65px)!important;
   width:clamp(49px,14vw,65px)!important;
   height:clamp(48px,13.5vw,64px)!important;
@@ -77,15 +77,15 @@
   font-size:0!important;
   filter:drop-shadow(0 3px 2px #442a3d6c)!important;
 }
-#welcomeScreen :is(#playDaily,#playTreasure,#playPractice,#openHideout) .menuIcon svg{
+#welcomeScreen :is(#playDaily,#playTreasure,#openHideout) .menuIcon svg{
   width:100%!important;height:100%!important;
   display:block!important;overflow:visible!important;
 }
-#welcomeScreen :is(#playDaily,#playTreasure,#playPractice,#openHideout)>span:nth-child(2){
+#welcomeScreen :is(#playDaily,#playTreasure,#openHideout)>span:nth-child(2){
   flex:1 1 auto!important;
   min-width:0!important;
 }
-#welcomeScreen :is(#playDaily,#playTreasure,#playPractice,#openHideout) strong{
+#welcomeScreen :is(#playDaily,#playTreasure,#openHideout) strong{
   display:block!important;
   font-family:"Trebuchet MS",system-ui,-apple-system,sans-serif!important;
   font-weight:1000!important;
@@ -98,7 +98,7 @@
   paint-order:stroke fill;
   text-shadow:0 2px 1px var(--capsule-ink),0 3px 3px #16284655!important;
 }
-#welcomeScreen :is(#playDaily,#playTreasure,#playPractice,#openHideout) small{
+#welcomeScreen :is(#playDaily,#playTreasure,#openHideout) small{
   display:block!important;
   font-family:system-ui,-apple-system,sans-serif!important;
   font-size:clamp(9px,2.6vw,13px)!important;
@@ -113,7 +113,7 @@
   text-overflow:ellipsis!important;
   text-shadow:none!important;
 }
-#welcomeScreen :is(#playDaily,#playTreasure,#playPractice,#openHideout) .chevron{
+#welcomeScreen :is(#playDaily,#playTreasure,#openHideout) .chevron{
   margin:0!important;
   flex:0 0 22px!important;
   width:22px!important;
@@ -128,7 +128,7 @@
   paint-order:stroke fill;
   text-shadow:0 2px 1px var(--capsule-ink)!important;
 }
-/* The visual reference's button order, colors and dark title outlines. */
+/* Approved colors and dark title outlines. */
 #welcomeScreen #playDaily{
   --capsule-ink:#783008;
   border-color:#fff5b8!important;
@@ -140,13 +140,6 @@
   background:linear-gradient(180deg,#b9ffff 0%,#44f6ed 22%,#06dacb 69%,#00adbd 100%)!important;
   box-shadow:inset 0 2px 0 #f7ffff,inset 0 -3px 0 #06bab8,0 5px 0 #008eac,0 10px 16px #0034549e!important;
 }
-#welcomeScreen #playPractice{
-  order:1!important;
-  --capsule-ink:#3b0b79;
-  border-color:#f2d9ff!important;
-  background:linear-gradient(180deg,#edd0ff 0%,#cb8aff 23%,#a54af4 70%,#7829d5 100%)!important;
-  box-shadow:inset 0 2px 0 #fff2ff,inset 0 -3px 0 #7625d2,0 5px 0 #531aa0,0 10px 16px #0034549e!important;
-}
 #welcomeScreen #openHideout{
   order:1!important;
   --capsule-ink:#7b121e;
@@ -154,45 +147,45 @@
   background:linear-gradient(180deg,#ffe3db 0%,#ff9592 25%,#ff626f 70%,#ef3c51 100%)!important;
   box-shadow:inset 0 2px 0 #fff2f0,inset 0 -3px 0 #e94b5b,0 5px 0 #b91c3d,0 10px 16px #0034549e!important;
 }
-#welcomeScreen :is(#playDaily,#playTreasure,#playPractice,#openHideout):active{
+#welcomeScreen :is(#playDaily,#playTreasure,#openHideout):active{
   transform:translateY(3px)!important;
   filter:brightness(1.05)!important;
 }
-#welcomeScreen :is(#playDaily,#playTreasure,#playPractice,#openHideout):focus-visible{
+#welcomeScreen :is(#playDaily,#playTreasure,#openHideout):focus-visible{
   outline:3px solid #fff!important;outline-offset:3px!important;
 }
 /* Preserve progress and settings controls while keeping the menu compact. */
 #welcomeScreen .homeQuickTools{order:5!important}
 @media(max-width:360px){
-  #welcomeScreen :is(#playDaily,#playTreasure,#playPractice,#openHideout){
+  #welcomeScreen :is(#playDaily,#playTreasure,#openHideout){
     gap:5px!important;padding-inline:9px!important;
   }
-  #welcomeScreen :is(#playDaily,#playTreasure,#playPractice,#openHideout) strong{
+  #welcomeScreen :is(#playDaily,#playTreasure,#openHideout) strong{
     font-size:clamp(15px,4.5vw,18px)!important;
   }
-  #welcomeScreen :is(#playDaily,#playTreasure,#playPractice,#openHideout) .menuIcon{
+  #welcomeScreen :is(#playDaily,#playTreasure,#openHideout) .menuIcon{
     flex-basis:45px!important;width:45px!important;height:45px!important;
   }
 }
 @media(max-height:700px){
-  #welcomeScreen :is(#playDaily,#playTreasure,#playPractice,#openHideout){
+  #welcomeScreen :is(#playDaily,#playTreasure,#openHideout){
     min-height:54px!important;
     margin-top:3px!important;
     padding-block:2px!important;
   }
-  #welcomeScreen :is(#playDaily,#playTreasure,#playPractice,#openHideout) .menuIcon{
+  #welcomeScreen :is(#playDaily,#playTreasure,#openHideout) .menuIcon{
     flex-basis:42px!important;width:42px!important;height:42px!important;
   }
-  #welcomeScreen :is(#playDaily,#playTreasure,#playPractice,#openHideout) strong{
+  #welcomeScreen :is(#playDaily,#playTreasure,#openHideout) strong{
     font-size:clamp(14px,4.4vw,19px)!important;
   }
-  #welcomeScreen :is(#playDaily,#playTreasure,#playPractice,#openHideout) small{
+  #welcomeScreen :is(#playDaily,#playTreasure,#openHideout) small{
     font-size:clamp(8px,2.45vw,11px)!important;margin-top:2px!important;
   }
-  #welcomeScreen :is(#playDaily,#playTreasure,#playPractice,#openHideout) .chevron{font-size:36px!important}
+  #welcomeScreen :is(#playDaily,#playTreasure,#openHideout) .chevron{font-size:36px!important}
 }
 @media(prefers-reduced-motion:reduce){
-  #welcomeScreen :is(#playDaily,#playTreasure,#playPractice,#openHideout){
+  #welcomeScreen :is(#playDaily,#playTreasure,#openHideout){
     transition:none!important;
   }
 }
@@ -202,18 +195,18 @@
   #welcomeScreen .homeBrand{margin-top:14px!important;}
   #welcomeScreen .homeBrand .pathleHomeLogoHeading{width:clamp(200px,68vw,275px)!important;}
   #welcomeScreen .illustratedHero{min-height:84px!important;}
-  #welcomeScreen :is(#playDaily,#playTreasure,#playPractice,#openHideout){
+  #welcomeScreen :is(#playDaily,#playTreasure,#openHideout){
     min-height:47px!important;
     margin-top:2px!important;
     padding-block:2px!important;
   }
-  #welcomeScreen :is(#playDaily,#playTreasure,#playPractice,#openHideout) .menuIcon{
+  #welcomeScreen :is(#playDaily,#playTreasure,#openHideout) .menuIcon{
     flex-basis:36px!important;width:36px!important;height:36px!important;
   }
-  #welcomeScreen :is(#playDaily,#playTreasure,#playPractice,#openHideout) strong{
+  #welcomeScreen :is(#playDaily,#playTreasure,#openHideout) strong{
     font-size:clamp(15px,4.25vw,18px)!important;
   }
-  #welcomeScreen :is(#playDaily,#playTreasure,#playPractice,#openHideout) small{
+  #welcomeScreen :is(#playDaily,#playTreasure,#openHideout) small{
     font-size:clamp(8px,2.35vw,10px)!important;
   }
   #welcomeScreen .homeQuickTools{margin-top:2px!important;}
@@ -222,8 +215,8 @@
   #welcomeScreen .homeBrand{margin-top:8px!important;}
   #welcomeScreen .homeBrand .pathleHomeLogoHeading{width:clamp(190px,62vw,235px)!important;}
   #welcomeScreen .illustratedHero{min-height:58px!important;}
-  #welcomeScreen :is(#playDaily,#playTreasure,#playPractice,#openHideout){min-height:45px!important;}
-  #welcomeScreen :is(#playDaily,#playTreasure,#playPractice,#openHideout) .menuIcon{
+  #welcomeScreen :is(#playDaily,#playTreasure,#openHideout){min-height:45px!important;}
+  #welcomeScreen :is(#playDaily,#playTreasure,#openHideout) .menuIcon{
     flex-basis:33px!important;width:33px!important;height:33px!important;
   }
 }
