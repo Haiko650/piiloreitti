@@ -159,6 +159,13 @@ test('three tutorial finishes unlock Water World and first Coral Coast stage',as
   assert.ok(sections[0].properties['--th-detail-art'].includes('section-01-details.svg'));
   assert.equal(sections[0].children.filter(x=>x.classList.contains('th-v2-map-haiko')).length,1);
   const first=sections[0].children.find(x=>x.classList.contains('is-next'));
+  const fourth=sections[0].children.find(x=>x.classList.contains('th-v2-node')&&
+    x.children[0].textContent==='4');
+  assert.ok(parseFloat(first.style.top)>parseFloat(fourth.style.top),
+    'Level 1 must appear below level 4 on the vertical map');
+  assert.equal(first.wasScrolled,true,'New area should open near Haiko at level 1');
+  h.$('thV2AreaHere').click();
+  assert.equal(first.wasScrolled,true,'Find Haiko must locate level 1');
   first.click();
   assert.equal(h.selected.at(-1),3);
   assert.deepEqual(h.storage.data.progress.chapters['ocean-01'],{dailyMarker:'preserve'});
@@ -205,6 +212,21 @@ test('a reload preserves tutorial unlocks and does not copy old bests',async()=>
   assert.equal(h2.root.PathleTreasureCampaign.canEnter(1),true);
   assert.equal(h2.root.PathleTreasureCampaign.canEnter(3),false);
   assert.equal(h2.storage.writes,0);
+});
+
+test('after clearing all released Coral Coast stages Find Haiko locates the last one',async()=>{
+  const h=harness();await idle();
+  for(let i=0;i<release.levels.length;i++)await clear(h,i);
+  h.root.PathleTreasureCampaign.openArea('coral-coast');
+  const sections=h.$('thV2AreaCanvas').children;
+  const last=sections.flatMap(section=>section.children).find(item=>
+    item.classList.contains('th-v2-node')&&item.children[0].textContent==='4');
+  assert.equal(last.classList.contains('is-complete'),true);
+  assert.equal(last.wasScrolled,true,'Completed area should focus the furthest stage');
+  h.$('thV2AreaHere').click();
+  assert.equal(last.wasScrolled,true);
+  assert.equal(h.storage.data.extensions.treasureHuntV2.records['th-water-coral-004'].bestMoves,
+    solver.solve(release.levels[6]).optimalMoves);
 });
 
 test('new visitor without shared DB gets one safe initialized record',async()=>{
