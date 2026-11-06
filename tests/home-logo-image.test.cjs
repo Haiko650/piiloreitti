@@ -12,7 +12,8 @@ test('the welcome screen displays the separate illustrated Pathle logo, not text
   assert.match(match[1],/<h1 class="pathleHomeLogoHeading">/);
   assert.match(match[1],/<img class="pathleHomeLogoImage" src="images\/pathle-logo\.webp\?v=1\.5\.8" alt="Pathle"/);
   assert.doesNotMatch(match[1],/pathleLogoText|pathleLogoWave/);
-  assert.match(match[1],/OCEAN JOURNEY/);
+  assert.doesNotMatch(match[1],/OCEAN JOURNEY|class="tag"/,
+    "The former logo subtitle must not appear on the home screen");
   assert.equal((html.match(/class="pathleHomeLogoImage"/g)||[]).length,1);
 });
 test('the logo has transparency and lives in its own replaceable file',()=>{
