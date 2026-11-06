@@ -499,7 +499,7 @@ function renderHome(){const done=adventure.completedDays,locked=adventure.lastCo
  el('playDaily').disabled=locked&&!(done>=7&&!chestState.opened);el('dailyButtonTitle').textContent=done>=7&&!chestState.opened?'Open your treasure':done>=7?'Chapter Complete':locked?'Today Complete!':'Daily Adventure';
  el('dailyButtonHint').textContent=done>=7?'Chapter 2 is in development':locked?'Come back tomorrow':'3 levels · 3 chances each · Best score wins';
  el('devPanel').hidden=!devEnabled;el('devToggle').checked=devEnabled;el('devDaySelect').value=String(devDay);
- el('goldenBadge').hidden=true;el('homeMusicState').textContent=musicOn?'Music on':'Music off';el('homeAmbientState').textContent=ambientOn?'Sea on':'Sea off';
+ el('goldenBadge').hidden=true;
 }
 function renderJourney(){const done=adventure.completedDays,days=el('journeyDays');days.replaceChildren();
  INTRO.forEach((label,i)=>{const row=document.createElement('div');row.className='journeyDay'+(i<done?' done':i===done?' next':'');const sym=document.createElement('div');sym.className='journeyDayIcon';sym.textContent=i<done?'✓':i===6?'🎁':i===done?'🦈':'🔒';const t=document.createElement('div');const strong=document.createElement('strong');strong.textContent=`Day ${i+1} · ${label}`;const small=document.createElement('small');small.textContent=i<done?'Completed':i===done?'Your next adventure':'Coming up';t.append(strong,small);row.append(sym,t);days.append(row)});
@@ -595,7 +595,7 @@ function nextLevel(){const i=game.activeLevel,s=game.levels[i];if(i===2){if(mode
  if(s.attemptsUsed<3){const left=3-s.attemptsUsed;if(!confirm(`Continue to ${CONFIG[i+1].name}? You have ${left} ${left===1?'try':'tries'} left on ${CONFIG[i].name}. You cannot return today.`))return}
  cancelEffects();game.activeLevel++;persist();render()}
 el('homeSettings').onclick=settingsOpen;el('gameSettings').onclick=settingsOpen;
-el('journeyQuick').onclick=()=>showScreen('journey');el('openHideout').onclick=()=>showScreen('hideout');el('hideoutBack').onclick=()=>showScreen('home');el('hideoutDone').onclick=()=>showScreen('home');el('homeGuideBtn').onclick=()=>openStory(guideIntro);el('homeMusicBtn').onclick=()=>{musicOn=!musicOn;recordPreferenceChange('settings','music',musicOn);activateAudio();renderHome()};el('homeAmbientBtn').onclick=()=>{ambientOn=!ambientOn;recordPreferenceChange('settings','ambient',ambientOn);activateAudio();renderHome()};
+el('journeyQuick').onclick=()=>showScreen('journey');el('openHideout').onclick=()=>showScreen('hideout');el('hideoutBack').onclick=()=>showScreen('home');el('hideoutDone').onclick=()=>showScreen('home');
 el('storyPrev').onclick=()=>{if(storyIndex>0){storyIndex--;paintStory()}};
 el('storyNext').onclick=()=>{if(storyIndex<storyPages.length-1){storyIndex++;paintStory()}else closeStory()};
 el('storySkip').onclick=closeStory;
