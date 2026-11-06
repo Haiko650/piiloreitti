@@ -10,7 +10,7 @@
 @keyframes mascot-bob{from{transform:translateY(0) rotate(-5deg)}to{transform:translateY(-12px) rotate(5deg)}}
 @keyframes thumb-wave{from{transform:rotate(-18deg) scale(.92)}to{transform:rotate(16deg) scale(1.15)}}
 @media(prefers-reduced-motion:reduce){.victory-mascot{display:none}}
- .modebar{display:flex;gap:8px;margin:10px 0 4px}.modebar button{flex:1}.modebar button.selected{background:linear-gradient(135deg,#b477ff,#8855ed);box-shadow:0 0 16px #b477ff66}.practice-note{border:1px solid #ffd166;background:#493a61;border-radius:12px;padding:10px 12px;margin:10px 0;color:#ffe6a6;font-size:13px;font-weight:700}.practice-note.hidden{display:none}
+ 
 
 .brand{display:flex;align-items:center;gap:9px}.brand-shark{width:56px;height:56px;object-fit:cover;border-radius:16px;border:2px solid #9d65ff;box-shadow:0 0 15px #65d9ff66;flex:none}
 .board{position:relative}.rush-fin{position:fixed;z-index:25;width:42px;height:45px;pointer-events:none;filter:drop-shadow(0 0 7px #65d9ff) drop-shadow(0 0 11px #ffd166);transform:translate(-50%,-60%);transition:none}.rush-fin svg{width:100%;height:100%}.rush-fin:before,.rush-fin:after{content:'⚡';position:absolute;font-size:20px;color:#ffd166;text-shadow:0 0 10px #65d9ff;animation:rush-spark .18s ease-in-out infinite alternate}.rush-fin:before{left:-15px;top:3px}.rush-fin:after{right:-13px;bottom:0;animation-delay:.09s}.tile.rush-lit{box-shadow:0 0 0 2px #fff5b0,0 0 20px 7px #65d9ff,0 0 26px #ffd166!important;filter:brightness(1.35)}@keyframes rush-spark{from{transform:scale(.7) rotate(-14deg);opacity:.5}to{transform:scale(1.2) rotate(15deg);opacity:1}}
@@ -57,7 +57,7 @@ body{background:radial-gradient(ellipse at 50% -10%,#6046a5 0%,#28245e 46%,#1113
 .navIcon{display:grid;place-items:center;width:43px;height:43px;min-width:43px;padding:0;border:1px solid #7261b4;background:#332d67;border-radius:14px;font-size:26px}
 #gameScreen .panel{margin-top:9px}
 #gameScreen .actions button{min-width:110px}
-#gameScreen .practice-note{margin:0 0 12px}
+
 .modalBackdrop{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:18px;background:#0b0724dc;backdrop-filter:blur(7px)}
 .modalCard{width:min(100%,440px);max-height:calc(100dvh - 30px);overflow-y:auto;overscroll-behavior:contain;border:2px solid #ad8aff;border-radius:25px;padding:23px 18px 20px;background:radial-gradient(ellipse at 50% 0%,#5b3ba1,#302359 45%,#191b43 100%);box-shadow:0 0 0 2px #ffffff0e,inset 0 2px #ffffff25,0 20px 50px #000a,0 0 32px #9b6cff60;text-align:center}
 .modalCard h2{font-size:clamp(24px,7vw,32px);margin:0 0 7px;color:#ffe187;text-shadow:0 2px 14px #eab65a6b}
@@ -134,7 +134,7 @@ body.game-active #playPanel{flex:1 1 auto;min-height:0;margin:2px 0 0;padding:8p
 body.game-active #gameScreen>section.panel:not(#playPanel),body.game-active #gameScreen>footer{display:none!important}
 #playPanel #puzzleHeading{font-size:14px;line-height:1.15;margin:1px 0 5px;text-align:center;color:#fff5c4}
 #playPanel #levelHint,#playPanel #message{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip:rect(0 0 0 0)!important;white-space:nowrap!important;padding:0!important;margin:0!important;border:0!important}
-body.game-active #playPanel .practice-note{display:none!important}
+
 body.game-active .tabs{gap:5px;margin-bottom:4px;flex:0 0 auto;flex-wrap:nowrap}.tabs button{min-height:33px;padding:7px 3px;font-size:11px;border-radius:9px}
 body.game-active .stats{margin:3px 0 5px;gap:4px;flex:0 0 auto}.stat{padding:4px 2px;border-radius:10px;min-height:41px}.stat b{font-size:18px;line-height:1.15}.stat span{font-size:9px;line-height:1.05;display:block}
 body.game-active .attempt-info{font-size:11px;padding:5px 8px;line-height:1.15;border-radius:8px;flex:0 0 auto}
