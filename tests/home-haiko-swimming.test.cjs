@@ -23,11 +23,19 @@ test('menu shark image is independent of coral reef and styles avoid clipping',(
  assert.match(css,/animation:haikoHomeBob/);
  assert.match(css,/home-reef-background\.webp/);
  const html=read('index.html');
- assert.match(html,/css\/home-reef\.css\?v=20261106-logo4/);
+ assert.match(html,/css\/home-reef\.css\?v=20261106-haiko-up1/);
 });
 test('new image is a valid transparent WebP in the repository',()=>{
  const data=fs.readFileSync(path.join(__dirname,'..','images/haiko-swimming-menu.webp'));
  assert.equal(data.toString('ascii',0,4),'RIFF');
  assert.equal(data.toString('ascii',8,12),'WEBP');
  assert.ok(data.length>20000);
+});
+
+test('swimming Haiko sits closer to the Pathle logo without losing his animation',()=>{
+ const css=read('css/home-reef.css');
+ assert.match(css,/#welcomeScreen \.illustratedHero \.homeStage > \.home-haiko\s*\{[^}]*top:-28px !important;/);
+ assert.match(css,/@media \(max-height:610px\)\s*\{[^}]*\.homeStage > \.home-haiko\s*\{[^}]*top:-14px !important;/);
+ assert.match(css,/animation:haikoHomeBob 4s ease-in-out infinite alternate/);
+ assert.match(css,/overflow:visible !important/);
 });
