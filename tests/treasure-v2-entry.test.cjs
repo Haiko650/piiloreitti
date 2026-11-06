@@ -134,12 +134,22 @@ test('three tutorial finishes unlock Water World and first Coral Coast stage',as
   h.root.PathleTreasureCampaign.advance(2,3);
   assert.equal(h.root.PathleTreasureCampaign.getView(),'world');
   assert.equal(h.$('thV2World').hidden,false);
-  const pins=h.$('thV2WorldPins').children;
+  const worldSections=h.$('thV2WorldPins').children;
+  assert.equal(worldSections.length,3);
+  assert.deepEqual(worldSections.map(section=>section.dataset.sectionId),
+    ['northern-sea','island-passage','southern-reef']);
+  const pins=worldSections.flatMap(section=>
+    section.children.filter(item=>item.classList.contains('th-v2-world-pin')));
   assert.equal(pins.length,3);
-  assert.equal(pins[0].disabled,false);
-  assert.equal(pins[1].disabled,true);
-  assert.ok(h.$('thV2WorldCanvas').properties['--th-world-art'].includes('world-overview.svg'));
-  pins[0].click();
+  const coral=pins.find(pin=>pin.textContent.startsWith('Coral Coast'));
+  const islands=pins.find(pin=>pin.textContent.startsWith('Tropical Islands'));
+  assert.equal(coral.disabled,false);
+  assert.equal(islands.disabled,true);
+  assert.ok(worldSections[2].properties['--th-world-art'].includes('world-overview.svg'));
+  assert.equal(coral.wasScrolled,true,'Current area should be located when entering world');
+  h.$('thV2WorldBack').click();
+  assert.equal(coral.wasScrolled,true,'Find my area should scroll to the current area');
+  coral.click();
   assert.equal(h.root.PathleTreasureCampaign.getView(),'area');
   const area=h.$('thV2AreaCanvas');
   const sections=area.children.filter(x=>x.classList.contains('th-v2-map-section'));
