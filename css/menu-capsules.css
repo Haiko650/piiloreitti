@@ -1,9 +1,20 @@
-/* Pathle menu capsules - approved visual reference, 6 Nov 2026.
-   Scoped to the four main-menu actions. Does not change gameplay or save data. */
+/* Pathle main-menu capsules — canonical styling for four menu actions.
+   Approved image 6 Nov 2026. Keep button visuals here, not in styles.css.
+   Does not modify gameplay or saved progress. */
 #welcomeScreen .adventureCard{
+  order:1!important;
+  display:flex!important;
+  flex:0 0 auto!important;
+  flex-direction:column!important;
+  gap:2px!important;
   width:min(100%,430px)!important;
   padding:3px 0 2px!important;
   margin-inline:auto!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
 }
 #welcomeScreen :is(#playDaily,#playTreasure,#playPractice,#openHideout){
   --capsule-ink:#6c310e;
@@ -98,8 +109,8 @@
   color:var(--capsule-ink)!important;
   opacity:1!important;
   white-space:nowrap!important;
-  overflow:visible!important;
-  text-overflow:clip!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
   text-shadow:none!important;
 }
 #welcomeScreen :is(#playDaily,#playTreasure,#playPractice,#openHideout) .chevron{
@@ -119,26 +130,25 @@
 }
 /* The visual reference's button order, colors and dark title outlines. */
 #welcomeScreen #playDaily{
-  order:1!important;
   --capsule-ink:#783008;
   border-color:#fff5b8!important;
 }
 #welcomeScreen #playTreasure{
-  order:2!important;
+  order:1!important;
   --capsule-ink:#004b6c;
   border-color:#ddfffa!important;
   background:linear-gradient(180deg,#b9ffff 0%,#44f6ed 22%,#06dacb 69%,#00adbd 100%)!important;
   box-shadow:inset 0 2px 0 #f7ffff,inset 0 -3px 0 #06bab8,0 5px 0 #008eac,0 10px 16px #0034549e!important;
 }
 #welcomeScreen #playPractice{
-  order:3!important;
+  order:1!important;
   --capsule-ink:#3b0b79;
   border-color:#f2d9ff!important;
   background:linear-gradient(180deg,#edd0ff 0%,#cb8aff 23%,#a54af4 70%,#7829d5 100%)!important;
   box-shadow:inset 0 2px 0 #fff2ff,inset 0 -3px 0 #7625d2,0 5px 0 #531aa0,0 10px 16px #0034549e!important;
 }
 #welcomeScreen #openHideout{
-  order:4!important;
+  order:1!important;
   --capsule-ink:#7b121e;
   border-color:#ffe1e2!important;
   background:linear-gradient(180deg,#ffe3db 0%,#ff9592 25%,#ff626f 70%,#ef3c51 100%)!important;
@@ -185,4 +195,40 @@
   #welcomeScreen :is(#playDaily,#playTreasure,#playPractice,#openHideout){
     transition:none!important;
   }
+}
+
+/* Compact portrait devices: protect logo, Haiko and all four tap targets. */
+@media(max-height:620px){
+  #welcomeScreen .homeBrand{margin-top:14px!important;}
+  #welcomeScreen .homeBrand .pathleHomeLogoHeading{width:clamp(200px,68vw,275px)!important;}
+  #welcomeScreen .illustratedHero{min-height:84px!important;}
+  #welcomeScreen :is(#playDaily,#playTreasure,#playPractice,#openHideout){
+    min-height:47px!important;
+    margin-top:2px!important;
+    padding-block:2px!important;
+  }
+  #welcomeScreen :is(#playDaily,#playTreasure,#playPractice,#openHideout) .menuIcon{
+    flex-basis:36px!important;width:36px!important;height:36px!important;
+  }
+  #welcomeScreen :is(#playDaily,#playTreasure,#playPractice,#openHideout) strong{
+    font-size:clamp(15px,4.25vw,18px)!important;
+  }
+  #welcomeScreen :is(#playDaily,#playTreasure,#playPractice,#openHideout) small{
+    font-size:clamp(8px,2.35vw,10px)!important;
+  }
+  #welcomeScreen .homeQuickTools{margin-top:2px!important;}
+}
+@media(max-height:520px){
+  #welcomeScreen .homeBrand{margin-top:8px!important;}
+  #welcomeScreen .homeBrand .pathleHomeLogoHeading{width:clamp(190px,62vw,235px)!important;}
+  #welcomeScreen .illustratedHero{min-height:58px!important;}
+  #welcomeScreen :is(#playDaily,#playTreasure,#playPractice,#openHideout){min-height:45px!important;}
+  #welcomeScreen :is(#playDaily,#playTreasure,#playPractice,#openHideout) .menuIcon{
+    flex-basis:33px!important;width:33px!important;height:33px!important;
+  }
+}
+/* An already-played daily challenge is genuinely disabled by game.js. */
+#welcomeScreen #playDaily:disabled{
+  cursor:default!important;
+  filter:saturate(.78)!important;
 }
