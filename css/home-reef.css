@@ -47,9 +47,9 @@
 }
 #welcomeScreen .illustratedHero .homeStage > .home-haiko {
   display:block !important;
-  width:min(78%,35dvh,330px) !important;
+  width:min(90%,44dvh,380px) !important;
   height:auto !important;
-  aspect-ratio:508/341 !important;
+  aspect-ratio:840/430 !important;
   max-width:100% !important;
   max-height:100% !important;
   margin:0 !important;
@@ -165,4 +165,28 @@
 #updateModal .pathleUpdateActions button:focus-visible {
   outline:3px solid #ffe28b;
   outline-offset:2px;
+}
+
+/* DEV v1.5.4: approved 'swimming' pose, main menu only. Independent
+   transparent image keeps the reef background unchanged. Original
+   cosmetics stay present in DOM for other scenes, but are hidden here
+   because their thumbs-up alignment does not fit the new pose. */
+#welcomeScreen .homeStage > .home-haiko .haiko-shades,
+#welcomeScreen .homeStage > .home-haiko .haiko-accessory-slot,
+#welcomeScreen .homeStage > .home-haiko .haiko-scene-item{
+  display:none !important;
+}
+#welcomeScreen .homeStage > .home-haiko .home-swimming-art{
+  display:block !important;
+  position:absolute;
+  inset:0;
+  width:100%;height:100%;
+  object-fit:contain;
+  z-index:1;
+  pointer-events:none;
+}
+@media(max-height:610px){
+  #welcomeScreen .homeStage > .home-haiko{
+    width:min(82%,38dvh,300px) !important;
+  }
 }
