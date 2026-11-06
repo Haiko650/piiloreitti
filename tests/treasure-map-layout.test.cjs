@@ -39,7 +39,15 @@ test('appending 60 levels creates independent scrolling artwork segments',()=>{
 });
 
 test('art assets are independent of stable level IDs and allow replacement images',()=>{
-  assert.ok(art.forWorld('water-world').overview.endsWith('.svg'));
+  const segments=art.worldSections('water-world');
+  assert.equal(segments.length,3);
+  assert.deepEqual(segments.map(item=>item.id),[
+    'northern-sea','island-passage','southern-reef'
+  ]);
+  assert.ok(segments.every(item=>item.base.endsWith('.svg')));
+  assert.ok(segments.every(item=>fs.existsSync(path.join(__dirname,'..',item.base))));
+  assert.deepEqual(art.worldAreaPosition('water-world','coral-coast'),
+    art.REGISTRY.worlds['water-world'].areas['coral-coast']);
   assert.ok(art.forArea('coral-coast').haiko.endsWith('.svg'));
   assert.ok(art.forSection('coral-coast','coral-shallows-01').base);
   const calls=[];
@@ -70,4 +78,21 @@ test('no changes to old level identities or old save keys',()=>{
   assert.ok(!body.includes('extensions.treasureHunt='));
   assert.equal(release.catalog.tutorial.levelIds.length,3);
   assert.equal(release.levels.length,7);
+});
+
+test('world area pins use stable section IDs and valid image-independent positions',()=>{
+  const world=art.forWorld('water-world');
+  const ids=new Set(art.worldSections('water-world').map(item=>item.id));
+  assert.equal(ids.size,3);
+  for(const area of release.catalog.areas){
+    const loc=art.worldAreaPosition(area.worldId,area.id);
+    assert.ok(loc,'Missing world marker for '+area.id);
+    assert.ok(ids.has(loc.sectionId),'No artwork section for '+area.id);
+    assert.ok(loc.x>0&&loc.x<1&&loc.y>0&&loc.y<1);
+  }
+  const src=read('js/treasure-campaign-v2.js');
+  assert.match(src,/for\(const section of art\.worldSections\(world\.id\)\)/);
+  assert.match(src,/art\.worldAreaPosition\(world\.id,area\.id\)/);
+  assert.doesNotMatch(src,/worldCanvas\.style\.height\s*=/);
+  assert.doesNotMatch(src,/art\.applyLayer\(worldCanvas/);
 });
