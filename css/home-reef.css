@@ -195,7 +195,16 @@
    artwork extracted from Haiko's character sheet. Only the home screen
    brand changes; all other game titles, Haiko assets and backgrounds stay.
    The logo is a single swappable image, not lettering baked into the reef. */
+/* A legacy rule in styles.css hides .homeBrand with display:none!important.
+   Explicitly restore the brand at the last-loaded home-reef layer.
+   The previous v1.5.5 logo was correctly deployed but INVISIBLE. */
 #welcomeScreen .homeBrand{
+  display:flex !important;
+  flex-direction:column;
+  align-items:center;
+  flex:0 0 auto;
+  position:relative;
+  z-index:6;
   margin-top:clamp(39px,6dvh,52px) !important;
 }
 #welcomeScreen .homeBrand .pathleHomeLogoHeading{
