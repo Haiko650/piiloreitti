@@ -209,7 +209,8 @@
 }
 #welcomeScreen .homeBrand .pathleHomeLogoHeading{
   display:block;
-  width:clamp(180px,58vw,258px);
+  overflow:visible !important;
+  width:clamp(185px,60vw,268px);
   max-width:100%;
   height:auto;
   margin:0 auto !important;
@@ -223,7 +224,7 @@
   display:block;
   width:100%;
   height:auto;
-  aspect-ratio:554/282;
+  aspect-ratio:574/326;
   object-fit:contain;
   pointer-events:none;
   user-select:none;
@@ -238,6 +239,6 @@
     margin-top:36px !important;
   }
   #welcomeScreen .homeBrand .pathleHomeLogoHeading{
-    width:clamp(160px,50vw,210px);
+    width:clamp(166px,52vw,220px);
   }
 }

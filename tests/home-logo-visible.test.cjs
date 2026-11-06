@@ -17,6 +17,6 @@ test('the visible Pathle logo overrides old display:none !important with same sp
   assert.match(rule[1],/align-items\s*:\s*center\s*;/);
   assert.ok(html.indexOf('css/home-reef.css')>html.indexOf('css/styles.css'),
     'New rule must load after old hidden brand rule');
-  assert.match(html,/css\/home-reef\.css\?v=20261106-logo2/);
-  assert.match(html,/<img class="pathleHomeLogoImage"[^>]+src="images\/pathle-logo-menu\.webp\?v=1\.5\.5"/);
+  assert.match(html,/css\/home-reef\.css\?v=20261106-logo3/);
+  assert.match(html,/<img class="pathleHomeLogoImage"[^>]+src="images\/pathle-logo-menu-full\.webp\?v=1\.5\.7"/);
 });
