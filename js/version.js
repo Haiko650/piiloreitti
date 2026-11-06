@@ -5,7 +5,7 @@
  */
 (function(root){
   'use strict';
-  const VERSION='1.5.17';
+  const VERSION='1.5.18';
   const CHANNEL='DEV';
   const info=Object.freeze({version:VERSION,channel:CHANNEL});
   root.PathleVersion=info;
