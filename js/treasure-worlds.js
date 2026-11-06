@@ -38,6 +38,7 @@
       targetLevelCount:60,status:'planned',levelIds:Object.freeze([]),
       unlock:Object.freeze({afterAreaId:requires,minimumFins:0}),
       map:Object.freeze({mode:'vertical-scroll',artStyle:'2.5d',sectionTarget:10,
+        travelDirection:'up',
         nodes:Object.freeze({})}),
       visualMode,visualOverrides:Object.freeze({}),featureAtEnd:mechanic});
   }
@@ -90,6 +91,7 @@
          !['planned','released'].includes(area.status)||!Array.isArray(area.levelIds)||
          area.levelIds.length>area.targetLevelCount||!MODES.includes(area.visualMode)||
          !area.map||area.map.mode!=='vertical-scroll'||
+         !['up','down'].includes(area.map.travelDirection||'down')||
          !area.unlock||!Number.isSafeInteger(area.unlock.minimumFins)||
          area.unlock.minimumFins<0) {
         errors.push('Invalid area');
