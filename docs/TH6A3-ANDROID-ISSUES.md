@@ -45,12 +45,20 @@ The player tests the same GitHub Pages URL after EACH visible fix.
    **Android acceptance:** verify smooth vertical scroll with no
    horizontal clipping, all three area markers correctly aligned,
    return-to-Coral Coast button and previous progress unchanged.
-2. **TH.6A.3b: invert Coral Coast map progression – TODO.**
-   The player should start at the bottom of each area, with level
-   numbers increasing upward. Coordinate rendering, section order,
-   paths and initial scroll position must agree in both 4- and
-   60-level maps. All puzzle IDs, stored results, medals and access
-   remain unchanged. Preserve the layered/replaceable artwork model.
+2. **TH.6A.3b: invert Coral Coast map progression – implemented in DEV v1.5.3; Android confirmation pending.**
+   `travelDirection:'up'` is a presentation-only map setting.
+   The bottom of the illustrated area map contains level 1, and
+   the route climbs toward larger level numbers above.
+   `js/treasure-map-layout.js` reverses section **display order**,
+   mirrors the local y-coordinates, and draws connected bottom-to-top
+   SVG trails. Original artwork section IDs, image paths, level IDs,
+   saved moves and fin scores are untouched. The first area map
+   automatically centers Haiko on the currently available stage;
+   **Find Haiko** also works after completing all published levels.
+   Automated layout tests include 4, 60 and 120-level maps.
+   **Android acceptance:** check level 1 lower than level 4,
+   smooth upward scrolling, correct Haiko and route placement,
+   old medals unchanged and returning from a level works.
 3. **TH.6A.3c: DEV mode Treasure Hunt integration – TODO.**
    `js/game.js` keeps `devEnabled` only in the home-page JS
    runtime. The Treasure Hunt page cannot currently see the toggle.
