@@ -60,7 +60,8 @@ test('art assets are independent of stable level IDs and allow replacement image
 
 test('player-facing area renderer obtains art by section ID, not by level ID',()=>{
   const body=read('js/treasure-campaign-v2.js');
-  assert.match(body,/layout\.getSections\(area\)/);
+  assert.match(body,/layout\.getDisplaySections\(area\)/);
+  assert.match(body,/layout\.pathForUp\(section\.nodes/);
   assert.match(body,/art\.forSection\(area\.id,section\.id\)/);
   assert.match(body,/art\.forArea\(area\.id\)\?\.haiko/);
   assert.doesNotMatch(body,/haiko\.style\.backgroundImage/);
@@ -95,4 +96,69 @@ test('world area pins use stable section IDs and valid image-independent positio
   assert.match(src,/art\.worldAreaPosition\(world\.id,area\.id\)/);
   assert.doesNotMatch(src,/worldCanvas\.style\.height\s*=/);
   assert.doesNotMatch(src,/art\.applyLayer\(worldCanvas/);
+});
+
+test('Coral Coast level 1 is at the bottom, with unchanged level IDs and map artwork',()=>{
+  const area=release.catalog.areas[0];
+  assert.equal(area.map.travelDirection,'up');
+  const logical=layout.getSections(area);
+  const visual=layout.getDisplaySections(area);
+  assert.equal(visual.length,1);
+  assert.equal(visual[0].id,logical[0].id);
+  assert.deepEqual(visual[0].nodes.map(n=>n.levelId),area.levelIds);
+  assert.deepEqual(visual[0].nodes.map(n=>n.x),[.22,.76,.31,.69]);
+  const expectedY=[.89,.66,.39,.14];
+  visual[0].nodes.forEach((node,i)=>assert.ok(Math.abs(node.y-expectedY[i])<1e-10));
+  assert.ok(visual[0].nodes.every((node,i,all)=>i===0||node.y<all[i-1].y));
+  assert.equal(layout.getSections(area)[0].nodes[0].y,.11,
+    'Original map definition must not mutate for existing saves');
+  assert.equal(layout.pathForUp(visual[0].nodes,false,false).startsWith('M220 1157'),true);
+  assert.equal(art.forSection('coral-coast',visual[0].id).base,
+    art.forSection('coral-coast',logical[0].id).base);
+  assert.deepEqual(release.levels.slice(3).map(l=>l.id),area.levelIds);
+});
+
+test('60 or 120 levels render as bottom-to-top sections with connected upward trails',()=>{
+  for(const count of [60,120]){
+    const area=mutable(release.catalog.areas[0]);
+    area.targetLevelCount=count;
+    area.levelIds=[
+      ...area.levelIds,
+      ...Array.from({length:count-area.levelIds.length},(_,i)=>
+        'th-water-coral-'+String(i+5).padStart(3,'0'))
+    ];
+    const original=layout.getSections(area);
+    const display=layout.getDisplaySections(area);
+    assert.equal(display.length,original.length);
+    assert.equal(display[0].id,original[original.length-1].id,
+      'Newest section is at the top');
+    assert.equal(display.at(-1).id,original[0].id,
+      'Original section remains at the bottom');
+    assert.equal(display[0].nodes.at(-1).levelId,area.levelIds.at(-1));
+    assert.equal(display.at(-1).nodes[0].levelId,area.levelIds[0]);
+    assert.equal(display.reduce((sum,section)=>sum+section.nodes.length,0),count);
+    for(let index=0;index<display.length;index++){
+      const section=display[index];
+      assert.ok(section.nodes.every((node,i,nodes)=>i===0||node.y<nodes[i-1].y),
+        'Levels must climb upward within each section');
+      const hasLower=index<display.length-1;
+      const hasUpper=index>0;
+      const p=layout.pathForUp(section.nodes,hasLower,hasUpper);
+      if(hasLower)assert.ok(p.startsWith('M500 1300'));
+      if(hasUpper)assert.ok(p.endsWith('500 0'));
+      if(!hasLower)assert.ok(p.startsWith(
+        'M'+(section.nodes[0].x*1000)+' '+(section.nodes[0].y*1300)));
+    }
+    assert.deepEqual(layout.getSections(area).map(section=>section.id),
+      original.map(section=>section.id),
+      'Orientation must not rewrite stable artwork section identities');
+  }
+});
+
+test('downward layout remains available for worlds using a different trail style',()=>{
+  const area=mutable(release.catalog.areas[0]);
+  area.map.travelDirection='down';
+  assert.deepEqual(layout.getDisplaySections(area),layout.getSections(area));
+  area.map.travelDirection='sideways';
+  assert.throws(()=>layout.getDisplaySections(area),/direction/);
 });
