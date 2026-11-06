@@ -102,6 +102,28 @@ layout, **not a hard 10-level ceiling**. An area can reach 60 or 120
 levels while the program renders only the actual published sections.
 Map expansion must not regenerate earlier puzzle content.
 
+## Upward Coral Coast trail (DEV v1.5.3)
+
+Map direction is chosen per area with
+`area.map.travelDirection: 'up'` in `js/treasure-worlds.js`.
+This is purely a rendering setting. The `levelIds` and original
+`area.map.nodes[levelId].x/y` coordinates are not overwritten.
+
+`layout.getDisplaySections(area)` returns illustration sections in
+reverse visual order (latest content highest), mirroring only each
+drawn node's y-coordinate. `layout.pathForUp` draws the connecting
+route from the BOTTOM edge of a section to its TOP edge.
+
+**Important:** keep the SVG/WebP background upright. Do not rotate or
+mirror an image just to move the level numbers. Image artwork and
+interactive trail coordinates are independent. The route's visible
+direction comes from the map presentation layer.
+
+The original first section remains at the bottom when 60+ levels are
+eventually published. Haiko's latest accessible stage is centered
+automatically, and the Find Haiko control remains usable after the
+entire published region is completed.
+
 ## Future graphics
 
 - Surface boards initially show the shark fin over turquoise water.
