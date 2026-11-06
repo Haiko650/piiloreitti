@@ -15,24 +15,34 @@
 .th-v2-node:focus-visible,
 .th-v2-world-pin:focus-visible{outline:3px solid #ffe59b;outline-offset:3px}
 .th-v2-world-canvas{
-  /* World map must fit narrow phones. A min-height plus aspect ratio
-     forces an oversized width and clips the map in overflow-x:hidden. */
-  box-sizing:border-box;position:relative;
+  /* The full World is an image-backed STACK, not one stretched bitmap.
+     The existing .th-v2-campaign-map scrolls all sections vertically. */
+  box-sizing:border-box;position:relative;display:block;
   width:100%;min-width:0;max-width:100%;
-  height:auto;min-height:0;aspect-ratio:600/760;
+  height:auto;min-height:0;
   border-radius:22px;border:2px solid #91e6e5;
   background:linear-gradient(145deg,#56d0df,#057caa 60%,#06436f);
   overflow:hidden;isolation:isolate;
   box-shadow:inset 0 0 40px #0c3d5f4d,0 10px 24px #00152c6b;
+}
+.th-v2-world-sections{
+  display:flex;flex-direction:column;align-items:stretch;
+  width:100%;min-width:0;gap:0;
+}
+.th-v2-world-section{
+  box-sizing:border-box;position:relative;display:block;
+  width:100%;min-width:0;flex:none;
+  aspect-ratio:600/760;min-height:0;height:auto;
+  overflow:hidden;isolation:isolate;
+  background:linear-gradient(145deg,#64d7e3,#1597b9 60%,#064781);
 }
 .th-v2-world-art{
   position:absolute;inset:0;z-index:0;pointer-events:none;
   background-image:var(--th-world-art,none);
   background-size:100% 100%;background-repeat:no-repeat;background-position:center;
 }
-.th-v2-world-pins{position:absolute;inset:0;z-index:3;pointer-events:none}
 .th-v2-world-pin{
-  position:absolute;transform:translate(-50%,-50%);pointer-events:auto;
+  position:absolute;z-index:2;transform:translate(-50%,-50%);pointer-events:auto;
   width:min(43%,190px);min-height:53px;padding:8px 9px;
   border:2px solid #fff4b6;background:#0a517ccd;color:#fff8d4;
   box-shadow:0 5px 0 #083a5c,0 8px 13px #062f5999;
