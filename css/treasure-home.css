@@ -1,9 +1,0 @@
-/* TH.2: a Treasure Hunt link on the existing home menu; Daily UI unchanged. */
-#welcomeScreen a.menuTreasure {color:inherit;text-decoration:none;cursor:pointer;background:linear-gradient(105deg,#166c91,#129e9f);border-color:#8ee0de;}
-#welcomeScreen a.menuTreasure .menuIcon {filter:drop-shadow(0 2px 3px #064558);}
-#welcomeScreen a.menuTreasure:focus-visible {outline:3px solid #fff3a6;outline-offset:2px;}
-/* The existing menu explicitly orders Daily, Practice and Hideout.
- * Place Treasure Hunt after Practice (not above Daily in the flex layout). */
-#welcomeScreen a.menuTreasure {order:3!important;z-index:4;margin:0 7px!important;width:calc(100% - 14px)!important;min-height:43px!important;border-radius:24px!important;padding:6px 12px!important;}
-#welcomeScreen .menuHideout {order:4!important;}
-#welcomeScreen .homeQuickTools {order:5!important;}
