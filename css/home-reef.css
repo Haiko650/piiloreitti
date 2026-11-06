@@ -190,3 +190,45 @@
     width:min(82%,38dvh,300px) !important;
   }
 }
+
+/* DEV 1.5.5: The user-approved Pathle logo is independent transparent
+   artwork extracted from Haiko's character sheet. Only the home screen
+   brand changes; all other game titles, Haiko assets and backgrounds stay.
+   The logo is a single swappable image, not lettering baked into the reef. */
+#welcomeScreen .homeBrand{
+  margin-top:clamp(39px,6dvh,52px) !important;
+}
+#welcomeScreen .homeBrand .pathleHomeLogoHeading{
+  display:block;
+  width:clamp(180px,58vw,258px);
+  max-width:100%;
+  height:auto;
+  margin:0 auto !important;
+  line-height:0 !important;
+  font-size:0 !important;
+  letter-spacing:0 !important;
+  text-shadow:none !important;
+  -webkit-text-stroke:0 !important;
+}
+#welcomeScreen .homeBrand .pathleHomeLogoImage{
+  display:block;
+  width:100%;
+  height:auto;
+  aspect-ratio:554/282;
+  object-fit:contain;
+  pointer-events:none;
+  user-select:none;
+  -webkit-user-drag:none;
+  filter:drop-shadow(0 4px 6px rgba(0,34,75,.42));
+}
+#welcomeScreen .homeBrand .tag{
+  margin:0 !important;
+}
+@media(max-height:680px){
+  #welcomeScreen .homeBrand{
+    margin-top:36px !important;
+  }
+  #welcomeScreen .homeBrand .pathleHomeLogoHeading{
+    width:clamp(160px,50vw,210px);
+  }
+}
