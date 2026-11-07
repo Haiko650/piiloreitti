@@ -37,11 +37,45 @@
   const areaSummary=$('thV2AreaSummary');
   const areaCanvas=$('thV2AreaCanvas');
   const mapButton=$('thMapReturn');
+  const headerBack=document.querySelector('.th-back');
   const leaveDialog=$('thLeaveDialog'),leaveStay=$('thLeaveStay'),leaveConfirm=$('thLeaveConfirm');
   const errorBox=$('thCampaignError'),errorTitle=$('thCampaignErrorTitle');
   const errorText=$('thCampaignErrorText'),errorRetry=$('thCampaignRetry');
   const winMap=$('thWinMap');
   let progress=null,ready=false,busy=false,currentArea='coral-coast',boardIndex=-1,view='tutorial';
+  /* Same-document history entries make the Android back gesture and the
+     header arrow follow the in-game hierarchy instead of skipping home. */
+  const navKey='pathleTreasureNav';
+  const navHistory=root.history&&typeof root.history.pushState==='function'&&
+    typeof root.history.replaceState==='function'?root.history:null;
+  let navDepth=0,navInitialized=false,restoringNavigation=false,approvedBoardExit=false;
+  function routeInfo(kind){
+    return {view:kind,area:currentArea,index:boardIndex,depth:navDepth};
+  }
+  function rememberRoute(kind){
+    if(!navHistory||restoringNavigation)return;
+    const old=navHistory.state||{};
+    const existing=old[navKey];
+    if(!navInitialized){
+      navInitialized=true;
+      navDepth=0;
+      navHistory.replaceState({...old,[navKey]:routeInfo(kind)},'');
+      return;
+    }
+    if(existing&&existing.view===kind&&
+      (kind!=='area'||existing.area===currentArea)&&
+      (kind!=='level'||existing.index===boardIndex))return;
+    navDepth++;
+    navHistory.pushState({...old,[navKey]:routeInfo(kind)},'');
+  }
+  function exitToHome(){
+    if(root.location&&typeof root.location.assign==='function')
+      root.location.assign('index.html');
+  }
+  function restoreCurrentHistory(){
+    if(!navHistory)return;
+    navHistory.pushState({...navHistory.state,[navKey]:routeInfo(view)},'');
+  }
   const optimalCache=new Map();
   const optimal=level=>{
     if(!optimalCache.has(level.id))optimalCache.set(level.id,solver.solve(level).optimalMoves);
@@ -81,6 +115,7 @@
     if(which==='world')renderWorld();
     if(which==='area')renderArea();
     if(which==='tutorial')renderTutorial();
+    rememberRoute(which);
   }
   function renderTutorial(){
     const cleared=catalog.tutorial.levelIds.filter(id=>Boolean(progress.records[id])).length;
@@ -258,20 +293,81 @@
     // A future sprite-only renderer can switch on this explicit mode.
     document.body.dataset.thVisualMode=stage.visualMode;
     map.hidden=true;panel.hidden=false;mapButton.hidden=false;
+    view='level';
     ui.selectLevel(index);
+    rememberRoute('level');
     ui.fitBoard();
     requestAnimationFrame(()=>ui.fitBoard());
+  }
+  function returnToMap(){
+    if(ui.leaveLevel()===false)return;
+    const stage=boardIndex>=0?worlds.getStage(catalog,levels[boardIndex].id):null;
+    // For a board opened from an area map, Back consumes its history entry.
+    // The tutorial can contain successive boards, so it returns to its guide.
+    if(stage?.areaId!=='tutorial'&&navHistory&&navDepth>0){
+      approvedBoardExit=true;
+      navHistory.back();
+    }else showFallbackMap();
   }
   function requestMap(){
     if(!ready||busy||!leaveDialog.hidden)return;
     if(ui.hasUnfinishedProgress()){
       leaveDialog.hidden=false;shell.inert=true;leaveStay.focus();return;
     }
-    if(ui.leaveLevel()===false)return;
-    showFallbackMap();
+    returnToMap();
   }
   function dismissLeave(){
     leaveDialog.hidden=true;shell.inert=false;mapButton.focus();
+  }
+  function goBackOneStep(){
+    if(!ready||busy||!errorBox.hidden)return;
+    if(!leaveDialog.hidden){dismissLeave();return;}
+    if(view==='level'){requestMap();return;}
+    if(view==='area'){
+      if(navHistory&&navDepth>0)navHistory.back();
+      else showWorld();
+      return;
+    }
+    // Water World is Treasure Hunt's top map; its parent is the main menu.
+    exitToHome();
+  }
+  function onBrowserBack(event){
+    if(!ready||!navHistory)return;
+    const target=event.state&&event.state[navKey];
+    if(!target||!['tutorial','world','area','level'].includes(target.view))return;
+    if(view==='world'&&target.view!=='area'&&target.view!=='world'){
+      exitToHome();return;
+    }
+    if(busy||!errorBox.hidden){restoreCurrentHistory();return;}
+    if(!leaveDialog.hidden){
+      restoreCurrentHistory();dismissLeave();return;
+    }
+    if(view==='level'){
+      if(!approvedBoardExit&&ui.hasUnfinishedProgress()){
+        restoreCurrentHistory();
+        leaveDialog.hidden=false;shell.inert=true;leaveStay.focus();return;
+      }
+      approvedBoardExit=false;
+      if(ui.leaveLevel()===false){restoreCurrentHistory();return;}
+    }
+    navDepth=Math.max(0,Number(target.depth)||0);
+    restoringNavigation=true;
+    try{
+      if(target.view==='world')showWorld();
+      else if(target.view==='area')openArea(target.area);
+      else if(target.view==='tutorial')showSection('tutorial');
+      else if(target.view==='level'){
+        // Completed tutorial/previous levels should not reopen accidentally
+        // when navigating out of the board; go to the containing map instead.
+        const stage=boardIndex>=0?worlds.getStage(catalog,levels[boardIndex].id):null;
+        if(view==='level'&&stage?.areaId!=='tutorial'){
+          showFallbackMap();
+          navHistory.replaceState({...navHistory.state,[navKey]:routeInfo(view)},'');
+        }else openLevel(target.index);
+      }
+    }finally{
+      restoringNavigation=false;
+    }
   }
   async function boot(){
     ready=false;shell.inert=true;
@@ -333,14 +429,14 @@
   $('thV2WorldBack').addEventListener('click',()=>{
     currentWorldPin?.scrollIntoView?.({block:'center',behavior:'smooth'});
   });
-  $('thV2AreaWorld').addEventListener('click',()=>showWorld());
+  $('thV2AreaWorld').addEventListener('click',goBackOneStep);
   $('thV2AreaHere').addEventListener('click',()=>{
     currentAreaNode?.scrollIntoView?.({block:'center',behavior:'smooth'});
   });
   mapButton.addEventListener('click',requestMap);
   leaveStay.addEventListener('click',dismissLeave);
   leaveConfirm.addEventListener('click',()=>{
-    dismissLeave();if(ui.leaveLevel()!==false)showFallbackMap();
+    dismissLeave();returnToMap();
   });
   leaveDialog.addEventListener('keydown',event=>{
     if(leaveDialog.hidden)return;
@@ -355,9 +451,18 @@
   });
   winMap.hidden=false;
   winMap.addEventListener('click',()=>{
-    $('thVictory').hidden=true;shell.inert=false;showFallbackMap();
+    $('thVictory').hidden=true;shell.inert=false;
+    returnToMap();
   });
+  if(headerBack)headerBack.addEventListener('click',event=>{
+    if(!ready)return;
+    event.preventDefault();
+    goBackOneStep();
+  });
+  if(navHistory&&typeof root.addEventListener==='function')
+    root.addEventListener('popstate',onBrowserBack);
   root.PathleTreasureCampaign=Object.freeze({canEnter,openLevel,openArea,
-    handleCompletion,advance,showWorld,requestMap,isReady:()=>ready,getView:()=>view});
+    handleCompletion,advance,showWorld,requestMap,goBackOneStep,
+    isReady:()=>ready,getView:()=>view});
   void boot();
 })(window);
