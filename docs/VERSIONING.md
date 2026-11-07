@@ -5,7 +5,7 @@
 The main menu shows a compact **tappable** build label at the top center,
 between Settings and the DEV toggle:
 
-**DEV · v1.5.26**
+**DEV · v1.5.27**
 
 The installed version is defined in `js/version.js`. The published
 GitHub Pages version is described by `version.json` in the repo root.
@@ -78,3 +78,10 @@ automatically reload while Daily or Treasure Hunt is in progress.
 - The five released SVG images are embedded losslessly as `data:image/svg+xml` in `js/treasure-map-art.js`. No extra asset request is required; the local SVG files remain editable source copies and are checked for byte-for-byte equality in tests.
 - Original CSS map art and fallback gradients are preserved for future, non-embedded regions. No puzzle IDs, coordinates, scores, or saved data are changed.
 - On Android verify geographical coast/island shapes on all three world-map sections, coral details, scrolling and touch targets before replacing placeholder artwork.
+
+## Full-width, frameless illustrated maps (DEV v1.5.27)
+
+- Water World and Coral Coast occupy the full mobile viewport width, not the narrower `th-shell` content box. The map's outer scroll container has no padding, border, corner radius, or shadow.
+- The World map canvas and individual Coral Coast map sections have no decorative borders or rounding. The three Water World artwork sections remain vertically stacked in their original order.
+- The header, Haiko sprite, map destination buttons, level coordinates, progress records and game boards are unchanged. No new map images were generated or installed.
+- On Android, verify both maps scroll and all level/area buttons remain clickable; the tutorial and puzzle views retain their original width.

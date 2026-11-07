@@ -33,13 +33,31 @@ test('Water World overview uses the available mobile width without forced oversi
   assert.match(cssBlock(css,'.th-v2-world-sections'),/flex-direction\s*:\s*column/);
   assert.doesNotMatch(css,/@media\s*\(max-width:370px\)\s*\{[^}]*\.th-v2-world-canvas\s*\{/);
   for(const viewport of [320,360,375,390,490]){
-    const available=viewport-24-20-4;
+    const available=viewport;
     const renderedWidth=available;
     const renderedHeight=available*760/600;
     assert.ok(renderedWidth<=viewport,'World width exceeds viewport');
     assert.ok(renderedHeight>0&&renderedHeight<680,'Each section should scale with width');
     assert.ok(renderedHeight*3>viewport,'Three geographic sections enable vertical scrolling');
   }
+});
+
+test('Water World and Coral Coast maps are borderless and span the full viewport',()=>{
+  const css=read('css/treasure-world-v2.css');
+  assert.match(css,/#thCampaignMap\.th-v2-campaign-map:has\(#thV2World:not\(\[hidden\]\)\)/);
+  assert.match(css,/#thCampaignMap\.th-v2-campaign-map:has\(#thV2Area:not\(\[hidden\]\)\)/);
+  assert.match(css,/width:100vw;\s*min-width:100vw;\s*max-width:none;/);
+  assert.match(css,/margin-left:calc\(50% - 50vw\)/);
+  assert.match(css,/margin-right:calc\(50% - 50vw\)/);
+  const fullBleed=css.slice(css.indexOf('/* DEV 1.5.27: full-bleed map'));
+  assert.match(fullBleed,/padding:0;\s*border:0;\s*border-radius:0;/);
+  const world=cssBlock(css,'.th-v2-world-canvas');
+  const area=cssBlock(css,'.th-v2-map-section');
+  assert.match(world,/border:0;border-radius:0;/);
+  assert.match(world,/box-shadow:none;/);
+  assert.match(area,/border:0;/);
+  assert.match(area,/box-shadow:none;/);
+  assert.doesNotMatch(css,/\.th-v2-map-section:first-child\s*\{|\.th-v2-map-section:last-child\s*\{|\.th-v2-map-section:only-child\s*\{/);
 });
 
 test('overview artwork and tappable area pins remain on separate responsive layers',()=>{

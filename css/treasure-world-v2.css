@@ -5,6 +5,25 @@
  */
 .th-campaign [hidden],.th-v2-campaign-map [hidden]{display:none!important}
 .th-v2-campaign-map{padding:10px;scroll-behavior:auto}
+/* DEV 1.5.27: full-bleed map, without frame or side gutters.
+   Only the World/Area views are affected; tutorial and level UI stay as-is. */
+#thCampaignMap.th-v2-campaign-map:has(#thV2World:not([hidden])),
+#thCampaignMap.th-v2-campaign-map:has(#thV2Area:not([hidden])){
+  box-sizing:border-box;
+  width:100vw;
+  min-width:100vw;
+  max-width:none;
+  margin-left:calc(50% - 50vw);
+  margin-right:calc(50% - 50vw);
+  padding:0;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
+}
+#thV2World,#thV2Area{width:100%;min-width:0}
+#thV2Area .th-v2-map-heading,
+#thV2Area .th-v2-map-explain{margin-inline:12px}
 .th-v2-map-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:4px 1px 8px}
 .th-v2-map-heading h2{margin:0;color:#fff6cf;font-size:23px;line-height:1.15}
 .th-v2-map-heading small{display:block;color:#d0fbff;font-size:10px;font-weight:900;letter-spacing:.11em;margin-bottom:4px}
@@ -26,10 +45,10 @@
   box-sizing:border-box;position:relative;display:block;
   width:100%;min-width:0;max-width:100%;
   height:auto;min-height:0;
-  border-radius:22px;border:2px solid #91e6e5;
+  border:0;border-radius:0;
   background:linear-gradient(145deg,#56d0df,#057caa 60%,#06436f);
   overflow:hidden;isolation:isolate;
-  box-shadow:inset 0 0 40px #0c3d5f4d,0 10px 24px #00152c6b;
+  box-shadow:none;
 }
 .th-v2-world-sections{
   display:flex;flex-direction:column;align-items:stretch;
@@ -66,17 +85,10 @@
   --th-base-art:none;--th-detail-art:none;--th-haiko-art:none;
   position:relative;flex:none;height:1300px;width:100%;
   overflow:hidden;isolation:isolate;
-  border-left:2px solid #8ae4e9;border-right:2px solid #8ae4e9;
+  border:0;
   background:linear-gradient(#7ae9e8,#228ebb 65%,#116a99);
-  box-shadow:inset 0 1px #e0ffff99;
+  box-shadow:none;
 }
-.th-v2-map-section:first-child{
-  border-top:2px solid #8ae4e9;border-radius:19px 19px 0 0;
-}
-.th-v2-map-section:last-child{
-  border-bottom:2px solid #8ae4e9;border-radius:0 0 19px 19px;
-}
-.th-v2-map-section:only-child{border-radius:19px}
 .th-v2-art-base,.th-v2-art-details{
   position:absolute;inset:0;width:100%;height:100%;
   background-size:100% 100%;background-repeat:no-repeat;
