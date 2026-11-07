@@ -9,8 +9,8 @@ test('Water World presentation uses a dedicated final-loaded ocean skin',()=>{
  const html=read('treasure-hunt.html');
  const ui=read('css/treasure-world-ui.css');
  const world=html.slice(html.indexOf('id="thV2World"'),html.indexOf('id="thV2Area"'));
- assert.ok(html.indexOf('css/treasure-world-ui.css?v=1.5.28')>
-           html.indexOf('css/treasure-world-v2.css?v=1.5.27'));
+ assert.ok(html.indexOf('css/treasure-world-ui.css?v=1.5.29')>
+           html.indexOf('css/treasure-world-v2.css?v=1.5.29'));
  assert.doesNotMatch(world,/th-v2-world-hero|th-v2-world-brand|th-v2-world-emblem/);
  assert.doesNotMatch(world,/thV2WorldTitle|thV2WorldStatus|Choose an area to explore/);
  assert.ok(world.indexOf('id="thV2WorldBack"')<world.indexOf('id="thV2WorldCanvas"'),
@@ -119,8 +119,8 @@ test('approved Haiko artwork is the single reusable progress cursor on both maps
  assert.match(art,/HAIKO_IMAGE='images\/haiko-map-upright\.webp'/);
  assert.match(art,/haiko:HAIKO_IMAGE/);
  assert.match(html,/js\/treasure-map-art\.js\?v=1.5.26/);
- assert.match(html,/js\/treasure-campaign-v2\.js\?v=1.5.26/);
- assert.match(script,/function makeHaikoMarker\(areaId,progressText,description\)/);
+ assert.match(html,/js\/treasure-campaign-v2\.js\?v=1.5.29/);
+ assert.match(script,/function makeHaikoMarker\(areaId,description\)/);
  assert.match(script,/picture\.className='th-v2-haiko-sprite'/);
  assert.match(script,/picture\.src=art\.HAIKO_SPRITE_DATA/);
  assert.match(art,/HAIKO_SPRITE_DATA='data:image\/webp;base64,/);
@@ -133,8 +133,8 @@ test('approved Haiko artwork is the single reusable progress cursor on both maps
  assert.match(css,/#thV2Area \.th-v2-map-haiko\.th-v2-area-haiko\{/);
  assert.match(css,/z-index:12/);
  assert.match(css,/background-image:\s*var\(--th-haiko-art,none\)/);
- assert.match(css,/#thV2World \.th-v2-haiko-progress,/);
- assert.match(css,/#thV2Area \.th-v2-haiko-progress\{/);
+ assert.doesNotMatch(script,/th-v2-haiko-progress/);
+ assert.doesNotMatch(css,/th-v2-haiko-progress/);
  assert.match(css,/prefers-reduced-motion:reduce/);
 });
 
@@ -156,4 +156,20 @@ test('Haiko is smaller and floats entirely above the destination marker on both 
  assert.ok(arrowTipAtLowest<worldTop);
  assert.match(geometry,/\.th-v2-world-pin\{/);
  assert.match(geometry,/\.th-v2-node\{/);
+});
+
+test('area completion is displayed below the area name, never below Haiko',()=>{
+ const html=read('treasure-hunt.html');
+ const script=read('js/treasure-campaign-v2.js');
+ const css=read('css/treasure-world-v2.css');
+ assert.match(html,/<h2 id="thV2AreaTitle">Coral Coast<\/h2><p class="th-v2-area-progress" id="thV2AreaSummary"/);
+ assert.match(script,/button\.textContent=area\.title;/);
+ assert.match(script,/status\.className='th-v2-world-pin-progress'/);
+ assert.match(script,/status\.textContent=access\.available/);
+ assert.match(script,/button\.append\(status\)/);
+ assert.match(css,/\.th-v2-world-pin\{\s*display:flex;\s*flex-direction:column/);
+ assert.match(css,/\.th-v2-world-pin-progress\{/);
+ assert.match(script,/areaSummary\.textContent=cleared\+' \/ '\+area\.levelIds\.length\+' CLEARED/);
+ assert.match(css,/#thV2Area \.th-v2-area-progress\{/);
+ assert.doesNotMatch(script,/marker\.append\(label\)/);
 });

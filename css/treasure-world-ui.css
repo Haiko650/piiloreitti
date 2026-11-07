@@ -242,28 +242,6 @@ body.th-page:has(#thV2World:not([hidden])) .th-header :is(.th-back):focus-visibl
   transform:translateX(-50%);
   filter:drop-shadow(0 2px 1px #05506a88);
 }
-#thV2World .th-v2-haiko-progress,
-#thV2Area .th-v2-haiko-progress{
-  position:absolute;
-  z-index:2;
-  bottom:-9px;
-  left:50%;
-  transform:translateX(-50%);
-  display:block;
-  min-width:max-content;
-  max-width:170px;
-  padding:5px 10px;
-  border:2px solid #fff8dc;
-  border-radius:999px;
-  background:linear-gradient(180deg,#fff6bb,#ffdb56 54%,#efaa26);
-  color:#704205;
-  box-shadow:inset 0 1px 0 #fff,0 3px 0 #a5731c,0 5px 8px #003b7070;
-  font:1000 clamp(10px,2.8vw,12px)/1.15 "Trebuchet MS",system-ui,sans-serif;
-  letter-spacing:.01em;
-  text-align:center;
-  text-shadow:0 1px #fff6cb;
-  white-space:nowrap;
-}
 @media(max-width:350px){
   #thV2World .th-v2-map-haiko.th-v2-world-haiko,
   #thV2Area .th-v2-map-haiko.th-v2-area-haiko{
@@ -331,4 +309,10 @@ body.th-page:has(#thV2World:not([hidden])) .th-header :is(.th-back):focus-visibl
   background:transparent!important;
   filter:none;
   image-rendering:auto;
+}
+
+/* DEV 1.5.29: the world pin now contains a progress line; float Haiko
+   above the taller pin while keeping the arrow and location visible. */
+#thV2World .th-v2-map-haiko.th-v2-world-haiko{
+  transform:translate(-50%,calc(-100% - 60px));
 }

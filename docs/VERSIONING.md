@@ -5,7 +5,7 @@
 The main menu shows a compact **tappable** build label at the top center,
 between Settings and the DEV toggle:
 
-**DEV · v1.5.28**
+**DEV · v1.5.29**
 
 The installed version is defined in `js/version.js`. The published
 GitHub Pages version is described by `version.json` in the repo root.
@@ -91,3 +91,11 @@ automatically reload while Daily or Treasure Hunt is in progress.
 - Water World and Coral Coast share a 96 × 126 CSS-pixel Haiko marker (80 × 110 on narrow phones), instead of 112 × 151 pixels.
 - The marker is anchored 48px above the point center instead of 18px; the down-pointing triangle is shortened so the destination button is not covered even during the swim bob animation.
 - Only CSS positioning and display size changed. The original 219 × 300 transparent sprite, map node positions, progress label, maps and saved progress are unchanged.
+
+
+## Progress below area name, separate from Haiko (DEV v1.5.29)
+
+- Haiko's floating marker no longer contains a yellow progress badge on either Water World or Coral Coast.
+- Water World's Coral Coast button shows completion directly below the area name, before the Explore action.
+- Coral Coast's completion (and earned fins) is shown directly beneath the area title, not under the moving character.
+- Accessibility labels still describe Haiko's position and saved progress. Map artwork, images, layout coordinates, game state, level unlocks and the approved Haiko sprite are unchanged.

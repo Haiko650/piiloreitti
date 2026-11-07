@@ -202,7 +202,10 @@ test('three tutorial finishes unlock Water World and first Coral Coast stage',as
   assert.equal(worldHaikos[0].style.left,coral.style.left);
   assert.equal(worldHaikos[0].style.top,coral.style.top);
   assert.ok(worldHaikos[0].properties['--th-haiko-art'].includes('haiko-map-upright.webp'));
-  assert.equal(worldHaikos[0].children[0].textContent,'0 / 4 CLEARED');
+  assert.equal(worldHaikos[0].children.length,1,'Haiko should have no progress badge');
+  assert.equal(worldHaikos[0].children[0].className,'th-v2-haiko-sprite');
+  assert.equal(coral.children.find(item=>item.className==='th-v2-world-pin-progress').textContent,
+    '0 / 4 CLEARED');
   assert.match(worldHaikos[0]['aria-label'],/Coral Coast, 0 of 4 levels cleared/);
   assert.equal(coral.wasScrolled,true,'Current area should be located when entering world');
   h.$('thV2WorldBack').click();
@@ -224,7 +227,9 @@ test('three tutorial finishes unlock Water World and first Coral Coast stage',as
   }
   assert.equal(sections[0].children.filter(x=>x.classList.contains('th-v2-map-haiko')).length,1);
   const haiko=sections[0].children.find(x=>x.classList.contains('th-v2-area-haiko'));
-  assert.equal(haiko.children[0].textContent,'LEVEL 1 / 4');
+  assert.equal(haiko.children.length,1,'Area Haiko should have no progress badge');
+  assert.equal(haiko.children[0].className,'th-v2-haiko-sprite');
+  assert.match(h.$('thV2AreaSummary').textContent,/^0 \/ 4 CLEARED/);
   assert.ok(haiko.properties['--th-haiko-art'].includes('haiko-map-upright.webp'));
   const first=sections[0].children.find(x=>x.classList.contains('is-next'));
   const fourth=sections[0].children.find(x=>x.classList.contains('th-v2-node')&&
@@ -253,14 +258,20 @@ test('Coral Coast current stage changes only after a successful saved victory',a
   assert.equal(next.children[0].textContent,'2');
   const marker=area.children.flatMap(section=>section.children)
     .find(item=>item.classList.contains('th-v2-area-haiko'));
-  assert.equal(marker.children[0].textContent,'LEVEL 2 / 4');
+  assert.equal(marker.children.length,1);
+  assert.equal(marker.children[0].className,'th-v2-haiko-sprite');
+  assert.match(h.$('thV2AreaSummary').textContent,/^1 \/ 4 CLEARED/);
   assert.match(marker['aria-label'],/next level 2 of 4/);
   assert.equal(marker.style.left,next.style.left);
   assert.equal(marker.style.top,next.style.top);
   h.root.PathleTreasureCampaign.showWorld();
   const worldMarker=h.$('thV2WorldPins').children.flatMap(section=>section.children)
     .find(item=>item.classList.contains('th-v2-world-haiko'));
-  assert.equal(worldMarker.children[0].textContent,'1 / 4 CLEARED');
+  const coralPin=h.$('thV2WorldPins').children.flatMap(section=>section.children)
+    .find(item=>item.classList.contains('th-v2-world-pin')&&item.textContent.startsWith('Coral Coast'));
+  assert.equal(coralPin.children.find(item=>item.className==='th-v2-world-pin-progress').textContent,
+    '1 / 4 CLEARED');
+  assert.equal(worldMarker.children.length,1);
   assert.equal(h.root.PathleTreasureCampaign.canEnter(4),true);
   assert.equal(h.root.PathleTreasureCampaign.canEnter(5),false);
 });
@@ -435,11 +446,16 @@ test('a finished Coral Coast area keeps Haiko on the final unlocked level',async
   const world=h.$('thV2WorldPins').children.flatMap(section=>section.children)
     .find(item=>item.classList.contains('th-v2-world-haiko'));
   assert.ok(world);
-  assert.equal(world.children[0].textContent,'4 / 4 CLEARED');
+  assert.equal(world.children.length,1);
+  const coralPin=h.$('thV2WorldPins').children.flatMap(section=>section.children)
+    .find(item=>item.classList.contains('th-v2-world-pin')&&item.textContent.startsWith('Coral Coast'));
+  assert.equal(coralPin.children.find(item=>item.className==='th-v2-world-pin-progress').textContent,
+    '4 / 4 CLEARED');
   h.root.PathleTreasureCampaign.openArea('coral-coast');
   const marker=h.$('thV2AreaCanvas').children.flatMap(section=>section.children)
     .find(item=>item.classList.contains('th-v2-area-haiko'));
   assert.ok(marker);
-  assert.equal(marker.children[0].textContent,'4 / 4 CLEARED');
+  assert.equal(marker.children.length,1);
+  assert.match(h.$('thV2AreaSummary').textContent,/^4 \/ 4 CLEARED/);
   assert.match(marker['aria-label'],/all levels cleared/);
 });

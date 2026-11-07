@@ -26,6 +26,15 @@
 #thV2Area .th-v2-map-explain{margin-inline:12px}
 .th-v2-map-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:4px 1px 8px}
 .th-v2-map-heading h2{margin:0;color:#fff6cf;font-size:23px;line-height:1.15}
+#thV2Area .th-v2-map-heading > div{min-width:0}
+#thV2Area .th-v2-area-progress{
+  margin:4px 0 0;
+  color:#ffe8a8;
+  font-size:12px;
+  font-weight:900;
+  line-height:1.25;
+  letter-spacing:.025em;
+}
 .th-v2-map-heading small{display:block;color:#d0fbff;font-size:10px;font-weight:900;letter-spacing:.11em;margin-bottom:4px}
 .th-v2-map-caption{font-size:9px;letter-spacing:.06em;font-weight:900;color:#ceffff;text-align:right;max-width:110px}
 .th-v2-map-explain{font-size:12px;line-height:1.45;color:#e3f9ff;margin:7px 0 12px}
@@ -72,6 +81,28 @@
   border:2px solid #fff4b6;background:#0a517ccd;color:#fff8d4;
   box-shadow:0 5px 0 #083a5c,0 8px 13px #062f5999;
   border-radius:19px;font-size:11px;line-height:1.2;text-align:center;font-weight:900;
+}
+
+/* Progress belongs directly under the area name, not under Haiko. */
+.th-v2-world-pin{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:2px;
+}
+.th-v2-world-pin-progress{
+  display:block;
+  font-size:clamp(10px,2.8vw,12px);
+  font-weight:950;
+  line-height:1.15;
+}
+.th-v2-world-pin-action{
+  display:block;
+  font-size:10px;
+  line-height:1.15;
+  font-weight:850;
+  opacity:.85;
 }
 .th-v2-world-pin.is-current{background:#f5c96b;color:#173b50}
 .th-v2-world-pin.is-locked:disabled{background:#194b69d9;color:#bbd9e0;border-color:#81abb8;opacity:.9}

@@ -178,16 +178,11 @@
   let currentAreaMarker=null;
   // Haiko is a single artwork layer, reused on every Treasure Hunt map.
   // Keep progress text in the same marker so current position is unmistakable.
-  function makeHaikoMarker(areaId,progressText,description){
+  function makeHaikoMarker(areaId,description){
     const marker=document.createElement('div');
     marker.className='th-v2-map-haiko';
     marker.setAttribute('role','img');
     marker.setAttribute('aria-label',description);
-    const label=document.createElement('span');
-    label.className='th-v2-haiko-progress';
-    label.textContent=progressText;
-    label.setAttribute('aria-hidden','true');
-    marker.append(label);
     const sprite=art.forArea(areaId)?.haiko;
     art.applyLayer(marker,'--th-haiko-art',sprite);
     // Render the actual image as well as the CSS fallback for mobile browsers.
@@ -262,15 +257,28 @@
       button.style.left=(position.x*100)+'%';
       button.style.top=(position.y*100)+'%';
       button.disabled=!access.available;
-      button.textContent=area.title+(access.available?' · Explore':' · Soon');
-      button.setAttribute('aria-label',area.title+(access.available?', explore area':', coming in a future update'));
+      const cleared=area.levelIds.filter(id=>Boolean(progress.records[id])).length;
+      button.textContent=area.title;
+      const status=document.createElement('span');
+      status.className='th-v2-world-pin-progress';
+      status.textContent=access.available
+        ?cleared+' / '+area.levelIds.length+' CLEARED'
+        :'Soon';
+      button.append(status);
+      if(access.available){
+        const action=document.createElement('small');
+        action.className='th-v2-world-pin-action';
+        action.textContent='Explore';
+        button.append(action);
+      }
+      button.setAttribute('aria-label',area.title+(access.available
+        ?', '+cleared+' of '+area.levelIds.length+' levels cleared, explore area'
+        :', coming in a future update'));
       button.addEventListener('click',()=>openArea(area.id));
       section.append(button);
       if(area.id===activeArea?.area.id){
         currentWorldPin=button;
-        const cleared=area.levelIds.filter(id=>Boolean(progress.records[id])).length;
         const haiko=makeHaikoMarker(area.id,
-          cleared+' / '+area.levelIds.length+' CLEARED',
           'Haiko is in '+area.title+', '+cleared+' of '+area.levelIds.length+' levels cleared');
         haiko.classList.add('th-v2-world-haiko');
         haiko.style.left=(position.x*100)+'%';
@@ -296,8 +304,7 @@
     areaTitle.textContent=area.title;
     const cleared=area.levelIds.filter(id=>Boolean(progress.records[id])).length;
     const earned=model.earnedFins(progress,area.levelIds,finsFor);
-    areaSummary.textContent=cleared+' / '+area.levelIds.length+
-      ' playable levels complete · '+earned+' fins · Area goal: '+area.targetLevelCount+' levels';
+    areaSummary.textContent=cleared+' / '+area.levelIds.length+' CLEARED · '+earned+' fins';
     areaCanvas.replaceChildren();
     currentAreaNode=null;
     currentAreaMarker=null;
@@ -362,10 +369,7 @@
           currentNodeElement=button;
           const completed=area.levelIds.every(levelId=>Boolean(progress.records[levelId]));
           const nextNumber=node.index+1;
-          const progressText=completed
-            ?area.levelIds.length+' / '+area.levelIds.length+' CLEARED'
-            :'LEVEL '+nextNumber+' / '+area.levelIds.length;
-          const haiko=makeHaikoMarker(area.id,progressText,
+          const haiko=makeHaikoMarker(area.id,
             'Haiko at '+area.title+', '+(completed?'all levels cleared':
               'next level '+nextNumber+' of '+area.levelIds.length));
           haiko.classList.add('th-v2-area-haiko');
