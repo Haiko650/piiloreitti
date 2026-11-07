@@ -186,6 +186,14 @@ test('three tutorial finishes unlock Water World and first Coral Coast stage',as
   assert.equal(coral.disabled,false);
   assert.equal(islands.disabled,true);
   assert.ok(worldSections[2].properties['--th-world-art'].includes('world-overview.svg'));
+  const worldHaikos=worldSections.flatMap(section=>
+    section.children.filter(item=>item.classList.contains('th-v2-world-haiko')));
+  assert.equal(worldHaikos.length,1,'Only the current region gets a Haiko progress sprite');
+  assert.equal(worldHaikos[0].style.left,coral.style.left);
+  assert.equal(worldHaikos[0].style.top,coral.style.top);
+  assert.ok(worldHaikos[0].properties['--th-haiko-art'].includes('haiko-swimming-menu.webp'));
+  assert.equal(worldHaikos[0].children[0].textContent,'0 / 4 CLEARED');
+  assert.match(worldHaikos[0]['aria-label'],/Coral Coast, 0 of 4 levels cleared/);
   assert.equal(coral.wasScrolled,true,'Current area should be located when entering world');
   h.$('thV2WorldBack').click();
   assert.equal(coral.wasScrolled,true,'Find my area should scroll to the current area');
@@ -198,6 +206,9 @@ test('three tutorial finishes unlock Water World and first Coral Coast stage',as
   assert.ok(sections[0].properties['--th-base-art'].includes('section-01-base.svg'));
   assert.ok(sections[0].properties['--th-detail-art'].includes('section-01-details.svg'));
   assert.equal(sections[0].children.filter(x=>x.classList.contains('th-v2-map-haiko')).length,1);
+  const haiko=sections[0].children.find(x=>x.classList.contains('th-v2-area-haiko'));
+  assert.equal(haiko.children[0].textContent,'LEVEL 1 / 4');
+  assert.ok(haiko.properties['--th-haiko-art'].includes('haiko-swimming-menu.webp'));
   const first=sections[0].children.find(x=>x.classList.contains('is-next'));
   const fourth=sections[0].children.find(x=>x.classList.contains('th-v2-node')&&
     x.children[0].textContent==='4');
@@ -223,6 +234,16 @@ test('Coral Coast current stage changes only after a successful saved victory',a
   const area=h.$('thV2AreaCanvas');
   const next=area.children.flatMap(section=>section.children).find(x=>x.classList.contains('is-next'));
   assert.equal(next.children[0].textContent,'2');
+  const marker=area.children.flatMap(section=>section.children)
+    .find(item=>item.classList.contains('th-v2-area-haiko'));
+  assert.equal(marker.children[0].textContent,'LEVEL 2 / 4');
+  assert.match(marker['aria-label'],/next level 2 of 4/);
+  assert.equal(marker.style.left,next.style.left);
+  assert.equal(marker.style.top,next.style.top);
+  h.root.PathleTreasureCampaign.showWorld();
+  const worldMarker=h.$('thV2WorldPins').children.flatMap(section=>section.children)
+    .find(item=>item.classList.contains('th-v2-world-haiko'));
+  assert.equal(worldMarker.children[0].textContent,'1 / 4 CLEARED');
   assert.equal(h.root.PathleTreasureCampaign.canEnter(4),true);
   assert.equal(h.root.PathleTreasureCampaign.canEnter(5),false);
 });
@@ -341,13 +362,17 @@ test('Return to Haiko appears only when the active Water World area is offscreen
   assert.equal(nav.observers.length,1);
   const watcher=nav.observers[0];
   assert.equal(watcher.options.root,h.$('thCampaignMap'));
-  assert.equal(watcher.target.classList.contains('th-v2-world-pin'),true);
+  assert.equal(watcher.target.classList.contains('th-v2-world-haiko'),true);
+  const activePin=h.$('thV2WorldPins').children.flatMap(section=>section.children)
+    .find(item=>item.classList.contains('th-v2-world-pin')&&item.classList.contains('is-current'));
+  assert.ok(activePin);
+  activePin.wasScrolled=false;
   watcher.notify(true);
   assert.equal(btn.hidden,true,'Return should remain hidden while current region is in view');
   watcher.notify(false);
   assert.equal(btn.hidden,false,'Return must appear once current region is offscreen');
   btn.click();
-  assert.equal(watcher.target.wasScrolled,true,'Return still scrolls to the current region');
+  assert.equal(activePin.wasScrolled,true,'Return still scrolls to the current region');
   watcher.notify(true);
   assert.equal(btn.hidden,true,'Return disappears after Haiko is visible again');
 });
@@ -367,7 +392,7 @@ test('Coral Coast uses its Haiko sprite as viewport anchor and ignores stale wat
   assert.equal(nav.observers.length,2);
   const active=nav.observers[1];
   assert.equal(active.options.root,h.$('thCampaignMap'));
-  assert.equal(active.target.className,'th-v2-map-haiko');
+  assert.equal(active.target.className,'th-v2-map-haiko th-v2-area-haiko');
   old.notify(false);
   assert.equal(h.$('thV2WorldBack').hidden,true,'Old map cannot revive hidden button');
   active.notify(true);
@@ -384,4 +409,20 @@ test('Coral Coast uses its Haiko sprite as viewport anchor and ignores stale wat
   assert.equal(active.disconnected,true);
   assert.equal(h.$('thV2AreaHere').hidden,true);
   assert.equal(h.root.PathleTreasureCampaign.getView(),'world');
+});
+
+test('a finished Coral Coast area keeps Haiko on the final unlocked level',async()=>{
+  const h=harness();await idle();
+  for(let i=0;i<release.levels.length;i++)await clear(h,i);
+  h.root.PathleTreasureCampaign.showWorld();
+  const world=h.$('thV2WorldPins').children.flatMap(section=>section.children)
+    .find(item=>item.classList.contains('th-v2-world-haiko'));
+  assert.ok(world);
+  assert.equal(world.children[0].textContent,'4 / 4 CLEARED');
+  h.root.PathleTreasureCampaign.openArea('coral-coast');
+  const marker=h.$('thV2AreaCanvas').children.flatMap(section=>section.children)
+    .find(item=>item.classList.contains('th-v2-area-haiko'));
+  assert.ok(marker);
+  assert.equal(marker.children[0].textContent,'4 / 4 CLEARED');
+  assert.match(marker['aria-label'],/all levels cleared/);
 });
