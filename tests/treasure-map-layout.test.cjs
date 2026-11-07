@@ -46,6 +46,22 @@ test('art assets are independent of stable level IDs and allow replacement image
   ]);
   assert.ok(segments.every(item=>item.base.endsWith('.svg')));
   assert.ok(segments.every(item=>fs.existsSync(path.join(__dirname,'..',item.base))));
+  // Each shipped map SVG must be embedded losslessly for Android rendering.
+  const files=[
+    ...segments.map(item=>item.base),
+    art.forSection('coral-coast','coral-shallows-01').base,
+    art.forSection('coral-coast','coral-shallows-01').details
+  ];
+  assert.equal(files.length,5);
+  for(const file of files){
+    const svg=fs.readFileSync(path.join(__dirname,'..',file),'utf8');
+    assert.equal(art.MAP_SVG_SOURCE[file],svg,'Embedded map differs: '+file);
+    const uri=art.imageSource(file);
+    assert.match(uri,/^data:image\/svg\+xml;charset=UTF-8,/);
+    assert.equal(decodeURIComponent(uri.slice(uri.indexOf(',')+1)),svg);
+  }
+  assert.equal(art.imageSource('images/maps/../../bad.svg'),null);
+  assert.equal(art.imageSource('https://example.org/m.svg'),null);
   assert.deepEqual(art.worldAreaPosition('water-world','coral-coast'),
     art.REGISTRY.worlds['water-world'].areas['coral-coast']);
   // Regression: the embedded sprite must decode to the exact approved asset.

@@ -5,7 +5,7 @@
 The main menu shows a compact **tappable** build label at the top center,
 between Settings and the DEV toggle:
 
-**DEV · v1.5.25**
+**DEV · v1.5.26**
 
 The installed version is defined in `js/version.js`. The published
 GitHub Pages version is described by `version.json` in the repo root.
@@ -65,9 +65,16 @@ automatically reload while Daily or Treasure Hunt is in progress.
 - The canonical Android shortcut URL remains
   `https://haiko650.github.io/piiloreitti/`.
 
-## Haiko map sprite quality (DEV v1.5.25)
+## Haiko map sprite quality (DEV v1.5.26)
 
 - Maps reuse the same transparent upright Haiko sprite, derived from the original 1254 × 1254 artwork.
 - The map-ready WebP is 219 × 300 pixels instead of the previous 95 × 130 thumbnail. Do not shrink to display-size pixels during GitHub transfer.
 - Both `images/haiko-map-upright.webp` and the inline base64 in `js/treasure-map-art.js` must contain identical bytes. The artwork test checks this and the decoded WebP dimensions.
 - Character appearance and map coordinates are unchanged; map-background rendering will be addressed separately.
+
+## SVG map artwork reliability (DEV v1.5.26)
+
+- Both the Water World overview and Coral Coast area render their existing, original SVGs as non-interactive `img` layers inside the geographic section artwork containers.
+- The five released SVG images are embedded losslessly as `data:image/svg+xml` in `js/treasure-map-art.js`. No extra asset request is required; the local SVG files remain editable source copies and are checked for byte-for-byte equality in tests.
+- Original CSS map art and fallback gradients are preserved for future, non-embedded regions. No puzzle IDs, coordinates, scores, or saved data are changed.
+- On Android verify geographical coast/island shapes on all three world-map sections, coral details, scrolling and touch targets before replacing placeholder artwork.

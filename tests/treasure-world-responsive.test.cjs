@@ -51,3 +51,17 @@ test('overview artwork and tappable area pins remain on separate responsive laye
   assert.match(cssBlock(css,'.th-v2-world-pin'),/position\s*:\s*absolute/);
   assert.match(read('js/treasure-map-art.js'),/world-overview\.svg/);
 });
+
+test('all illustrated maps use image layers while preserving separate tap targets',()=>{
+  const controller=read('js/treasure-campaign-v2.js');
+  const art=read('js/treasure-map-art.js');
+  const css=read('css/treasure-world-v2.css');
+  assert.match(controller,/mountMapArtwork\(picture,section\.base\)/);
+  assert.match(controller,/mountMapArtwork\(base,images\?\.base\)/);
+  assert.match(controller,/mountMapArtwork\(detail,images\?\.details\)/);
+  assert.match(controller,/image\.className='th-v2-map-art-img'/);
+  assert.match(art,/function imageSource\(url\)/);
+  assert.match(css,/\.th-v2-world-art > \.th-v2-map-art-img,/);
+  assert.match(css,/pointer-events:none;/);
+  assert.match(css,/object-fit:fill;/);
+});

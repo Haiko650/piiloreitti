@@ -203,6 +203,19 @@
     }
     return marker;
   }
+  // Put the geographic artwork into real <img> elements; the CSS
+  // background remains a fallback and the buttons stay independent.
+  function mountMapArtwork(container,url){
+    const source=art.imageSource(url);
+    if(!source)return;
+    const image=document.createElement('img');
+    image.className='th-v2-map-art-img';
+    image.src=source;
+    image.alt='';
+    image.draggable=false;
+    image.setAttribute('aria-hidden','true');
+    container.append(image);
+  }
   function renderWorld(){
     const world=worlds.getWorld(catalog,'water-world');
     worldPins.replaceChildren();
@@ -229,6 +242,7 @@
       const picture=document.createElement('div');
       picture.className='th-v2-world-art';
       picture.setAttribute('aria-hidden','true');
+      mountMapArtwork(picture,section.base);
       box.append(picture);
       worldPins.append(box);
       sectionNodes.set(section.id,box);
@@ -304,6 +318,8 @@
       base.className='th-v2-art-base';base.setAttribute('aria-hidden','true');
       const detail=document.createElement('div');
       detail.className='th-v2-art-details';detail.setAttribute('aria-hidden','true');
+      mountMapArtwork(base,images?.base);
+      mountMapArtwork(detail,images?.details);
       sectionElement.append(base);
       const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
       svg.classList.add('th-v2-route-svg');

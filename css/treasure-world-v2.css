@@ -84,6 +84,21 @@
 }
 .th-v2-art-base{z-index:0;background-image:var(--th-base-art)}
 .th-v2-art-details{z-index:2;background-image:var(--th-detail-art)}
+/* SVG illustrations are mounted as self-contained image elements.
+   Gradients remain visible while images decode and on unsupported clients. */
+.th-v2-world-art > .th-v2-map-art-img,
+.th-v2-art-base > .th-v2-map-art-img,
+.th-v2-art-details > .th-v2-map-art-img{
+  position:absolute;
+  inset:0;
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:fill;
+  pointer-events:none;
+  user-select:none;
+  -webkit-user-drag:none;
+}
 .th-v2-route-svg{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;filter:drop-shadow(0 2px 2px #07526a)}
 .th-v2-node{
   position:absolute;z-index:5;transform:translate(-50%,-50%);

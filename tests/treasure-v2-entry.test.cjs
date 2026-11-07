@@ -186,6 +186,16 @@ test('three tutorial finishes unlock Water World and first Coral Coast stage',as
   assert.equal(coral.disabled,false);
   assert.equal(islands.disabled,true);
   assert.ok(worldSections[2].properties['--th-world-art'].includes('world-overview.svg'));
+  // The actual map must be visible via an embedded real image, not just
+  // the CSS fallback gradient (which Android showed without geography).
+  for(const section of worldSections){
+    const artBox=section.children.find(x=>x.classList.contains('th-v2-world-art'));
+    assert.ok(artBox,'Missing world artwork container');
+    assert.equal(artBox.children.length,1);
+    assert.equal(artBox.children[0].className,'th-v2-map-art-img');
+    assert.match(artBox.children[0].src,/^data:image\/svg\+xml;charset=UTF-8,/);
+    assert.equal(artBox.children[0]['aria-hidden'],'true');
+  }
   const worldHaikos=worldSections.flatMap(section=>
     section.children.filter(item=>item.classList.contains('th-v2-world-haiko')));
   assert.equal(worldHaikos.length,1,'Only the current region gets a Haiko progress sprite');
@@ -205,6 +215,13 @@ test('three tutorial finishes unlock Water World and first Coral Coast stage',as
   assert.equal(sections[0].children.filter(x=>x.classList.contains('th-v2-node')).length,4);
   assert.ok(sections[0].properties['--th-base-art'].includes('section-01-base.svg'));
   assert.ok(sections[0].properties['--th-detail-art'].includes('section-01-details.svg'));
+  for(const className of ['th-v2-art-base','th-v2-art-details']){
+    const artwork=sections[0].children.find(x=>x.classList.contains(className));
+    assert.ok(artwork,'Missing '+className);
+    assert.equal(artwork.children.length,1);
+    assert.equal(artwork.children[0].className,'th-v2-map-art-img');
+    assert.match(artwork.children[0].src,/^data:image\/svg\+xml;charset=UTF-8,/);
+  }
   assert.equal(sections[0].children.filter(x=>x.classList.contains('th-v2-map-haiko')).length,1);
   const haiko=sections[0].children.find(x=>x.classList.contains('th-v2-area-haiko'));
   assert.equal(haiko.children[0].textContent,'LEVEL 1 / 4');
