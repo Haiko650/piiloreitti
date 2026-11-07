@@ -167,7 +167,8 @@ test('area completion is displayed below the area name, never below Haiko',()=>{
  assert.match(script,/status\.className='th-v2-world-pin-progress'/);
  assert.match(script,/status\.textContent=access\.available/);
  assert.match(script,/button\.append\(status\)/);
- assert.match(css,/\.th-v2-world-pin\{\s*display:flex;\s*flex-direction:column/);
+ assert.match(css,/\.th-v2-world-pin\{[^}]*display:flex;/);
+ assert.match(css,/\.th-v2-world-pin\{[^}]*flex-direction:column;/);
  assert.match(css,/\.th-v2-world-pin-progress\{/);
  assert.match(script,/areaSummary\.textContent=cleared\+' \/ '\+area\.levelIds\.length\+' CLEARED/);
  assert.match(css,/#thV2Area \.th-v2-area-progress\{/);
