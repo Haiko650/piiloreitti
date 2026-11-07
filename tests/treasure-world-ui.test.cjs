@@ -142,7 +142,7 @@ test('Haiko is smaller and floats entirely above the destination marker on both 
  const css=read('css/treasure-world-ui.css');
  const html=read('treasure-hunt.html');
  const geometry=read('css/treasure-world-v2.css');
- assert.match(html,/css\/treasure-world-ui\.css\?v=1\.5\.28/);
+ assert.match(html,/css\/treasure-world-ui\.css\?v=1\.5\.29/);
  assert.match(css,/transform:translate\(-50%,calc\(-100% - 48px\)\)/);
  assert.match(css,/width:96px;\s*height:126px;\s*border:0;/);
  assert.match(css,/@media\(max-width:350px\)[\s\S]*?width:80px;\s*height:110px;/);
