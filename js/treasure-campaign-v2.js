@@ -173,12 +173,38 @@
       cleared<3?'Continue tutorial · '+(cleared+1)+' / 3 →':'Explore Water World →';
   }
   let currentWorldPin=null;
+  let currentWorldMarker=null;
   let currentAreaNode=null;
   let currentAreaMarker=null;
+  // Haiko is a single artwork layer, reused on every Treasure Hunt map.
+  // Keep progress text in the same marker so current position is unmistakable.
+  function makeHaikoMarker(areaId,progressText,description){
+    const marker=document.createElement('div');
+    marker.className='th-v2-map-haiko';
+    marker.setAttribute('role','img');
+    marker.setAttribute('aria-label',description);
+    const label=document.createElement('span');
+    label.className='th-v2-haiko-progress';
+    label.textContent=progressText;
+    label.setAttribute('aria-hidden','true');
+    marker.append(label);
+    art.applyLayer(marker,'--th-haiko-art',art.forArea(areaId)?.haiko);
+    return marker;
+  }
   function renderWorld(){
     const world=worlds.getWorld(catalog,'water-world');
     worldPins.replaceChildren();
     currentWorldPin=null;
+    currentWorldMarker=null;
+    const areaStates=worlds.getAreas(catalog,world.id).map(area=>({
+      area,access:model.areaAccess(progress,catalog,area.id,finsFor)
+    }));
+    // Follow the first unfinished released area, or the furthest completed
+    // unlocked area when all currently available puzzles have been solved.
+    const availableAreas=areaStates.filter(item=>item.access.available);
+    const activeArea=availableAreas.find(item=>
+      item.area.levelIds.some(id=>!progress.records[id]))||
+      availableAreas[availableAreas.length-1];
     const sectionNodes=new Map();
     // One separate, replaceable artwork panel per geographic section.
     // Both the artwork and the number of panels are data-driven.
@@ -196,14 +222,13 @@
       sectionNodes.set(section.id,box);
     }
     if(!sectionNodes.size)throw new Error('Water World has no map artwork sections');
-    for(const area of worlds.getAreas(catalog,world.id)){
+    for(const {area,access} of areaStates){
       const position=art.worldAreaPosition(world.id,area.id);
       const section=position&&sectionNodes.get(position.sectionId);
       if(!section||!Number.isFinite(position.x)||!Number.isFinite(position.y)||
          position.x<0||position.x>1||position.y<0||position.y>1){
         throw new Error('Missing valid map section/location for area '+area.id);
       }
-      const access=model.areaAccess(progress,catalog,area.id,finsFor);
       const button=document.createElement('button');
       button.type='button';
       button.className='th-v2-world-pin';
@@ -215,15 +240,26 @@
       button.setAttribute('aria-label',area.title+(access.available?', explore area':', coming in a future update'));
       button.addEventListener('click',()=>openArea(area.id));
       section.append(button);
-      if(access.available)currentWorldPin=button;
+      if(area.id===activeArea?.area.id){
+        currentWorldPin=button;
+        const cleared=area.levelIds.filter(id=>Boolean(progress.records[id])).length;
+        const haiko=makeHaikoMarker(area.id,
+          cleared+' / '+area.levelIds.length+' CLEARED',
+          'Haiko is in '+area.title+', '+cleared+' of '+area.levelIds.length+' levels cleared');
+        haiko.classList.add('th-v2-world-haiko');
+        haiko.style.left=(position.x*100)+'%';
+        haiko.style.top=(position.y*100)+'%';
+        section.append(haiko);
+        currentWorldMarker=haiko;
+      }
     }
-    // Return from a level to the player's active region instead of leaving
-    // them stranded at the far northern edge of a future huge map.
-    if(currentWorldPin){
-      const marker=currentWorldPin;
+    // Center the chosen area and follow Haiko, not just the pin, for the
+    // contextual Return button as the player scrolls.
+    if(currentWorldPin&&currentWorldMarker){
+      const pin=currentWorldPin,marker=currentWorldMarker;
       requestAnimationFrame(()=>{
-        if(view!=='world'||currentWorldPin!==marker)return;
-        marker.scrollIntoView?.({block:'center',behavior:'auto'});
+        if(view!=='world'||currentWorldMarker!==marker)return;
+        pin.scrollIntoView?.({block:'center',behavior:'auto'});
         watchHaiko('world',marker);
       });
     }
@@ -296,15 +332,17 @@
         sectionElement.append(button);
         if(id===currentId){
           currentNodeElement=button;
-          const haiko=document.createElement('div');
-          haiko.className='th-v2-map-haiko';
-          haiko.setAttribute('role','img');
-          haiko.setAttribute('aria-label','Haiko the Shark at your current position');
+          const completed=area.levelIds.every(levelId=>Boolean(progress.records[levelId]));
+          const nextNumber=node.index+1;
+          const progressText=completed
+            ?area.levelIds.length+' / '+area.levelIds.length+' CLEARED'
+            :'LEVEL '+nextNumber+' / '+area.levelIds.length;
+          const haiko=makeHaikoMarker(area.id,progressText,
+            'Haiko at '+area.title+', '+(completed?'all levels cleared':
+              'next level '+nextNumber+' of '+area.levelIds.length));
+          haiko.classList.add('th-v2-area-haiko');
           haiko.style.left=(node.x*100)+'%';
-          haiko.style.top='calc('+(node.y*100)+'% - 60px)';
-          // Haiko is independent from every map background and can be replaced
-          // in the artwork registry without touching puzzle or campaign code.
-          art.applyLayer(haiko,'--th-haiko-art',art.forArea(area.id)?.haiko);
+          haiko.style.top=(node.y*100)+'%';
           sectionElement.append(haiko);
           currentAreaMarker=haiko;
         }
