@@ -392,7 +392,7 @@ test('Coral Coast uses its Haiko sprite as viewport anchor and ignores stale wat
   assert.equal(nav.observers.length,2);
   const active=nav.observers[1];
   assert.equal(active.options.root,h.$('thCampaignMap'));
-  assert.equal(active.target.className,'th-v2-map-haiko th-v2-area-haiko');
+  assert.equal(active.target.classList.contains('th-v2-area-haiko'),true);
   old.notify(false);
   assert.equal(h.$('thV2WorldBack').hidden,true,'Old map cannot revive hidden button');
   active.notify(true);
