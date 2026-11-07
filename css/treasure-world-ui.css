@@ -204,3 +204,76 @@ body.th-page:has(#thV2World:not([hidden])) .th-header :is(.th-back):focus-visibl
 #thV2Area #thV2AreaHere[hidden]{
   display:none!important;
 }
+
+/* Haiko is the visual progress cursor on both maps (shared approved art).
+   These styles affect ONLY the separate character overlay, not geography,
+   route lines, level hit areas or the map's scroll/zoom geometry. */
+#thV2World .th-v2-map-haiko.th-v2-world-haiko,
+#thV2Area .th-v2-map-haiko.th-v2-area-haiko{
+  position:absolute;
+  z-index:12;
+  width:clamp(114px,32vw,154px);
+  height:clamp(92px,25vw,112px);
+  transform:translate(-50%,calc(-100% - 18px));
+  pointer-events:none;
+  border:2px solid #dcffffad;
+  border-radius:48% 48% 36% 36%;
+  background-image:
+    var(--th-haiko-art,none),
+    radial-gradient(ellipse at 50% 52%,#f5ffffee 0%,#b1f3f8c9 50%,#30abc94d 76%,transparent 100%);
+  background-size:96% auto,100% 100%;
+  background-position:center 14%,center;
+  background-repeat:no-repeat;
+  box-shadow:inset 0 2px 0 #ffffffc8,0 0 0 3px #ffef99aa,0 4px 12px #003d7885;
+  filter:drop-shadow(0 5px 4px #023c6988);
+  animation:thV2HaikoSwim 2.8s ease-in-out infinite alternate;
+}
+#thV2World .th-v2-map-haiko.th-v2-world-haiko::after,
+#thV2Area .th-v2-map-haiko.th-v2-area-haiko::after{
+  content:"";
+  position:absolute;
+  bottom:-20px;
+  left:50%;
+  width:0;
+  height:0;
+  border-left:9px solid transparent;
+  border-right:9px solid transparent;
+  border-top:12px solid #ffe27c;
+  transform:translateX(-50%);
+  filter:drop-shadow(0 2px 1px #05506a88);
+}
+#thV2World .th-v2-haiko-progress,
+#thV2Area .th-v2-haiko-progress{
+  position:absolute;
+  z-index:2;
+  bottom:-9px;
+  left:50%;
+  transform:translateX(-50%);
+  display:block;
+  min-width:max-content;
+  max-width:170px;
+  padding:5px 10px;
+  border:2px solid #fff8dc;
+  border-radius:999px;
+  background:linear-gradient(180deg,#fff6bb,#ffdb56 54%,#efaa26);
+  color:#704205;
+  box-shadow:inset 0 1px 0 #fff,0 3px 0 #a5731c,0 5px 8px #003b7070;
+  font:1000 clamp(10px,2.8vw,12px)/1.15 "Trebuchet MS",system-ui,sans-serif;
+  letter-spacing:.01em;
+  text-align:center;
+  text-shadow:0 1px #fff6cb;
+  white-space:nowrap;
+}
+@media(max-width:350px){
+  #thV2World .th-v2-map-haiko.th-v2-world-haiko,
+  #thV2Area .th-v2-map-haiko.th-v2-area-haiko{
+    width:108px;
+    height:89px;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  #thV2World .th-v2-map-haiko.th-v2-world-haiko,
+  #thV2Area .th-v2-map-haiko.th-v2-area-haiko{
+    animation:none;
+  }
+}
