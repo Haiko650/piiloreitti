@@ -55,8 +55,10 @@
   }
   function applyLayer(node,variable,url){
     if(!node||!node.style||typeof node.style.setProperty!=='function')return;
-    if(typeof url==='string'&&(url.startsWith(BASE)||url===HAIKO_IMAGE)&&
-      !url.includes('..')&&/^images\/maps\/[a-z0-9/._-]+\.(?:svg|webp|png)$/.test(url)){
+    const allowedMap=typeof url==='string'&&url.startsWith(BASE)&&
+      /^images\/maps\/[a-z0-9/._-]+\.(?:svg|webp|png)$/.test(url);
+    const allowedHaiko=url===HAIKO_IMAGE;
+    if((allowedMap||allowedHaiko)&&!url.includes('..')){
       node.style.setProperty(variable,'url("'+url+'")');
     }else{
       node.style.setProperty(variable,'none');
