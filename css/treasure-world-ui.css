@@ -300,3 +300,23 @@ body.th-page:has(#thV2World:not([hidden])) .th-header :is(.th-back):focus-visibl
     height:129px;
   }
 }
+
+/* v1.5.23: explicitly render the map sprite above the illustrated layers. */
+#thV2World .th-v2-map-haiko.th-v2-world-haiko,
+#thV2Area .th-v2-map-haiko.th-v2-area-haiko{
+  z-index:24;
+  display:block;
+  visibility:visible;
+  opacity:1;
+}
+#thV2World .th-v2-map-haiko .th-v2-haiko-sprite,
+#thV2Area .th-v2-map-haiko .th-v2-haiko-sprite{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
+  pointer-events:none;
+  z-index:1;
+}

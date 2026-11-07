@@ -191,7 +191,7 @@ test('three tutorial finishes unlock Water World and first Coral Coast stage',as
   assert.equal(worldHaikos.length,1,'Only the current region gets a Haiko progress sprite');
   assert.equal(worldHaikos[0].style.left,coral.style.left);
   assert.equal(worldHaikos[0].style.top,coral.style.top);
-  assert.ok(worldHaikos[0].properties['--th-haiko-art'].includes('haiko-swimming-menu.webp'));
+  assert.ok(worldHaikos[0].properties['--th-haiko-art'].includes('haiko-map-upright.webp'));
   assert.equal(worldHaikos[0].children[0].textContent,'0 / 4 CLEARED');
   assert.match(worldHaikos[0]['aria-label'],/Coral Coast, 0 of 4 levels cleared/);
   assert.equal(coral.wasScrolled,true,'Current area should be located when entering world');
@@ -208,7 +208,7 @@ test('three tutorial finishes unlock Water World and first Coral Coast stage',as
   assert.equal(sections[0].children.filter(x=>x.classList.contains('th-v2-map-haiko')).length,1);
   const haiko=sections[0].children.find(x=>x.classList.contains('th-v2-area-haiko'));
   assert.equal(haiko.children[0].textContent,'LEVEL 1 / 4');
-  assert.ok(haiko.properties['--th-haiko-art'].includes('haiko-swimming-menu.webp'));
+  assert.ok(haiko.properties['--th-haiko-art'].includes('haiko-map-upright.webp'));
   const first=sections[0].children.find(x=>x.classList.contains('is-next'));
   const fourth=sections[0].children.find(x=>x.classList.contains('th-v2-node')&&
     x.children[0].textContent==='4');

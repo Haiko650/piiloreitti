@@ -5,7 +5,7 @@
 (function(root){
   'use strict';
   const BASE='images/maps/water-world/';
-  // Use the approved, transparent Haiko character from the main menu on maps.
+  // Shared upright transparent Haiko sprite for Water World and area progress maps.
   const HAIKO_IMAGE='images/haiko-map-upright.webp';
   const REGISTRY=Object.freeze({
     worlds:Object.freeze({

@@ -188,7 +188,17 @@
     label.textContent=progressText;
     label.setAttribute('aria-hidden','true');
     marker.append(label);
-    art.applyLayer(marker,'--th-haiko-art',art.forArea(areaId)?.haiko);
+    const sprite=art.forArea(areaId)?.haiko;
+    art.applyLayer(marker,'--th-haiko-art',sprite);
+    // Render the actual image as well as the CSS fallback for mobile browsers.
+    if(sprite){
+      const picture=document.createElement('img');
+      picture.className='th-v2-haiko-sprite';
+      picture.src=sprite+'?v=1.5.23';
+      picture.alt='';
+      picture.setAttribute('aria-hidden','true');
+      marker.append(picture);
+    }
     return marker;
   }
   function renderWorld(){
