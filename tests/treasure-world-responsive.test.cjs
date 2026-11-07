@@ -83,3 +83,31 @@ test('all illustrated maps use image layers while preserving separate tap target
   assert.match(css,/pointer-events:none;/);
   assert.match(css,/object-fit:fill;/);
 });
+
+test('Water World area signs match the approved home Treasure capsule look',()=>{
+  const menu=read('css/menu-capsules.css');
+  const css=read('css/treasure-world-v2.css');
+  const html=read('treasure-hunt.html');
+  const js=read('js/treasure-campaign-v2.js');
+  assert.match(html,/css\/treasure-world-v2\.css\?v=1\.5\.30/);
+  assert.match(menu,/#welcomeScreen #playTreasure\{/);
+  assert.match(menu,/linear-gradient\(180deg,#b9ffff 0%,#44f6ed 22%,#06dacb 69%,#00adbd 100%\)/);
+  assert.match(css,/linear-gradient\(180deg,#b9ffff 0%,#44f6ed 22%,#06dacb 69%,#00adbd 100%\)/);
+  assert.match(css,/border-radius:999px/);
+  assert.match(css,/border:4px solid #ddfffa/);
+  assert.match(css,/\.th-page \.th-v2-world-pin\{/);
+  assert.match(css,/background:linear-gradient\(180deg,#ffffff99,#ffffff17\)/);
+  assert.match(css,/\.th-v2-world-pin.is-locked:disabled\{/);
+  assert.match(css,/\.th-v2-world-pin-progress\{/);
+  assert.match(css,/\.th-v2-world-pin-action\{/);
+  assert.match(js,/button\.className='th-v2-world-pin'/);
+  assert.match(js,/button\.append\(status\)/);
+  assert.match(js,/button\.disabled=!access\.available/);
+  for(const viewport of [320,360,390,430]){
+    const width=Math.min(viewport*.52,212);
+    const leftCoral=.32*viewport-width/2;
+    const rightOpen=.69*viewport+width/2;
+    assert.ok(leftCoral>=0,'Coral Coast capsule must fit the screen');
+    assert.ok(rightOpen<=viewport,'Open Ocean capsule must fit the screen');
+  }
+});

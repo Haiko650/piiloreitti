@@ -10,7 +10,7 @@ test('Water World presentation uses a dedicated final-loaded ocean skin',()=>{
  const ui=read('css/treasure-world-ui.css');
  const world=html.slice(html.indexOf('id="thV2World"'),html.indexOf('id="thV2Area"'));
  assert.ok(html.indexOf('css/treasure-world-ui.css?v=1.5.29')>
-           html.indexOf('css/treasure-world-v2.css?v=1.5.29'));
+           html.indexOf('css/treasure-world-v2.css?v=1.5.30'));
  assert.doesNotMatch(world,/th-v2-world-hero|th-v2-world-brand|th-v2-world-emblem/);
  assert.doesNotMatch(world,/thV2WorldTitle|thV2WorldStatus|Choose an area to explore/);
  assert.ok(world.indexOf('id="thV2WorldBack"')<world.indexOf('id="thV2WorldCanvas"'),

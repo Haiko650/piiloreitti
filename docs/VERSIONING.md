@@ -5,7 +5,7 @@
 The main menu shows a compact **tappable** build label at the top center,
 between Settings and the DEV toggle:
 
-**DEV · v1.5.29**
+**DEV · v1.5.30**
 
 The installed version is defined in `js/version.js`. The published
 GitHub Pages version is described by `version.json` in the repo root.
@@ -99,3 +99,11 @@ automatically reload while Daily or Treasure Hunt is in progress.
 - Water World's Coral Coast button shows completion directly below the area name, before the Explore action.
 - Coral Coast's completion (and earned fins) is shown directly beneath the area title, not under the moving character.
 - Accessibility labels still describe Haiko's position and saved progress. Map artwork, images, layout coordinates, game state, level unlocks and the approved Haiko sprite are unchanged.
+
+
+## Matching home-menu capsule style for Water World destinations (DEV v1.5.30)
+
+- All three Water World area labels reuse the approved main-menu Treasure Hunt capsule language: rounded pill silhouettes, aqua/turquoise gradient, pale 4px border, upper glossy highlight, high-contrast outlined lettering and raised shadows.
+- An accessible current area is bright turquoise and has a clear progress line and Explore action below its name. Future/locked regions use a muted ocean-blue variant of the same capsule, retain "Soon", and remain disabled.
+- On narrow Android screens width is capped at 52% of the section and 212 CSS pixels, preventing the Coral Coast and Open Ocean signs from reaching the map edges.
+- World map art, area coordinates, Haiko sprite, progress and level logic remain unchanged. The main-menu CSS remains the reference; only the Treasure Hunt destination appearance was updated.

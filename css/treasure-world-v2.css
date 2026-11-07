@@ -75,37 +75,136 @@
   background-image:var(--th-world-art,none);
   background-size:100% 100%;background-repeat:no-repeat;background-position:center;
 }
+/* DEV 1.5.30 — region signs use the approved home-menu Treasure
+   capsule design: shape, sea-turquoise gradient, glossy shine and depth.
+   Visual-only: preserve the exact absolute map positions and hit actions. */
 .th-v2-world-pin{
-  position:absolute;z-index:2;transform:translate(-50%,-50%);pointer-events:auto;
-  width:min(43%,190px);min-height:53px;padding:8px 9px;
-  border:2px solid #fff4b6;background:#0a517ccd;color:#fff8d4;
-  box-shadow:0 5px 0 #083a5c,0 8px 13px #062f5999;
-  border-radius:19px;font-size:11px;line-height:1.2;text-align:center;font-weight:900;
-}
-
-/* Progress belongs directly under the area name, not under Haiko. */
-.th-v2-world-pin{
+  position:absolute;
+  z-index:2;
+  transform:translate(-50%,-50%);
+  pointer-events:auto;
+  box-sizing:border-box;
+  width:min(52%,212px);
+  min-height:76px;
+  padding:11px 12px 10px;
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  gap:2px;
+  gap:3px;
+  isolation:isolate;
+  overflow:hidden;
+  border:4px solid #ddfffa;
+  border-radius:999px;
+  background:linear-gradient(180deg,#b9ffff 0%,#44f6ed 22%,#06dacb 69%,#00adbd 100%);
+  color:#fff;
+  box-shadow:inset 0 2px 0 #f7ffff,inset 0 -3px 0 #06bab8,
+             0 5px 0 #008eac,0 10px 16px #0034549e;
+  font-family:"Trebuchet MS",system-ui,-apple-system,sans-serif;
+  font-size:clamp(13px,3.7vw,18px);
+  line-height:1.08;
+  font-weight:1000;
+  letter-spacing:-.04em;
+  white-space:nowrap;
+  text-align:center;
+  -webkit-text-stroke:.75px #004b6c;
+  paint-order:stroke fill;
+  text-shadow:0 2px 1px #004b6c,0 3px 3px #16284655;
+  transition:filter .14s ease,box-shadow .14s ease;
+  -webkit-tap-highlight-color:transparent;
+}
+/* The base game CSS declares ".th-page button {font:inherit;border:0}".
+   Keep equivalent or stronger specificity so the capsule border and
+   Trebuchet lettering actually render on Android. */
+.th-page .th-v2-world-pin{
+  border:4px solid #ddfffa;
+  color:#fff;
+  font-family:"Trebuchet MS",system-ui,-apple-system,sans-serif;
+  font-size:clamp(13px,3.7vw,18px);
+  font-weight:1000;
+  line-height:1.08;
+  letter-spacing:-.04em;
+}
+.th-v2-world-pin::before{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  top:5px;
+  left:12px;
+  right:12px;
+  height:37%;
+  border-radius:100% 100% 40% 40%/65% 65% 25% 25%;
+  background:linear-gradient(180deg,#ffffff99,#ffffff17);
+  opacity:.86;
+  pointer-events:none;
+}
+.th-v2-world-pin::after{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  top:9px;
+  left:19px;
+  width:39px;
+  height:7px;
+  border-radius:100%;
+  transform:rotate(-18deg);
+  background:#ffffffb5;
+  filter:blur(1px);
+  pointer-events:none;
 }
 .th-v2-world-pin-progress{
   display:block;
-  font-size:clamp(10px,2.8vw,12px);
-  font-weight:950;
+  font-family:system-ui,-apple-system,sans-serif;
+  font-size:clamp(10px,2.65vw,12px);
   line-height:1.15;
+  font-weight:900;
+  letter-spacing:0;
+  color:#004b6c;
+  -webkit-text-stroke:0;
+  text-shadow:none;
 }
 .th-v2-world-pin-action{
   display:block;
-  font-size:10px;
+  font-family:system-ui,-apple-system,sans-serif;
+  font-size:clamp(10px,2.6vw,12px);
   line-height:1.15;
   font-weight:850;
-  opacity:.85;
+  letter-spacing:0;
+  color:#004b6c;
+  opacity:.9;
+  -webkit-text-stroke:0;
+  text-shadow:none;
 }
-.th-v2-world-pin.is-current{background:#f5c96b;color:#173b50}
-.th-v2-world-pin.is-locked:disabled{background:#194b69d9;color:#bbd9e0;border-color:#81abb8;opacity:.9}
+.th-v2-world-pin.is-current:active{
+  filter:brightness(1.06);
+  box-shadow:inset 0 2px 0 #f7ffff,inset 0 -3px 0 #06bab8,
+             0 2px 0 #008eac,0 5px 9px #0034549e;
+}
+.th-v2-world-pin.is-locked:disabled{
+  border-color:#d5ecf6;
+  background:linear-gradient(180deg,#c2ebef 0%,#91ccdc 22%,#5eacc5 69%,#3b819f 100%);
+  color:#f7ffff;
+  box-shadow:inset 0 2px 0 #efffff,inset 0 -3px 0 #408da6,
+             0 5px 0 #286381,0 10px 16px #0034548a;
+  -webkit-text-stroke:.75px #245777;
+  text-shadow:0 2px 1px #245777;
+  opacity:.94;
+  cursor:default;
+}
+.th-v2-world-pin.is-locked .th-v2-world-pin-progress{
+  color:#245777;
+}
+@media(max-width:370px){
+  .th-page .th-v2-world-pin{
+    min-height:70px;
+    padding:9px 8px 8px;
+    border-width:3px;
+    font-size:clamp(12px,3.7vw,14px);
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .th-v2-world-pin{transition:none}
+}
 .th-v2-area-controls{display:flex;justify-content:flex-end;margin:6px 2px 9px}
 .th-v2-area-canvas{
   position:relative;display:flex;flex-direction:column;gap:0;
@@ -185,7 +284,7 @@
   background:#074c6bba;color:#eafffa;font-size:12px;font-weight:750;line-height:1.25;
 }
 @media(max-width:370px){
- .th-v2-world-pin{font-size:10px;padding:5px 6px;min-height:48px}
+ .th-v2-world-pin{font-size:clamp(12px,3.7vw,14px);padding:9px 8px 8px;min-height:70px}
  .th-v2-node{width:54px;min-height:58px}
 }
 @media(max-height:650px){
