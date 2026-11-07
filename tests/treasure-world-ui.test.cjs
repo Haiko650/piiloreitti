@@ -116,7 +116,7 @@ test('approved Haiko artwork is the single reusable progress cursor on both maps
  const script=read('js/treasure-campaign-v2.js');
  const css=read('css/treasure-world-ui.css');
  const html=read('treasure-hunt.html');
- assert.match(art,/HAIKO_IMAGE='images\/haiko-swimming-menu\.webp'/);
+ assert.match(art,/HAIKO_IMAGE='images\/haiko-map-upright\.webp'/);
  assert.match(art,/haiko:HAIKO_IMAGE/);
  assert.match(html,/js\/treasure-map-art\.js\?v=20261107-haikoupright1/);
  assert.match(html,/js\/treasure-campaign-v2\.js\?v=20261107-haikoupright1/);
