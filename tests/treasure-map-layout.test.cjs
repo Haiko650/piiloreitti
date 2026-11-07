@@ -48,12 +48,15 @@ test('art assets are independent of stable level IDs and allow replacement image
   assert.ok(segments.every(item=>fs.existsSync(path.join(__dirname,'..',item.base))));
   assert.deepEqual(art.worldAreaPosition('water-world','coral-coast'),
     art.REGISTRY.worlds['water-world'].areas['coral-coast']);
-  assert.ok(art.forArea('coral-coast').haiko.endsWith('.svg'));
+  assert.equal(art.forArea('coral-coast').haiko,'images/haiko-swimming-menu.webp');
+  assert.ok(fs.existsSync(path.join(__dirname,'..',art.forArea('coral-coast').haiko)));
   assert.ok(art.forSection('coral-coast','coral-shallows-01').base);
   const calls=[];
   const node={style:{setProperty:(k,v)=>calls.push([k,v])}};
   art.applyLayer(node,'--th-base-art','images/maps/water-world/coral-coast/custom-scene.webp');
   assert.match(calls.at(-1)[1],/custom-scene.webp/);
+  art.applyLayer(node,'--th-haiko-art',art.forArea('coral-coast').haiko);
+  assert.match(calls.at(-1)[1],/haiko-swimming-menu.webp/);
   art.applyLayer(node,'--th-base-art','images/maps/../../sneaky.png');
   assert.equal(calls.at(-1)[1],'none');
 });
@@ -63,7 +66,7 @@ test('player-facing area renderer obtains art by section ID, not by level ID',()
   assert.match(body,/layout\.getDisplaySections\(area\)/);
   assert.match(body,/layout\.pathForUp\(section\.nodes/);
   assert.match(body,/art\.forSection\(area\.id,section\.id\)/);
-  assert.match(body,/art\.forArea\(area\.id\)\?\.haiko/);
+  assert.match(body,/art\.forArea\(areaId\)\?\.haiko/);
   assert.doesNotMatch(body,/haiko\.style\.backgroundImage/);
   const html=read('treasure-hunt.html');
   const layoutScript=html.indexOf('js/treasure-map-layout.js');
