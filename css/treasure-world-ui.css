@@ -196,3 +196,11 @@ body.th-page:has(#thV2World:not([hidden])) .th-header :is(.th-back):focus-visibl
     bottom:calc(10px + env(safe-area-inset-bottom,0px))!important;
   }
 }
+
+/* A map button is available only after Haiko's current marker has left
+   the visible map viewport. Explicit ID rules override the 2.5D
+   button's display: inline-flex !important, including on Android. */
+#thV2World #thV2WorldBack[hidden],
+#thV2Area #thV2AreaHere[hidden]{
+  display:none!important;
+}
