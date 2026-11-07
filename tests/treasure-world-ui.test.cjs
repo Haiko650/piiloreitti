@@ -9,7 +9,7 @@ test('Water World presentation uses a dedicated final-loaded ocean skin',()=>{
  const html=read('treasure-hunt.html');
  const ui=read('css/treasure-world-ui.css');
  const world=html.slice(html.indexOf('id="thV2World"'),html.indexOf('id="thV2Area"'));
- assert.ok(html.indexOf('css/treasure-world-ui.css?v=20261106-mapfirst1')>
+ assert.ok(html.indexOf('css/treasure-world-ui.css?v=20261107-visibility1')>
            html.indexOf('css/treasure-world-v2.css?v=th6a3d'));
  assert.doesNotMatch(world,/th-v2-world-hero|th-v2-world-brand|th-v2-world-emblem/);
  assert.doesNotMatch(world,/thV2WorldTitle|thV2WorldStatus|Choose an area to explore/);
@@ -38,7 +38,7 @@ test('new Water World UI does not touch map geometry or map artwork assets',()=>
  assert.match(html,/id="thV2WorldPins" class="th-v2-world-sections"/);
  assert.match(geometry,/aspect-ratio:600\/760/);
  assert.match(geometry,/width:100%;min-width:0;max-width:100%/);
- assert.match(script,/currentWorldPin\.scrollIntoView/);
+ assert.match(script,/marker\.scrollIntoView\?\.\(\{block:'center',behavior:'auto'\}\)/);
  assert.match(art,/world-overview\.svg/);
  for(const className of ['th-v2-world-canvas','th-v2-world-section','th-v2-world-pin','th-v2-map-section','th-v2-node']){
    assert.doesNotMatch(ui,new RegExp('\\.'+className+'\\s*\\{'),
@@ -94,4 +94,19 @@ test('Water World opens directly on the geographic map without redundant instruc
  assert.match(world,/Return to Haiko/);
  assert.match(controller,/function renderWorld\(\)/);
  assert.match(controller,/worlds\.getAreas\(catalog,world\.id\)/);
+});
+
+test('Return controls start hidden and CSS honours hidden despite button display overrides',()=>{
+ const html=read('treasure-hunt.html');
+ const css=read('css/treasure-world-ui.css');
+ const source=read('js/treasure-campaign-v2.js');
+ for(const id of ['thV2WorldBack','thV2AreaHere']){
+   assert.match(html,new RegExp('id="'+id+'" type="button" hidden'));
+ }
+ assert.match(css,/#thV2World #thV2WorldBack\[hidden\],\s*#thV2Area #thV2AreaHere\[hidden\]\s*\{\s*display:none!important;/);
+ assert.match(source,/new root\.IntersectionObserver\(entries=>/);
+ assert.match(source,/\{root:map,threshold:0\}/);
+ assert.match(source,/haikoObserver\.disconnect\(\)/);
+ assert.match(source,/watchHaiko\('world',marker\)/);
+ assert.match(source,/watchHaiko\('area',marker\)/);
 });
