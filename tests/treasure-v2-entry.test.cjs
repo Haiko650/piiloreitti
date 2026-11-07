@@ -93,6 +93,21 @@ function harness(initial=original(),navigationOptions=null){
       collection:{items:{}},settings:{sound:true}
     })}
   };
+  if(navigationOptions?.observeHaiko){
+    const observers=[];
+    navigationOptions.observers=observers;
+    root.IntersectionObserver=class{
+      constructor(callback,options){
+        this.callback=callback;this.options=options;this.disconnected=false;
+        observers.push(this);
+      }
+      observe(target){this.target=target;}
+      disconnect(){this.disconnected=true;}
+      notify(isIntersecting){
+        this.callback([{target:this.target,isIntersecting}]);
+      }
+    };
+  }
   if(navigationOptions){
     const entries=[{state:null}],pointer={index:0};
     root.location={assigned:[],assign(url){this.assigned.push(url);}};
@@ -313,4 +328,60 @@ test('fresh Water World entry uses native browser Back to return home',async()=>
   assert.equal(fresh.root.PathleTreasureCampaign.getView(),'world');
   fresh.root.history.back();
   assert.deepEqual(fresh.root.location.assigned,['index.html']);
+});
+
+test('Return to Haiko appears only when the active Water World area is offscreen',async()=>{
+  const seed=harness();await idle();
+  for(let i=0;i<3;i++)await clear(seed,i);
+  const nav={observeHaiko:true};
+  const h=harness(seed.storage.data,nav);await idle();
+  assert.equal(h.root.PathleTreasureCampaign.getView(),'world');
+  const btn=h.$('thV2WorldBack');
+  assert.equal(btn.hidden,true,'Initial auto-centered area needs no return action');
+  assert.equal(nav.observers.length,1);
+  const watcher=nav.observers[0];
+  assert.equal(watcher.options.root,h.$('thCampaignMap'));
+  assert.equal(watcher.target.classList.contains('th-v2-world-pin'),true);
+  watcher.notify(true);
+  assert.equal(btn.hidden,true,'Return should remain hidden while current region is in view');
+  watcher.notify(false);
+  assert.equal(btn.hidden,false,'Return must appear once current region is offscreen');
+  btn.click();
+  assert.equal(watcher.target.wasScrolled,true,'Return still scrolls to the current region');
+  watcher.notify(true);
+  assert.equal(btn.hidden,true,'Return disappears after Haiko is visible again');
+});
+
+test('Coral Coast uses its Haiko sprite as viewport anchor and ignores stale watchers',async()=>{
+  const seed=harness();await idle();
+  for(let i=0;i<3;i++)await clear(seed,i);
+  const nav={observeHaiko:true};
+  const h=harness(seed.storage.data,nav);await idle();
+  const old=nav.observers[0];
+  old.notify(false);
+  assert.equal(h.$('thV2WorldBack').hidden,false);
+  h.root.PathleTreasureCampaign.openArea('coral-coast');
+  assert.equal(old.disconnected,true);
+  assert.equal(h.$('thV2WorldBack').hidden,true);
+  assert.equal(h.$('thV2AreaHere').hidden,true,'Initially Haiko is automatically centered');
+  assert.equal(nav.observers.length,2);
+  const active=nav.observers[1];
+  assert.equal(active.options.root,h.$('thCampaignMap'));
+  assert.equal(active.target.className,'th-v2-map-haiko');
+  old.notify(false);
+  assert.equal(h.$('thV2WorldBack').hidden,true,'Old map cannot revive hidden button');
+  active.notify(true);
+  assert.equal(h.$('thV2AreaHere').hidden,true);
+  active.notify(false);
+  assert.equal(h.$('thV2AreaHere').hidden,false);
+  h.$('thV2AreaHere').click();
+  const node=h.$('thV2AreaCanvas').children.flatMap(section=>section.children)
+    .find(item=>item.classList.contains('is-next'));
+  assert.equal(node.wasScrolled,true,'Area return still centers the current level');
+  active.notify(true);
+  assert.equal(h.$('thV2AreaHere').hidden,true);
+  h.$('headerBack').click();
+  assert.equal(active.disconnected,true);
+  assert.equal(h.$('thV2AreaHere').hidden,true);
+  assert.equal(h.root.PathleTreasureCampaign.getView(),'world');
 });
