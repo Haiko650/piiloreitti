@@ -37,7 +37,7 @@ function element(id){
       if(selector.includes('.is-complete'))return children.slice().reverse().find(c=>c.classList?.contains('is-complete'))||null;
       return null;
     },
-    click(){for(const fn of events.click??[])fn({target:this})}
+    click(){for(const fn of events.click??[])fn({target:this,preventDefault(){}})}
   };
   return item;
 }
