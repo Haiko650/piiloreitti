@@ -194,9 +194,9 @@
     if(sprite){
       const picture=document.createElement('img');
       picture.className='th-v2-haiko-sprite';
-      picture.src=art.HAIKO_SPRITE_DATA||sprite+'?v=1.5.24';
-      picture.width=95;
-      picture.height=130;
+      picture.src=art.HAIKO_SPRITE_DATA||sprite+'?v=1.5.25';
+      picture.width=219;
+      picture.height=300;
       picture.alt='';
       picture.setAttribute('aria-hidden','true');
       marker.append(picture);

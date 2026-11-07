@@ -52,6 +52,13 @@ test('art assets are independent of stable level IDs and allow replacement image
   assert.match(art.HAIKO_SPRITE_DATA,/^data:image\/webp;base64,/);
   const embedded=Buffer.from(art.HAIKO_SPRITE_DATA.split(',')[1],'base64');
   assert.deepEqual(embedded,fs.readFileSync(path.join(__dirname,'..','images/haiko-map-upright.webp')));
+  // Guard against accidentally publishing a tiny thumbnail as the map sprite.
+  assert.equal(embedded.toString('ascii',0,4),'RIFF');
+  assert.equal(embedded.toString('ascii',12,16),'VP8X');
+  const pixelWidth=1+embedded.readUIntLE(24,3);
+  const pixelHeight=1+embedded.readUIntLE(27,3);
+  assert.equal(pixelWidth,219);
+  assert.equal(pixelHeight,300);
   assert.equal(art.forArea('coral-coast').haiko,'images/haiko-map-upright.webp');
   assert.ok(fs.existsSync(path.join(__dirname,'..',art.forArea('coral-coast').haiko)));
   assert.ok(art.forSection('coral-coast','coral-shallows-01').base);

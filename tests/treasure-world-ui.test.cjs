@@ -9,7 +9,7 @@ test('Water World presentation uses a dedicated final-loaded ocean skin',()=>{
  const html=read('treasure-hunt.html');
  const ui=read('css/treasure-world-ui.css');
  const world=html.slice(html.indexOf('id="thV2World"'),html.indexOf('id="thV2Area"'));
- assert.ok(html.indexOf('css/treasure-world-ui.css?v=1.5.24')>
+ assert.ok(html.indexOf('css/treasure-world-ui.css?v=1.5.25')>
            html.indexOf('css/treasure-world-v2.css?v=th6a3d'));
  assert.doesNotMatch(world,/th-v2-world-hero|th-v2-world-brand|th-v2-world-emblem/);
  assert.doesNotMatch(world,/thV2WorldTitle|thV2WorldStatus|Choose an area to explore/);
@@ -118,8 +118,8 @@ test('approved Haiko artwork is the single reusable progress cursor on both maps
  const html=read('treasure-hunt.html');
  assert.match(art,/HAIKO_IMAGE='images\/haiko-map-upright\.webp'/);
  assert.match(art,/haiko:HAIKO_IMAGE/);
- assert.match(html,/js\/treasure-map-art\.js\?v=1.5.24/);
- assert.match(html,/js\/treasure-campaign-v2\.js\?v=1.5.24/);
+ assert.match(html,/js\/treasure-map-art\.js\?v=1.5.25/);
+ assert.match(html,/js\/treasure-campaign-v2\.js\?v=1.5.25/);
  assert.match(script,/function makeHaikoMarker\(areaId,progressText,description\)/);
  assert.match(script,/picture\.className='th-v2-haiko-sprite'/);
  assert.match(script,/picture\.src=art\.HAIKO_SPRITE_DATA/);

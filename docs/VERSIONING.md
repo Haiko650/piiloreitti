@@ -5,7 +5,7 @@
 The main menu shows a compact **tappable** build label at the top center,
 between Settings and the DEV toggle:
 
-**DEV · v1.5.24**
+**DEV · v1.5.25**
 
 The installed version is defined in `js/version.js`. The published
 GitHub Pages version is described by `version.json` in the repo root.
@@ -64,3 +64,10 @@ automatically reload while Daily or Treasure Hunt is in progress.
 - GitHub Pages on the existing site serves the development game.
 - The canonical Android shortcut URL remains
   `https://haiko650.github.io/piiloreitti/`.
+
+## Haiko map sprite quality (DEV v1.5.25)
+
+- Maps reuse the same transparent upright Haiko sprite, derived from the original 1254 × 1254 artwork.
+- The map-ready WebP is 219 × 300 pixels instead of the previous 95 × 130 thumbnail. Do not shrink to display-size pixels during GitHub transfer.
+- Both `images/haiko-map-upright.webp` and the inline base64 in `js/treasure-map-art.js` must contain identical bytes. The artwork test checks this and the decoded WebP dimensions.
+- Character appearance and map coordinates are unchanged; map-background rendering will be addressed separately.
