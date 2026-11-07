@@ -320,3 +320,14 @@ body.th-page:has(#thV2World:not([hidden])) .th-header :is(.th-back):focus-visibl
   pointer-events:none;
   z-index:1;
 }
+
+/* v1.5.24: Haiko is an actual embedded image, above both maps' level pins.
+   No dependency on an external image URL; never intercept taps. */
+#thV2World .th-v2-map-haiko .th-v2-haiko-sprite,
+#thV2Area .th-v2-map-haiko .th-v2-haiko-sprite{
+  opacity:1!important;
+  visibility:visible!important;
+  background:transparent!important;
+  filter:none;
+  image-rendering:auto;
+}

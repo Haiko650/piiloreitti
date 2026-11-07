@@ -48,6 +48,10 @@ test('art assets are independent of stable level IDs and allow replacement image
   assert.ok(segments.every(item=>fs.existsSync(path.join(__dirname,'..',item.base))));
   assert.deepEqual(art.worldAreaPosition('water-world','coral-coast'),
     art.REGISTRY.worlds['water-world'].areas['coral-coast']);
+  // Regression: the embedded sprite must decode to the exact approved asset.
+  assert.match(art.HAIKO_SPRITE_DATA,/^data:image\/webp;base64,/);
+  const embedded=Buffer.from(art.HAIKO_SPRITE_DATA.split(',')[1],'base64');
+  assert.deepEqual(embedded,fs.readFileSync(path.join(__dirname,'..','images/haiko-map-upright.webp')));
   assert.equal(art.forArea('coral-coast').haiko,'images/haiko-map-upright.webp');
   assert.ok(fs.existsSync(path.join(__dirname,'..',art.forArea('coral-coast').haiko)));
   assert.ok(art.forSection('coral-coast','coral-shallows-01').base);
