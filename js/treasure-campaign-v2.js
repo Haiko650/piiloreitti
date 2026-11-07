@@ -32,6 +32,8 @@
   const worldView=$('thV2World');
   const worldCanvas=$('thV2WorldCanvas');
   const worldPins=$('thV2WorldPins');
+  const worldReturn=$('thV2WorldBack');
+  const areaReturn=$('thV2AreaHere');
   const areaView=$('thV2Area');
   const areaTitle=$('thV2AreaTitle');
   const areaSummary=$('thV2AreaSummary');
@@ -106,7 +108,52 @@
   function hideError(){
     errorBox.hidden=true;errorRetry.onclick=null;shell.inert=false;
   }
+  /* The Return button appears only when the current map marker is outside
+     the scrollable map viewport. A new map invalidates old observations. */
+  let haikoObserver=null,haikoFallback=null,haikoWatchId=0;
+  function stopHaikoWatch(){
+    haikoWatchId++;
+    if(haikoObserver){haikoObserver.disconnect();haikoObserver=null;}
+    if(haikoFallback){
+      map.removeEventListener?.('scroll',haikoFallback);
+      root.removeEventListener?.('resize',haikoFallback);
+      haikoFallback=null;
+    }
+    worldReturn.hidden=true;
+    areaReturn.hidden=true;
+  }
+  function watchHaiko(kind,marker){
+    if(!marker||view!==kind)return;
+    const watchId=haikoWatchId;
+    const button=kind==='world'?worldReturn:areaReturn;
+    const setVisible=isMarkerVisible=>{
+      if(haikoWatchId!==watchId||view!==kind)return;
+      button.hidden=Boolean(isMarkerVisible);
+    };
+    if(typeof root.IntersectionObserver==='function'){
+      haikoObserver=new root.IntersectionObserver(entries=>{
+        for(const entry of entries){
+          if(entry.target===marker)setVisible(entry.isIntersecting);
+        }
+      },{root:map,threshold:0});
+      haikoObserver.observe(marker);
+    }else if(typeof marker.getBoundingClientRect==='function'&&
+             typeof map.getBoundingClientRect==='function'){
+      // Older webviews: use the same scroll container and real DOM bounds.
+      const refresh=()=>{
+        const target=marker.getBoundingClientRect();
+        const viewport=map.getBoundingClientRect();
+        setVisible(target.bottom>viewport.top&&target.top<viewport.bottom&&
+                   target.right>viewport.left&&target.left<viewport.right);
+      };
+      haikoFallback=refresh;
+      map.addEventListener?.('scroll',refresh,{passive:true});
+      root.addEventListener?.('resize',refresh);
+      refresh();
+    }
+  }
   function showSection(which){
+    stopHaikoWatch();
     view=which;
     map.hidden=false;panel.hidden=true;mapButton.hidden=true;
     tutorialView.hidden=which!=='tutorial';
@@ -127,6 +174,7 @@
   }
   let currentWorldPin=null;
   let currentAreaNode=null;
+  let currentAreaMarker=null;
   function renderWorld(){
     const world=worlds.getWorld(catalog,'water-world');
     worldPins.replaceChildren();
@@ -171,8 +219,13 @@
     }
     // Return from a level to the player's active region instead of leaving
     // them stranded at the far northern edge of a future huge map.
-    if(currentWorldPin&&typeof currentWorldPin.scrollIntoView==='function'){
-      requestAnimationFrame(()=>currentWorldPin.scrollIntoView({block:'center',behavior:'auto'}));
+    if(currentWorldPin){
+      const marker=currentWorldPin;
+      requestAnimationFrame(()=>{
+        if(view!=='world'||currentWorldPin!==marker)return;
+        marker.scrollIntoView?.({block:'center',behavior:'auto'});
+        watchHaiko('world',marker);
+      });
     }
   }
   function renderArea(){
@@ -185,6 +238,7 @@
       ' playable levels complete · '+earned+' fins · Area goal: '+area.targetLevelCount+' levels';
     areaCanvas.replaceChildren();
     currentAreaNode=null;
+    currentAreaMarker=null;
     const sections=layout.getDisplaySections(area);
     const currentId=area.levelIds.find(id=>!progress.records[id])||
       area.levelIds[area.levelIds.length-1];
@@ -252,13 +306,19 @@
           // in the artwork registry without touching puzzle or campaign code.
           art.applyLayer(haiko,'--th-haiko-art',art.forArea(area.id)?.haiko);
           sectionElement.append(haiko);
+          currentAreaMarker=haiko;
         }
       }
       areaCanvas.append(sectionElement);
     }
     currentAreaNode=currentNodeElement;
-    if(currentAreaNode&&typeof currentAreaNode.scrollIntoView==='function'){
-      requestAnimationFrame(()=>currentAreaNode.scrollIntoView({block:'center',behavior:'auto'}));
+    if(currentAreaNode&&currentAreaMarker){
+      const node=currentAreaNode,marker=currentAreaMarker;
+      requestAnimationFrame(()=>{
+        if(view!=='area'||currentAreaMarker!==marker)return;
+        node.scrollIntoView?.({block:'center',behavior:'auto'});
+        watchHaiko('area',marker);
+      });
     }
   }
   function showWorld(){
@@ -292,6 +352,7 @@
     $('thV2LevelGuide').textContent=hint;
     // A future sprite-only renderer can switch on this explicit mode.
     document.body.dataset.thVisualMode=stage.visualMode;
+    stopHaikoWatch();
     map.hidden=true;panel.hidden=false;mapButton.hidden=false;
     view='level';
     ui.selectLevel(index);
