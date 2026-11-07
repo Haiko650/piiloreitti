@@ -57,8 +57,9 @@ const original=()=>({schemaVersion:1,extensions:{
   treasureHunt:{version:1,seed:'old-campaign',generatorVersion:1,records:{}}
 },progress:{chapters:{'ocean-01':{dailyMarker:'preserve'}}},
 settings:{sound:true},collection:{items:{luminous_pearl:true}}});
-function harness(initial=original()){
+function harness(initial=original(),navigationOptions=null){
   const elements=new Map(),storageInstance=storage(initial),selected=[];
+  const navigationListeners={};
   const $=id=>{
     if(!elements.has(id))elements.set(id,element(id));
     return elements.get(id);
@@ -66,7 +67,10 @@ function harness(initial=original()){
   const document={
     getElementById:$,createElement:tag=>element(tag),
     createElementNS:(_ns,tag)=>element(tag),
-    querySelector:s=>({'.th-shell':$('shell'),'.th-panel':$('panel')}[s]||null),
+    querySelector:s=>({
+      '.th-shell':$('shell'),'.th-panel':$('panel'),
+      '.th-back':navigationOptions?$('headerBack'):null
+    }[s]||null),
     body:{dataset:{}}
   };
   $('thLeaveDialog').hidden=true;
@@ -79,7 +83,8 @@ function harness(initial=original()){
     PathleTreasureSolver:solver,PathleTreasureEngine:engine,
     PathleTreasureUI:{
       selectLevel:i=>selected.push(i),fitBoard(){},
-      leaveLevel(){return true},hasUnfinishedProgress:()=>false
+      leaveLevel(){if(navigationOptions)navigationOptions.leaveCalls=(navigationOptions.leaveCalls||0)+1;return true},
+      hasUnfinishedProgress:()=>Boolean(navigationOptions?.unfinished)
     },
     PathleStorage:storageInstance,PathleTreasureMapArt:art,
     PathleTreasureMapLayout:layout,
@@ -88,6 +93,26 @@ function harness(initial=original()){
       collection:{items:{}},settings:{sound:true}
     })}
   };
+  if(navigationOptions){
+    const entries=[{state:null}],pointer={index:0};
+    root.location={assigned:[],assign(url){this.assigned.push(url);}};
+    root.addEventListener=(name,fn)=>(navigationListeners[name]??=[]).push(fn);
+    root.history={
+      get state(){return entries[pointer.index].state;},
+      replaceState(state){entries[pointer.index]={state:clone(state)};},
+      pushState(state){
+        entries.splice(pointer.index+1);
+        entries.push({state:clone(state)});
+        pointer.index++;
+      },
+      back(){
+        if(pointer.index===0){root.location.assign('index.html');return;}
+        pointer.index--;
+        for(const fn of navigationListeners.popstate||[])
+          fn({state:clone(entries[pointer.index].state)});
+      }
+    };
+  }
   vm.runInNewContext(source,{window:root,document,requestAnimationFrame:fn=>fn()});
   return {root,storage:storageInstance,$,selected,document};
 }
@@ -234,4 +259,58 @@ test('new visitor without shared DB gets one safe initialized record',async()=>{
   assert.equal(h.root.PathleTreasureCampaign.isReady(),true);
   assert.equal(h.storage.writes,1);
   assert.equal(h.root.PathleTreasureCampaign.getView(),'tutorial');
+});
+
+test('header arrow and Android Back return from Coral Coast to Water World, then home',async()=>{
+  const nav={};
+  const h=harness(original(),nav);await idle();
+  for(let i=0;i<3;i++)await clear(h,i);
+  h.root.PathleTreasureCampaign.advance(2,3);
+  assert.equal(h.root.PathleTreasureCampaign.getView(),'world');
+  h.root.PathleTreasureCampaign.openArea('coral-coast');
+  assert.equal(h.root.PathleTreasureCampaign.getView(),'area');
+  h.$('headerBack').click();
+  assert.equal(h.root.PathleTreasureCampaign.getView(),'world',
+    'The header arrow on Coral Coast must not leave Treasure Hunt');
+  assert.deepEqual(h.root.location.assigned,[]);
+  h.root.PathleTreasureCampaign.openArea('coral-coast');
+  h.root.history.back(); // Android system Back / browser Back
+  assert.equal(h.root.PathleTreasureCampaign.getView(),'world');
+  assert.deepEqual(h.root.location.assigned,[]);
+  h.$('headerBack').click();
+  assert.deepEqual(h.root.location.assigned,['index.html'],
+    'Water World has no parent map, so Back exits to the main menu');
+});
+
+test('native Back from an unfinished level asks before discarding moves',async()=>{
+  const nav={unfinished:false};
+  const h=harness(original(),nav);await idle();
+  for(let i=0;i<3;i++)await clear(h,i);
+  h.root.PathleTreasureCampaign.advance(2,3);
+  h.root.PathleTreasureCampaign.openArea('coral-coast');
+  h.root.PathleTreasureCampaign.openLevel(3);
+  nav.unfinished=true;
+  h.root.history.back(); // hardware gesture
+  assert.equal(h.root.PathleTreasureCampaign.getView(),'level');
+  assert.equal(h.$('thLeaveDialog').hidden,false);
+  h.$('thLeaveStay').click();
+  assert.equal(h.$('thLeaveDialog').hidden,true);
+  assert.equal(h.root.PathleTreasureCampaign.getView(),'level');
+  h.$('headerBack').click();
+  assert.equal(h.$('thLeaveDialog').hidden,false);
+  h.$('thLeaveConfirm').click();
+  assert.equal(h.$('thLeaveDialog').hidden,true);
+  assert.equal(h.root.PathleTreasureCampaign.getView(),'area');
+  assert.deepEqual(h.root.location.assigned,[]);
+  assert.equal(h.storage.data.progress.chapters['ocean-01'].dailyMarker,'preserve');
+});
+
+test('fresh Water World entry uses native browser Back to return home',async()=>{
+  const first=harness();await idle();
+  for(let i=0;i<3;i++)await clear(first,i);
+  const nav={};
+  const fresh=harness(first.storage.data,nav);await idle();
+  assert.equal(fresh.root.PathleTreasureCampaign.getView(),'world');
+  fresh.root.history.back();
+  assert.deepEqual(fresh.root.location.assigned,['index.html']);
 });
