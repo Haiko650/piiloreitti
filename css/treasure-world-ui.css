@@ -277,3 +277,26 @@ body.th-page:has(#thV2World:not([hidden])) .th-header :is(.th-back):focus-visibl
     animation:none;
   }
 }
+
+/* Approved upright Haiko: transparent sprite floating over map progress.
+   The image is isolated from clickable nodes and does not alter their coordinates. */
+#thV2World .th-v2-map-haiko.th-v2-world-haiko,
+#thV2Area .th-v2-map-haiko.th-v2-area-haiko{
+  width:112px;
+  height:151px;
+  border:0;
+  border-radius:0;
+  background-image:var(--th-haiko-art,none);
+  background-size:contain;
+  background-position:center;
+  background-repeat:no-repeat;
+  box-shadow:none;
+  filter:drop-shadow(0 4px 5px #023c6999);
+}
+@media(max-width:350px){
+  #thV2World .th-v2-map-haiko.th-v2-world-haiko,
+  #thV2Area .th-v2-map-haiko.th-v2-area-haiko{
+    width:94px;
+    height:129px;
+  }
+}

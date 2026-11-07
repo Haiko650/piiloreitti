@@ -6,7 +6,7 @@
   'use strict';
   const BASE='images/maps/water-world/';
   // Use the approved, transparent Haiko character from the main menu on maps.
-  const HAIKO_IMAGE='images/haiko-swimming-menu.webp';
+  const HAIKO_IMAGE='images/haiko-map-upright.webp';
   const REGISTRY=Object.freeze({
     worlds:Object.freeze({
       'water-world':Object.freeze({
