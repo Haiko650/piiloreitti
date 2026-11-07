@@ -5,6 +5,8 @@
 (function(root){
   'use strict';
   const BASE='images/maps/water-world/';
+  // Use the approved, transparent Haiko character from the main menu on maps.
+  const HAIKO_IMAGE='images/haiko-swimming-menu.webp';
   const REGISTRY=Object.freeze({
     worlds:Object.freeze({
       'water-world':Object.freeze({
@@ -27,7 +29,7 @@
     areas:Object.freeze({
       'coral-coast':Object.freeze({
         theme:'coast',
-        haiko:BASE+'haiko-map.svg',
+        haiko:HAIKO_IMAGE,
         sections:Object.freeze({
           'coral-shallows-01':Object.freeze({
             base:BASE+'coral-coast/section-01-base.svg',
@@ -53,7 +55,7 @@
   }
   function applyLayer(node,variable,url){
     if(!node||!node.style||typeof node.style.setProperty!=='function')return;
-    if(typeof url==='string'&&url.startsWith(BASE)&&
+    if(typeof url==='string'&&(url.startsWith(BASE)||url===HAIKO_IMAGE)&&
       !url.includes('..')&&/^images\/maps\/[a-z0-9/._-]+\.(?:svg|webp|png)$/.test(url)){
       node.style.setProperty(variable,'url("'+url+'")');
     }else{
