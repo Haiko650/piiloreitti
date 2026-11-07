@@ -214,7 +214,7 @@ body.th-page:has(#thV2World:not([hidden])) .th-header :is(.th-back):focus-visibl
   z-index:12;
   width:clamp(114px,32vw,154px);
   height:clamp(92px,25vw,112px);
-  transform:translate(-50%,calc(-100% - 18px));
+  transform:translate(-50%,calc(-100% - 48px));
   pointer-events:none;
   border:2px solid #dcffffad;
   border-radius:48% 48% 36% 36%;
@@ -232,7 +232,7 @@ body.th-page:has(#thV2World:not([hidden])) .th-header :is(.th-back):focus-visibl
 #thV2Area .th-v2-map-haiko.th-v2-area-haiko::after{
   content:"";
   position:absolute;
-  bottom:-20px;
+  bottom:-12px;
   left:50%;
   width:0;
   height:0;
@@ -278,12 +278,13 @@ body.th-page:has(#thV2World:not([hidden])) .th-header :is(.th-back):focus-visibl
   }
 }
 
+/* DEV v1.5.28: smaller Haiko, raised above the destination so the pin/node remains visible. */
 /* Approved upright Haiko: transparent sprite floating over map progress.
    The image is isolated from clickable nodes and does not alter their coordinates. */
 #thV2World .th-v2-map-haiko.th-v2-world-haiko,
 #thV2Area .th-v2-map-haiko.th-v2-area-haiko{
-  width:112px;
-  height:151px;
+  width:96px;
+  height:126px;
   border:0;
   border-radius:0;
   background-image:var(--th-haiko-art,none);
@@ -296,8 +297,8 @@ body.th-page:has(#thV2World:not([hidden])) .th-header :is(.th-back):focus-visibl
 @media(max-width:350px){
   #thV2World .th-v2-map-haiko.th-v2-world-haiko,
   #thV2Area .th-v2-map-haiko.th-v2-area-haiko{
-    width:94px;
-    height:129px;
+    width:80px;
+    height:110px;
   }
 }
 

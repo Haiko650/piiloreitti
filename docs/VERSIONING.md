@@ -5,7 +5,7 @@
 The main menu shows a compact **tappable** build label at the top center,
 between Settings and the DEV toggle:
 
-**DEV · v1.5.27**
+**DEV · v1.5.28**
 
 The installed version is defined in `js/version.js`. The published
 GitHub Pages version is described by `version.json` in the repo root.
@@ -85,3 +85,9 @@ automatically reload while Daily or Treasure Hunt is in progress.
 - The World map canvas and individual Coral Coast map sections have no decorative borders or rounding. The three Water World artwork sections remain vertically stacked in their original order.
 - The header, Haiko sprite, map destination buttons, level coordinates, progress records and game boards are unchanged. No new map images were generated or installed.
 - On Android, verify both maps scroll and all level/area buttons remain clickable; the tutorial and puzzle views retain their original width.
+
+## Smaller, higher Haiko progress cursor (DEV v1.5.28)
+
+- Water World and Coral Coast share a 96 × 126 CSS-pixel Haiko marker (80 × 110 on narrow phones), instead of 112 × 151 pixels.
+- The marker is anchored 48px above the point center instead of 18px; the down-pointing triangle is shortened so the destination button is not covered even during the swim bob animation.
+- Only CSS positioning and display size changed. The original 219 × 300 transparent sprite, map node positions, progress label, maps and saved progress are unchanged.

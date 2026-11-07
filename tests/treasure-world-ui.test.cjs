@@ -9,7 +9,7 @@ test('Water World presentation uses a dedicated final-loaded ocean skin',()=>{
  const html=read('treasure-hunt.html');
  const ui=read('css/treasure-world-ui.css');
  const world=html.slice(html.indexOf('id="thV2World"'),html.indexOf('id="thV2Area"'));
- assert.ok(html.indexOf('css/treasure-world-ui.css?v=1.5.27')>
+ assert.ok(html.indexOf('css/treasure-world-ui.css?v=1.5.28')>
            html.indexOf('css/treasure-world-v2.css?v=1.5.27'));
  assert.doesNotMatch(world,/th-v2-world-hero|th-v2-world-brand|th-v2-world-emblem/);
  assert.doesNotMatch(world,/thV2WorldTitle|thV2WorldStatus|Choose an area to explore/);
@@ -136,4 +136,24 @@ test('approved Haiko artwork is the single reusable progress cursor on both maps
  assert.match(css,/#thV2World \.th-v2-haiko-progress,/);
  assert.match(css,/#thV2Area \.th-v2-haiko-progress\{/);
  assert.match(css,/prefers-reduced-motion:reduce/);
+});
+
+test('Haiko is smaller and floats entirely above the destination marker on both maps',()=>{
+ const css=read('css/treasure-world-ui.css');
+ const html=read('treasure-hunt.html');
+ const geometry=read('css/treasure-world-v2.css');
+ assert.match(html,/css\/treasure-world-ui\.css\?v=1\.5\.28/);
+ assert.match(css,/transform:translate\(-50%,calc\(-100% - 48px\)\)/);
+ assert.match(css,/width:96px;\s*height:126px;\s*border:0;/);
+ assert.match(css,/@media\(max-width:350px\)[\s\S]*?width:80px;\s*height:110px;/);
+ assert.match(css,/bottom:-12px;\s*left:50%;\s*width:0;/);
+ // At the lowered swim-animation extreme the pointer still ends above the
+ // ~61px level button (its upper edge is about 31px above center).
+ const arrowTipAtLowest=-48+12+2;
+ const levelTop=-61/2;
+ const worldTop=-53/2;
+ assert.ok(arrowTipAtLowest<levelTop);
+ assert.ok(arrowTipAtLowest<worldTop);
+ assert.match(geometry,/\.th-v2-world-pin\{/);
+ assert.match(geometry,/\.th-v2-node\{/);
 });
