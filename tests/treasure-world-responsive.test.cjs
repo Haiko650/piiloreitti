@@ -120,7 +120,7 @@ test('area titles have larger typography than progress and action captions',()=>
   const progress=cssBlock(css,'.th-v2-world-pin-progress');
   const action=cssBlock(css,'.th-v2-world-pin-action');
   assert.match(pin,/font-size:clamp\(21px,5\.8vw,27px\)/);
-  assert.match(forced,/font-size:clamp\(16px,4\.6vw,20px\)/);
+  assert.match(forced,/font-size:clamp\(21px,5\.8vw,27px\)/);
   assert.match(narrow,/font-size:clamp\(20px,5\.8vw,22px\)/);
   assert.match(progress,/font-size:clamp\(10px,2\.55vw,11px\)/);
   assert.match(action,/font-size:clamp\(10px,2\.45vw,11px\)/);
