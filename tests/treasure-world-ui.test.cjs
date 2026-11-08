@@ -421,7 +421,7 @@ test('returning home and checking updates always request a fresh index document'
 test('Coral Coast uses CSS medallions with fins only, never numeric ratings',()=>{
  const css=read('css/treasure-world-v2.css');
  const controller=read('js/treasure-campaign-v2.js');
- const region=css.slice(css.indexOf('/* DEV 1.5.47: Coral Coast level medallions.'));
+ const region=css.slice(css.indexOf('/* DEV 1.5.46: Coral Coast level medallions.'));
  assert.ok(region.includes('#thV2Area .th-v2-node{'));
  assert.match(region,/width:70px;/);
  assert.match(region,/height:70px;/);
