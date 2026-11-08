@@ -5,7 +5,7 @@
 The main menu shows a compact **tappable** build label at the top center,
 between Settings and the DEV toggle:
 
-**DEV · v1.5.38**
+**DEV · v1.5.39**
 
 The installed version is defined in `js/version.js`. The published
 GitHub Pages version is described by `version.json` in the repo root.
@@ -161,3 +161,10 @@ automatically reload while Daily or Treasure Hunt is in progress.
 - Deleted the scroll-driven hide/show code and its CSS `opacity:0!important;visibility:hidden!important` rule. Haiko stays at the actual map node and renders whenever its location is within the scroll viewport; scrolling does not toggle sprite visibility.
 - Initial map auto-centering and Return to Haiko still use unobstructed-viewport measurements and keep the controls above the map; the Return button's visibility may change, but the sprite never disappears as a side effect.
 - No map artwork, sprites, progress records or gameplay mechanics changed.
+
+
+## Approved Water World logo for the world overview (DEV v1.5.39)
+- Added the approved transparent Water World logo directly from the earlier image generation as `images/water-world-logo.webp` (600 × 200 pixels).
+- Only Water World overview now shows the centered image, replacing visually the HAIKO’S ADVENTURE and Treasure Hunt heading and the yellow WATER WORLD badge. The pink upper-left back control stays available.
+- Other map/level views, particularly Coral Coast, keep their headers unchanged. This is a logo/UI-only change; no map art, coordinates, player progress, save logic or Haiko marker changes.
+- The logo remains separate from the world map illustration and is sized for narrow phones.

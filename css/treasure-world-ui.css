@@ -1,4 +1,4 @@
-/* Pathle Treasure Hunt · World and Coral Coast outer UI (DEV 1.5.38).
+/* Pathle Treasure Hunt · World and Coral Coast outer UI (DEV 1.5.39).
    This file styles the world heading, navigation and page chrome only.
    Map art, node positions, pin hit areas, route geometry and gameplay
    are intentionally owned by treasure-world-v2.css and its JS modules. */
@@ -575,3 +575,30 @@ body.th-page:has(#thV2Area:not([hidden])) .th-header :is(.th-back):focus-visible
 }
 /* DEV 1.5.38: Haiko always remains in the map layer while scrolling.
    No scroll-dependent opacity/visibility switch is applied to the sprite. */
+
+/* DEV 1.5.39: Water World logo replaces the two-line Treasure Hunt
+   heading AND the golden world badge, but ONLY on the world overview.
+   Coral Coast and regular play screens keep their existing headers. */
+.th-water-world-logo{display:none}
+body.th-page:has(#thV2World:not([hidden])) .th-heading,
+body.th-page:has(#thV2World:not([hidden])) .th-test-badge{
+  display:none!important;
+}
+body.th-page:has(#thV2World:not([hidden])) .th-header{
+  min-height:88px;
+}
+body.th-page:has(#thV2World:not([hidden])) .th-header .th-water-world-logo{
+  display:block;
+  position:absolute;
+  z-index:1;
+  left:50%;
+  top:0;
+  transform:translateX(-50%);
+  width:min(64vw,260px);
+  max-width:calc(100% - 80px);
+  height:auto;
+  object-fit:contain;
+  pointer-events:none;
+  user-select:none;
+  -webkit-user-drag:none;
+}
