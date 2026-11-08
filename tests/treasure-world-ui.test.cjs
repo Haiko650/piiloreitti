@@ -327,7 +327,7 @@ test('Coral Coast foreground map has a geographic fallthrough behind the floatin
  assert.match(declarations,/overflow-y:auto;/);
  assert.match(art,/<svg xmlns="http:\/\/www.w3.org\/2000\/svg"/);
  assert.match(html,/css\/treasure-world-ui\.css\?v=1\.5\.37/);
- assert.match(home,/id="playTreasure" href="treasure-hunt\.html\?v=1\.5\.36"/);
+ assert.match(home,/id="playTreasure" href="treasure-hunt\.html\?v=1\.5\.37"/);
 });
 
 test('Haiko is centered in safe space instead of beneath floating text',()=>{
