@@ -178,3 +178,14 @@ test('Coral Coast edge-to-edge map has the same viewport contract as Water World
  assert.match(css,/@media\(max-width:360px\)\{[\s\S]*?#thV2Area \.th-v2-map-heading\{/);
  assert.match(css,/#thV2Area \.th-v2-map-heading\{[^}]*top:calc\(98px \+ env\(safe-area-inset-top,0px\)\)/);
 });
+
+test('Coral Coast geographic fallback remains aligned with existing 1300px art section',()=>{
+ const world=read('css/treasure-world-v2.css');
+ const ui=read('css/treasure-world-ui.css');
+ const areaBlock=world.slice(world.indexOf('.th-v2-map-section{'),world.indexOf('}',world.indexOf('.th-v2-map-section{')));
+ const background=ui.slice(ui.indexOf('#thCampaignMap.th-v2-campaign-map:has(#thV2Area:not([hidden])){'),
+  ui.indexOf('}',ui.indexOf('#thCampaignMap.th-v2-campaign-map:has(#thV2Area:not([hidden])){')));
+ assert.match(areaBlock,/height:1300px;/);
+ assert.match(background,/background-size:100% 1300px;/);
+ assert.match(background,/background-attachment:local;/);
+});

@@ -5,7 +5,7 @@
 The main menu shows a compact **tappable** build label at the top center,
 between Settings and the DEV toggle:
 
-**DEV · v1.5.35**
+**DEV · v1.5.36**
 
 The installed version is defined in `js/version.js`. The published
 GitHub Pages version is described by `version.json` in the repo root.
@@ -140,3 +140,10 @@ automatically reload while Daily or Treasure Hunt is in progress.
 - The Treasure Hunt back control, title, Water World badge, Coral Coast heading, progress and in-area World action are independent overlays with transparent containers. The two back buttons remain interactive, while the wrappers do not block map touches.
 - All actual Coral Coast section SVG art starts at y=0 under the headers, including when auto-scrolling to Haiko. This changes no map assets, buttons, save data, unlocking, navigation history or level positions.
 - Previous tutorial and gameplay screen layouts continue to use the original flow layout. Android visual inspection is still advised after CI.
+
+
+## Prevent stale Treasure Hunt HTML and cover Coral Coast header gaps (DEV v1.5.36)
+- The Play Treasure Hunt link in `index.html` used to open `treasure-hunt.html` without a build-specific URL, so browser cache could preserve an outdated HTML document and CSS references despite an up-to-date home page. The link now carries `?v=1.5.36` and MUST be bumped on subsequent changes to Treasure Hunt HTML/CSS.
+- The Coral Coast map's full-screen scroll container additionally paints its existing `section-01-base.svg` as a scroll-bound geographic fallback (1300px tall, the exact illustration section height). This avoids showing the flat body gradient anywhere around the two floating headers even if the map has unpainted gaps.
+- Both actual embedded SVG layers, their source images, level/area position coordinates, Haiko, back navigation, and saved progress remain unchanged. No new map artwork was created.
+- Mobile visual confirmation is still required; use a build-specific direct URL when checking changes to avoid stale GitHub Pages HTML.

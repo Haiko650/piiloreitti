@@ -1,4 +1,4 @@
-/* Pathle Treasure Hunt · World and Coral Coast outer UI (DEV 1.5.35).
+/* Pathle Treasure Hunt · World and Coral Coast outer UI (DEV 1.5.36).
    This file styles the world heading, navigation and page chrome only.
    Map art, node positions, pin hit areas, route geometry and gameplay
    are intentionally owned by treasure-world-v2.css and its JS modules. */
@@ -171,6 +171,13 @@ body.th-page:has(#thV2Area:not([hidden])) .th-shell{
   border:0;
   border-radius:0;
   background:transparent;
+  /* Geographic artwork follows the scroll position and covers any unused
+     area at the top, rather than allowing the BODY gradient to show. */
+  background-image:url("../images/maps/water-world/coral-coast/section-01-base.svg");
+  background-size:100% 1300px;
+  background-position:center top;
+  background-repeat:no-repeat;
+  background-attachment:local;
   box-shadow:none;
 }
 /* Same individually floating Treasure Hunt back arrow, title and badge. */
