@@ -10,7 +10,7 @@ test('Water World presentation uses a dedicated final-loaded ocean skin',()=>{
  const ui=read('css/treasure-world-ui.css');
  const world=html.slice(html.indexOf('id="thV2World"'),html.indexOf('id="thV2Area"'));
  assert.ok(html.indexOf('css/treasure-world-ui.css?v=bba8942aa5c8')>
-           html.indexOf('css/treasure-world-v2.css?v=fa71650f73f6'));
+           html.indexOf('css/treasure-world-v2.css?v=629759d9ace6'));
  assert.doesNotMatch(world,/th-v2-world-hero|th-v2-world-brand|th-v2-world-emblem/);
  assert.doesNotMatch(world,/thV2WorldTitle|thV2WorldStatus|Choose an area to explore/);
  assert.ok(world.indexOf('id="thV2WorldBack"')<world.indexOf('id="thV2WorldCanvas"'),
@@ -39,7 +39,7 @@ test('new Water World UI does not touch map geometry or map artwork assets',()=>
  assert.match(geometry,/aspect-ratio:600\/760/);
  assert.match(geometry,/width:100%;min-width:0;max-width:100%/);
  assert.match(script,/focusHaiko\('world',pin,marker\)/);
- assert.match(art,/world-overview\.svg/);
+ assert.match(art,/coral-coast-overview\.webp/);
  for(const className of ['th-v2-world-canvas','th-v2-world-section','th-v2-world-pin','th-v2-map-section','th-v2-node']){
    assert.doesNotMatch(ui,new RegExp('\\.'+className+'\\s*\\{'),
      'UI-only skin must not restyle map element '+className);
@@ -118,7 +118,7 @@ test('approved Haiko artwork is the single reusable progress cursor on both maps
  const html=read('treasure-hunt.html');
  assert.match(art,/HAIKO_IMAGE='images\/haiko-map-upright\.webp'/);
  assert.match(art,/haiko:HAIKO_IMAGE/);
- assert.match(html,/js\/treasure-map-art\.js\?v=544efa830e2a/);
+ assert.match(html,/js\/treasure-map-art\.js\?v=f3794411586d/);
  assert.match(html,/js\/treasure-campaign-v2\.js\?v=1b0a57d0f82c/);
  assert.match(script,/function makeHaikoMarker\(areaId,description\)/);
  assert.match(script,/picture\.className='th-v2-haiko-sprite'/);
@@ -327,7 +327,7 @@ test('Coral Coast foreground map has a geographic fallthrough behind the floatin
  assert.match(declarations,/overflow-y:auto;/);
  assert.match(art,/<svg xmlns="http:\/\/www.w3.org\/2000\/svg"/);
  assert.match(html,/css\/treasure-world-ui\.css\?v=bba8942aa5c8/);
- assert.match(home,/id="playTreasure" href="treasure-hunt\.html\?v=1\.5\.44"/);
+ assert.match(home,/id="playTreasure" href="treasure-hunt\.html\?v=1\.5\.45"/);
 });
 
 test('Haiko is centered in safe space instead of beneath floating text',()=>{
@@ -377,7 +377,7 @@ test('approved Water World logo replaces only the overview labels',()=>{
  assert.match(css,/body\.th-page:has\(#thV2World:not\(\[hidden\]\)\) \.th-header \.th-water-world-logo\{\s*display:block;/);
  assert.match(css,/width:min\(64vw,260px\)/);
  assert.match(css,/max-width:calc\(100% - 80px\)/);
- assert.match(html,/class="th-back" href="index.html\?pathle-update=1\.5\.44"/);
+ assert.match(html,/class="th-back" href="index.html\?pathle-update=1\.5\.45"/);
  assert.match(html,/<section id="thV2Area" class="th-v2-area"/);
  assert.doesNotMatch(css,/body\.th-page:has\(#thV2Area:not\(\[hidden\]\)\) \.th-heading,\s*body\.th-page:has\(#thV2Area:not\(\[hidden\]\)\) \.th-test-badge\{\s*display:none/);
  assert.match(html,/css\/treasure-world-ui\.css\?v=bba8942aa5c8/);
@@ -387,7 +387,7 @@ test('Water World and Coral Coast share the same home button and navigation',()=
  const html=read('treasure-hunt.html');
  const css=read('css/treasure-world-ui.css');
  const js=read('js/treasure-campaign-v2.js');
- assert.ok(html.includes('<a class="th-back" href="index.html?pathle-update=1.5.44"'));
+ assert.ok(html.includes('<a class="th-back" href="index.html?pathle-update=1.5.45"'));
  assert.ok(html.includes('class="th-back-home-icon"'));
  assert.ok(html.includes('class="th-back-arrow"'));
  const world='body.th-page:has(#thV2World:not([hidden]))';
@@ -410,10 +410,10 @@ test('returning home and checking updates always request a fresh index document'
  const html=read('treasure-hunt.html');
  const js=read('js/treasure-campaign-v2.js');
  const home=read('index.html');
- assert.match(html,/class="th-back" href="index\.html\?pathle-update=1\.5\.44"/);
+ assert.match(html,/class="th-back" href="index\.html\?pathle-update=1\.5\.45"/);
  assert.match(js,/headerBack\?\.getAttribute\?\.\('href'\)\|\|'index\.html'/);
  assert.match(js,/root\.location\.assign\(home\+separator\+'fresh='\+Date\.now\(\)\)/);
- assert.match(home,/js\/version\.js\?v=17a6ca4264ac/);
- assert.match(home,/id="playTreasure" href="treasure-hunt\.html\?v=1\.5\.44"/);
+ assert.match(home,/js\/version\.js\?v=7352ffd9ee26/);
+ assert.match(home,/id="playTreasure" href="treasure-hunt\.html\?v=1\.5\.45"/);
  assert.match(read('js/version.js'),/url\.searchParams\.set\('fresh',String\(Date\.now\(\)\)\)/);
 });

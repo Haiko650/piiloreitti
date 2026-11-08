@@ -44,15 +44,17 @@ test('art assets are independent of stable level IDs and allow replacement image
   assert.deepEqual(segments.map(item=>item.id),[
     'northern-sea','island-passage','southern-reef'
   ]);
-  assert.ok(segments.every(item=>item.base.endsWith('.svg')));
+  assert.ok(segments.slice(0,2).every(item=>item.base.endsWith('.svg')));
+  assert.equal(segments[2].base,'images/maps/water-world/coral-coast-overview.webp');
   assert.ok(segments.every(item=>fs.existsSync(path.join(__dirname,'..',item.base))));
-  // Each shipped map SVG must be embedded losslessly for Android rendering.
+  // Old SVG sections stay embedded; the approved Coral Coast WebP is a
+  // separate asset in Water World (not a replacement for level-map art).
   const files=[
-    ...segments.map(item=>item.base),
+    ...segments.slice(0,2).map(item=>item.base),
     art.forSection('coral-coast','coral-shallows-01').base,
     art.forSection('coral-coast','coral-shallows-01').details
   ];
-  assert.equal(files.length,5);
+  assert.equal(files.length,4);
   for(const file of files){
     const svg=fs.readFileSync(path.join(__dirname,'..',file),'utf8');
     assert.equal(art.MAP_SVG_SOURCE[file],svg,'Embedded map differs: '+file);
@@ -60,6 +62,18 @@ test('art assets are independent of stable level IDs and allow replacement image
     assert.match(uri,/^data:image\/svg\+xml;charset=UTF-8,/);
     assert.equal(decodeURIComponent(uri.slice(uri.indexOf(',')+1)),svg);
   }
+  const worldCoast=segments[2].base;
+  const coastBytes=fs.readFileSync(path.join(__dirname,'..',worldCoast));
+  assert.equal(coastBytes.toString('ascii',0,4),'RIFF');
+  assert.equal(coastBytes.toString('ascii',8,12),'WEBP');
+  assert.equal(coastBytes.toString('ascii',12,16),'VP8 ');
+  assert.equal(coastBytes.readUInt16LE(26)&0x3fff,941);
+  assert.equal(coastBytes.readUInt16LE(28)&0x3fff,1672);
+  assert.ok(coastBytes.length>100_000&&coastBytes.length<300_000);
+  const currentRev=require('node:crypto').createHash('sha1')
+    .update('blob '+coastBytes.length+'\0').update(coastBytes)
+    .digest('hex').slice(0,12);
+  assert.equal(art.imageSource(worldCoast),worldCoast+'?v='+currentRev);
   assert.equal(art.imageSource('images/maps/../../bad.svg'),null);
   assert.equal(art.imageSource('https://example.org/m.svg'),null);
   assert.deepEqual(art.worldAreaPosition('water-world','coral-coast'),
@@ -80,6 +94,8 @@ test('art assets are independent of stable level IDs and allow replacement image
   assert.ok(art.forSection('coral-coast','coral-shallows-01').base);
   const calls=[];
   const node={style:{setProperty:(k,v)=>calls.push([k,v])}};
+  art.applyLayer(node,'--th-world-art',worldCoast);
+  assert.equal(calls.at(-1)[1],'url("'+worldCoast+'?v='+currentRev+'")');
   art.applyLayer(node,'--th-base-art','images/maps/water-world/coral-coast/custom-scene.webp');
   assert.match(calls.at(-1)[1],/custom-scene.webp/);
   art.applyLayer(node,'--th-haiko-art',art.forArea('coral-coast').haiko);

@@ -67,7 +67,9 @@ test('overview artwork and tappable area pins remain on separate responsive laye
   assert.match(read('js/treasure-campaign-v2.js'),/picture.className='th-v2-world-art'/);
   assert.match(cssBlock(css,'.th-v2-world-art'),/background-size\s*:\s*100%\s+100%/);
   assert.match(cssBlock(css,'.th-v2-world-pin'),/position\s*:\s*absolute/);
-  assert.match(read('js/treasure-map-art.js'),/world-overview\.svg/);
+  assert.match(read('js/treasure-map-art.js'),/coral-coast-overview\.webp/);
+  assert.match(cssBlock(css,'#thV2World .th-v2-world-section[data-section-id="southern-reef"]'),
+    /aspect-ratio\s*:\s*941\s*\/\s*1672/);
 });
 
 test('all illustrated maps use image layers while preserving separate tap targets',()=>{
@@ -89,7 +91,7 @@ test('Water World area signs match the approved home Treasure capsule look',()=>
   const css=read('css/treasure-world-v2.css');
   const html=read('treasure-hunt.html');
   const js=read('js/treasure-campaign-v2.js');
-  assert.match(html,/css\/treasure-world-v2\.css\?v=fa71650f73f6/);
+  assert.match(html,/css\/treasure-world-v2\.css\?v=629759d9ace6/);
   assert.match(menu,/#welcomeScreen #playTreasure\{/);
   assert.match(menu,/linear-gradient\(180deg,#b9ffff 0%,#44f6ed 22%,#06dacb 69%,#00adbd 100%\)/);
   assert.match(css,/linear-gradient\(180deg,#b9ffff 0%,#44f6ed 22%,#06dacb 69%,#00adbd 100%\)/);

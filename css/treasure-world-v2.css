@@ -70,6 +70,12 @@
   overflow:hidden;isolation:isolate;
   background:linear-gradient(145deg,#64d7e3,#1597b9 60%,#064781);
 }
+/* The Coral Coast panel is taller than the original SVG panels.
+   Preserve all of the approved portrait artwork without cropping/stretching.
+   Level buttons and Haiko remain absolute overlay elements. */
+#thV2World .th-v2-world-section[data-section-id="southern-reef"]{
+  aspect-ratio:941/1672;
+}
 .th-v2-world-art{
   position:absolute;inset:0;z-index:0;pointer-events:none;
   background-image:var(--th-world-art,none);

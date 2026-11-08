@@ -74,7 +74,7 @@ function harness(initial=original(),navigationOptions=null){
     }[s]||null),
     body:{dataset:{}}
   };
-  $('headerBack').href='index.html?pathle-update=1.5.44';
+  $('headerBack').href='index.html?pathle-update=1.5.45';
   $('thLeaveDialog').hidden=true;
   $('thCampaignError').hidden=true;
   $('thVictory').hidden=true;
@@ -187,15 +187,21 @@ test('three tutorial finishes unlock Water World and first Coral Coast stage',as
   const islands=pins.find(pin=>pin.textContent.startsWith('Tropical Islands'));
   assert.equal(coral.disabled,false);
   assert.equal(islands.disabled,true);
-  assert.ok(worldSections[2].properties['--th-world-art'].includes('world-overview.svg'));
+  assert.ok(worldSections[2].properties['--th-world-art'].includes('coral-coast-overview.webp'));
+  assert.ok(worldSections[2].properties['--th-world-art']
+    .includes(art.imageSource(art.worldSections('water-world')[2].base)));
   // The actual map must be visible via an embedded real image, not just
   // the CSS fallback gradient (which Android showed without geography).
-  for(const section of worldSections){
+  for(const [index,section] of worldSections.entries()){
     const artBox=section.children.find(x=>x.classList.contains('th-v2-world-art'));
     assert.ok(artBox,'Missing world artwork container');
     assert.equal(artBox.children.length,1);
     assert.equal(artBox.children[0].className,'th-v2-map-art-img');
-    assert.match(artBox.children[0].src,/^data:image\/svg\+xml;charset=UTF-8,/);
+    if(index===2)
+      assert.equal(artBox.children[0].src,
+        art.imageSource(art.worldSections('water-world')[2].base));
+    else
+      assert.match(artBox.children[0].src,/^data:image\/svg\+xml;charset=UTF-8,/);
     assert.equal(artBox.children[0]['aria-hidden'],'true');
   }
   const worldHaikos=worldSections.flatMap(section=>
@@ -349,7 +355,7 @@ test('Coral Coast World button and Android Back preserve hierarchical navigation
   assert.equal(h.root.location.assigned.length,1);
   const worldHome=new URL(h.root.location.assigned[0],'https://haiko650.github.io/piiloreitti/');
   assert.equal(worldHome.pathname,'/piiloreitti/index.html');
-  assert.equal(worldHome.searchParams.get('pathle-update'),'1.5.44');
+  assert.equal(worldHome.searchParams.get('pathle-update'),'1.5.45');
   assert.match(worldHome.searchParams.get('fresh'),/^\d+$/,
     'The Water World home button requests fresh HTML');
 });
@@ -366,7 +372,7 @@ test('Coral Coast top-left home button opens main menu directly',async()=>{
   assert.equal(h.root.location.assigned.length,1);
   const areaHome=new URL(h.root.location.assigned[0],'https://haiko650.github.io/piiloreitti/');
   assert.equal(areaHome.pathname,'/piiloreitti/index.html');
-  assert.equal(areaHome.searchParams.get('pathle-update'),'1.5.44');
+  assert.equal(areaHome.searchParams.get('pathle-update'),'1.5.45');
   assert.match(areaHome.searchParams.get('fresh'),/^\d+$/,
     'Coral Coast Home must bypass stale cached HTML');
   assert.equal(h.root.PathleTreasureCampaign.getView(),'area',

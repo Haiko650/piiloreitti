@@ -5,7 +5,7 @@
 The main menu shows a compact **tappable** build label at the top center,
 between Settings and the DEV toggle:
 
-**DEV · v1.5.44**
+**DEV · v1.5.45**
 
 **The sole release-version source is `version.json`.** The installed
 `js/version.js` constant, the main-menu fallback label, versioned
@@ -218,3 +218,11 @@ mode never writes files; it explains which files need synchronization.
 - The four released Coral Coast level buttons now have 50% of the previous point-to-point distances in both their horizontal and vertical map coordinates, retaining the original alternating trail and bottom-to-top ordering.
 - The one existing SVG route path is a solid, smooth continuous gold trail instead of a dotted path. Level IDs, ordering, progression, Haiko attachment, scrolling rules and map illustrations are unchanged.
 - The map section remains 1300px tall and ready for later additional levels/sections. The visual change affects Coral Coast only.
+
+
+## Illustrated Coral Coast in Water World (DEV v1.5.45)
+- Installed the approved 941 × 1672 pixel 2.5D Coral Coast illustration as an optimized ~170 KB WebP at `images/maps/water-world/coral-coast-overview.webp`.
+- Replaced only the Water World overview's bottom `southern-reef` section image. Northern Sea, Tropical Islands and the separate playable Coral Coast level map keep their existing artwork. The old southern-reef SVG remains available for rollback.
+- Set that world-section aspect ratio to 941:1672 so the portrait illustration is neither distorted nor cropped on phones. The Coral Coast capsule, Haiko progress sprite, scroll/navigation behavior and persistent save data stay separate overlays.
+- The artwork manifest generates cache-versioned image requests from the approved WebP's content hash. The release synchronizer now also manages this runtime image fingerprint for future graphic swaps.
+- Tests cover WebP dimensions, image provenance, the world-only section assignment, safe cache keys and responsive section sizing.

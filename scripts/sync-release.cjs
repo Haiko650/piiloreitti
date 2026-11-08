@@ -53,6 +53,22 @@ const overrideHash={'js/version.js':(()=>{
   const b=Buffer.from(versionJS);
   return crypto.createHash('sha1').update('blob '+b.length+'\0').update(b).digest('hex').slice(0,12);
 })()};
+// The illustrated Coral Coast overview is loaded at runtime rather than
+// from an HTML tag. Fingerprint that image too, so future art replacements
+// receive new cache keys without any hand-edited JavaScript constants.
+const worldArtFile='images/maps/water-world/coral-coast-overview.webp';
+if(fs.existsSync(path.join(root,worldArtFile))){
+  const p='js/treasure-map-art.js';
+  const oldArt=read(p);
+  if(!/const CORAL_COAST_ART_REV='[0-9a-f]{12}'/.test(oldArt))
+    throw Error('Missing Coral Coast cache-revision marker');
+  const newArt=oldArt.replace(/const CORAL_COAST_ART_REV='[0-9a-f]{12}'/,
+    "const CORAL_COAST_ART_REV='"+sha(worldArtFile)+"'");
+  stage(p,newArt);
+  const bytes=Buffer.from(newArt);
+  overrideHash[p]=crypto.createHash('sha1')
+    .update('blob '+bytes.length+'\0').update(bytes).digest('hex').slice(0,12);
+}
 const assetMap=new Map();
 function assetVersion(p){
   if(!overrideHash[p]){
