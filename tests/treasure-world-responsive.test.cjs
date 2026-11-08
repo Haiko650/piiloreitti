@@ -139,3 +139,13 @@ test('region title grows while longer names remain inside the display',()=>{
     assert.ok(.69*screen+width/2<=screen+.001,'Open Ocean clipped on '+screen);
   }
 });
+
+// The illustrated map's viewport is full height while the floating header
+// is absolutely positioned; it must not consume a separate blank row.
+test('floating World header retains phone-safe positions at narrow widths',()=>{
+ const css=read('css/treasure-world-ui.css');
+ assert.match(css,/@media\(max-width:360px\)\{[\s\S]*?\.th-header\{padding:7px;gap:5px;left:8px;right:8px;\}/);
+ assert.match(css,/\.th-header > \*\{\s*position:relative;\s*z-index:1;/);
+ assert.match(css,/\.th-back\{\s*pointer-events:auto;/);
+ assert.match(css,/\.th-header::before\{\s*content:none;\s*display:none;/);
+});

@@ -5,7 +5,7 @@
 The main menu shows a compact **tappable** build label at the top center,
 between Settings and the DEV toggle:
 
-**DEV · v1.5.32**
+**DEV · v1.5.33**
 
 The installed version is defined in `js/version.js`. The published
 GitHub Pages version is described by `version.json` in the repo root.
@@ -120,3 +120,9 @@ automatically reload while Daily or Treasure Hunt is in progress.
 - Destination capsules span up to 62% of map width (maximum 240px), remain centered on their existing geographic positions, and accommodate longer names without clipping on 320–490px viewports.
 - Removed the header's opaque turquoise panel, golden frame, corner radius, shadow and the pseudo-element highlight. The colored back-arrow control, title lettering and golden WATER WORLD badge remain independently visible against the ocean page background.
 - No map art, Haiko progress cursor, saving, unlocks or gameplay logic changed. Only the development branch was modified.
+
+
+## World map behind independently floating header controls (DEV v1.5.33)
+- The previous transparent header still occupied its own flex row, so its turquoise page background showed instead of the map. In Water World ONLY, the header is now an absolute overlay at the top of the shell, and the map begins at the shell's top edge beneath it.
+- Back-arrow, outlined Treasure Hunt title and gold WATER WORLD capsule stay as distinct elements; the header has no background, border, shadow or decorative pseudo-element. The wrapper passes through touches while the back arrow remains interactive.
+- Applies only when Water World is visible; tutorial, Coral Coast area view and puzzle layouts retain their own flow. The map scroll position, artwork, Haiko, region pins and game saves are unchanged.

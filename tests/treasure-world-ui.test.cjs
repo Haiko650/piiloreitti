@@ -9,7 +9,7 @@ test('Water World presentation uses a dedicated final-loaded ocean skin',()=>{
  const html=read('treasure-hunt.html');
  const ui=read('css/treasure-world-ui.css');
  const world=html.slice(html.indexOf('id="thV2World"'),html.indexOf('id="thV2Area"'));
- assert.ok(html.indexOf('css/treasure-world-ui.css?v=1.5.32')>
+ assert.ok(html.indexOf('css/treasure-world-ui.css?v=1.5.33')>
            html.indexOf('css/treasure-world-v2.css?v=1.5.32'));
  assert.doesNotMatch(world,/th-v2-world-hero|th-v2-world-brand|th-v2-world-emblem/);
  assert.doesNotMatch(world,/thV2WorldTitle|thV2WorldStatus|Choose an area to explore/);
@@ -142,7 +142,7 @@ test('Haiko is smaller and floats entirely above the destination marker on both 
  const css=read('css/treasure-world-ui.css');
  const html=read('treasure-hunt.html');
  const geometry=read('css/treasure-world-v2.css');
- assert.match(html,/css\/treasure-world-ui\.css\?v=1\.5\.32/);
+ assert.match(html,/css\/treasure-world-ui\.css\?v=1\.5\.33/);
  assert.match(css,/transform:translate\(-50%,calc\(-100% - 48px\)\)/);
  assert.match(css,/width:96px;\s*height:126px;\s*border:0;/);
  assert.match(css,/@media\(max-width:350px\)[\s\S]*?width:80px;\s*height:110px;/);
@@ -192,5 +192,29 @@ test('Water World header panel is transparent but the three header controls rema
  assert.match(css,/body\.th-page:has\(#thV2World:not\(\[hidden\]\)\) \.th-test-badge\{/);
  assert.match(html,/class="th-heading"><small>HAIKO’S ADVENTURE<\/small><h1>Treasure Hunt<\/h1>/);
  assert.match(html,/class="th-test-badge" id="thMapTotal"/);
- assert.match(html,/css\/treasure-world-ui\.css\?v=1\.5\.32/);
+ assert.match(html,/css\/treasure-world-ui\.css\?v=1\.5\.33/);
+});
+
+test('the World geographic image starts behind three independent floating header elements',()=>{
+ const css=read('css/treasure-world-ui.css');
+ const base=read('css/treasure.css');
+ const html=read('treasure-hunt.html');
+ assert.match(base,/\.th-shell\s*\{[^}]*display: flex; flex-direction: column/);
+ assert.match(css,/body\.th-page:has\(#thV2World:not\(\[hidden\]\)\) \.th-shell\{\s*position:relative;\s*padding-top:0;\s*gap:0;/);
+ assert.match(css,/body\.th-page:has\(#thV2World:not\(\[hidden\]\)\) #thCampaignMap\{[^}]*margin-top:0;/);
+ const selector='body.th-page:has(#thV2World:not([hidden])) .th-header';
+ const at=css.indexOf(selector+'{');
+ const declaration=css.slice(at,css.indexOf('}',at));
+ assert.match(declaration,/position:absolute;/);
+ assert.match(declaration,/z-index:100;/);
+ assert.match(declaration,/top:calc\(10px \+ env\(safe-area-inset-top,0px\)\)/);
+ assert.match(declaration,/pointer-events:none;/);
+ assert.match(css,/body\.th-page:has\(#thV2World:not\(\[hidden\]\)\) \.th-back\{\s*pointer-events:auto;/);
+ assert.match(css,/body\.th-page:has\(#thV2World:not\(\[hidden\]\)\) \.th-heading\{\s*pointer-events:none;/);
+ assert.match(declaration,/background:transparent;/);
+ assert.match(declaration,/box-shadow:none;/);
+ assert.match(html,/<header class="th-header">[\s\S]*?class="th-back"[\s\S]*?class="th-heading"[\s\S]*?class="th-test-badge"/);
+ assert.match(html,/id="thV2WorldCanvas"/);
+ // No layout shift is applied to area/tutorial/levels.
+ assert.doesNotMatch(css,/body\.th-page:has\(#thV2Area:not\(\[hidden\]\)\) \.th-header/);
 });

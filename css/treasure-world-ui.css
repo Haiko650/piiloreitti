@@ -8,8 +8,27 @@ body.th-page:has(#thV2World:not([hidden])){
     radial-gradient(circle at 86% 8%,#fff8c85a 0 5px,transparent 7px),
     radial-gradient(ellipse at 50% -9%,#73f8ed 0%,#1dbbd1 30%,#0783ad 58%,#06557f 100%);
 }
-body.th-page:has(#thV2World:not([hidden])) .th-header{
+/* DEV 1.5.33: put the geographical map BELOW the floating controls, not
+   below an empty header-height strip. In world view the header is removed
+   from flex flow; the scrollable map begins at the very top of the screen. */
+body.th-page:has(#thV2World:not([hidden])) .th-shell{
   position:relative;
+  padding-top:0;
+  gap:0;
+}
+body.th-page:has(#thV2World:not([hidden])) #thCampaignMap{
+  flex:1 1 auto;
+  min-height:0;
+  margin-top:0;
+}
+body.th-page:has(#thV2World:not([hidden])) .th-header{
+  position:absolute;
+  z-index:100;
+  top:calc(10px + env(safe-area-inset-top,0px));
+  left:12px;
+  right:12px;
+  width:auto;
+  pointer-events:none;
   isolation:isolate;
   gap:clamp(6px,2.2vw,12px);
   min-height:65px;
@@ -28,6 +47,12 @@ body.th-page:has(#thV2World:not([hidden])) .th-header::before{
 body.th-page:has(#thV2World:not([hidden])) .th-header > *{
   position:relative;
   z-index:1;
+}
+body.th-page:has(#thV2World:not([hidden])) .th-back{
+  pointer-events:auto;
+}
+body.th-page:has(#thV2World:not([hidden])) .th-heading{
+  pointer-events:none;
 }
 body.th-page:has(#thV2World:not([hidden])) .th-back{
   width:40px;
@@ -88,7 +113,7 @@ body.th-page:has(#thV2World:not([hidden])) .th-header :is(.th-back):focus-visibl
   outline-offset:3px;
 }
 @media(max-width:360px){
-  body.th-page:has(#thV2World:not([hidden])) .th-header{padding:7px;gap:5px;}
+  body.th-page:has(#thV2World:not([hidden])) .th-header{padding:7px;gap:5px;left:8px;right:8px;}
   body.th-page:has(#thV2World:not([hidden])) .th-back{width:35px;height:35px;}
   body.th-page:has(#thV2World:not([hidden])) .th-test-badge{max-width:70px;min-height:33px;padding:4px;}
 }
