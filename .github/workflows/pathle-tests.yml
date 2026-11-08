@@ -29,3 +29,12 @@ jobs:
           done
       - name: Run Pathle regression tests
         run: node --test tests/*.test.cjs
+      - name: Dry-run the next release without modifying the repository
+        run: |
+          scratch="$(mktemp -d)"
+          cp -a . "$scratch/site"
+          cd "$scratch/site"
+          node -e "const fs=require('node:fs');const m=JSON.parse(fs.readFileSync('version.json','utf8'));const p=m.version.split('.').map(Number);p[2]++;m.version=p.join('.');fs.writeFileSync('version.json',JSON.stringify(m,null,2)+'\n');"
+          node scripts/sync-release.cjs --write
+          node scripts/sync-release.cjs --check
+          node --test tests/*.test.cjs
