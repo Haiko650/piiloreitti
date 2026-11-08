@@ -1,4 +1,4 @@
-/* Pathle Treasure Hunt · World and Coral Coast outer UI (DEV 1.5.37).
+/* Pathle Treasure Hunt · World and Coral Coast outer UI (DEV 1.5.38).
    This file styles the world heading, navigation and page chrome only.
    Map art, node positions, pin hit areas, route geometry and gameplay
    are intentionally owned by treasure-world-v2.css and its JS modules. */
@@ -573,10 +573,5 @@ body.th-page:has(#thV2Area:not([hidden])) .th-header :is(.th-back):focus-visible
   pointer-events:none;
   background:linear-gradient(180deg,transparent 50%,#7ae9ec 100%);
 }
-/* When scrolled behind a fixed title or bottom controls, don't paint Haiko
-   through the text. Return to Haiko becomes available instead. */
-#thV2World .th-v2-map-haiko.th-v2-world-haiko.th-v2-haiko-occluded,
-#thV2Area .th-v2-map-haiko.th-v2-area-haiko.th-v2-haiko-occluded{
-  opacity:0!important;
-  visibility:hidden!important;
-}
+/* DEV 1.5.38: Haiko always remains in the map layer while scrolling.
+   No scroll-dependent opacity/visibility switch is applied to the sprite. */

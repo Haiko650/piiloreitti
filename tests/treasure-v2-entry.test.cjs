@@ -460,7 +460,7 @@ test('a finished Coral Coast area keeps Haiko on the final unlocked level',async
   assert.match(marker['aria-label'],/all levels cleared/);
 });
 
-test('Return to Haiko centers full shark+pin and detects fixed-heading overlap',async()=>{
+test('Haiko remains visible when scrolled behind fixed headings',async()=>{
  const h=harness();await idle();
  for(let i=0;i<3;i++)await clear(h,i);
  h.root.PathleTreasureCampaign.advance(2,3);
@@ -484,7 +484,8 @@ test('Return to Haiko centers full shark+pin and detects fixed-heading overlap',
  assert.equal(marker.classList.contains('th-v2-haiko-occluded'),false);
  map.scrollTop=210;refresh();
  assert.equal(h.$('thV2AreaHere').hidden,false);
- assert.equal(marker.classList.contains('th-v2-haiko-occluded'),true);
+ assert.equal(marker.classList.contains('th-v2-haiko-occluded'),false,
+   'Map scrolling must not hide the Haiko sprite');
  h.$('thV2AreaHere').click();
  assert.equal(map.scrollTop,14);
  refresh();

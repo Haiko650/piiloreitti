@@ -155,12 +155,10 @@
     const target=Math.max(0,Math.min(maximum,map.scrollTop+delta));
     map.scrollTo({top:Math.round(target),behavior});
   }
-  /* Return to Haiko should appear as soon as the character is obscured by
-     the floating headers or bottom controls, not only after it leaves the
-     physical viewport. When the player manually scrolls Haiko beneath the
-     toolbar, hide the sprite temporarily instead of drawing it across text. */
+  /* Return to Haiko is controlled by the free viewing area. The character
+     itself NEVER changes visibility in response to scrolling: it remains at
+     the saved map coordinate and naturally passes behind fixed controls. */
   let haikoObserver=null,haikoFallback=null,haikoWatchId=0;
-  let haikoObservedMarker=null;
   function stopHaikoWatch(){
     haikoWatchId++;
     if(haikoObserver){haikoObserver.disconnect();haikoObserver=null;}
@@ -169,10 +167,6 @@
       root.removeEventListener?.('resize',haikoFallback);
       haikoFallback=null;
     }
-    if(haikoObservedMarker){
-      haikoObservedMarker.classList?.remove('th-v2-haiko-occluded');
-      haikoObservedMarker=null;
-    }
     worldReturn.hidden=true;
     areaReturn.hidden=true;
   }
@@ -180,7 +174,6 @@
     if(!marker||view!==kind)return;
     const watchId=haikoWatchId;
     const button=kind==='world'?worldReturn:areaReturn;
-    haikoObservedMarker=marker;
     let intersecting=true;
     const update=()=>{
       if(haikoWatchId!==watchId||view!==kind)return;
@@ -193,10 +186,6 @@
          shark.right>safe.left&&shark.left<safe.right
         :intersecting;
       button.hidden=clear;
-      if(measured){
-        if(clear)marker.classList.remove('th-v2-haiko-occluded');
-        else marker.classList.add('th-v2-haiko-occluded');
-      }
     };
     haikoFallback=update;
     map.addEventListener?.('scroll',update,{passive:true});

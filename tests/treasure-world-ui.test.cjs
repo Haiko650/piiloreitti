@@ -9,7 +9,7 @@ test('Water World presentation uses a dedicated final-loaded ocean skin',()=>{
  const html=read('treasure-hunt.html');
  const ui=read('css/treasure-world-ui.css');
  const world=html.slice(html.indexOf('id="thV2World"'),html.indexOf('id="thV2Area"'));
- assert.ok(html.indexOf('css/treasure-world-ui.css?v=1.5.37')>
+ assert.ok(html.indexOf('css/treasure-world-ui.css?v=1.5.38')>
            html.indexOf('css/treasure-world-v2.css?v=1.5.32'));
  assert.doesNotMatch(world,/th-v2-world-hero|th-v2-world-brand|th-v2-world-emblem/);
  assert.doesNotMatch(world,/thV2WorldTitle|thV2WorldStatus|Choose an area to explore/);
@@ -119,7 +119,7 @@ test('approved Haiko artwork is the single reusable progress cursor on both maps
  assert.match(art,/HAIKO_IMAGE='images\/haiko-map-upright\.webp'/);
  assert.match(art,/haiko:HAIKO_IMAGE/);
  assert.match(html,/js\/treasure-map-art\.js\?v=1.5.26/);
- assert.match(html,/js\/treasure-campaign-v2\.js\?v=1.5.37/);
+ assert.match(html,/js\/treasure-campaign-v2\.js\?v=1.5.38/);
  assert.match(script,/function makeHaikoMarker\(areaId,description\)/);
  assert.match(script,/picture\.className='th-v2-haiko-sprite'/);
  assert.match(script,/picture\.src=art\.HAIKO_SPRITE_DATA/);
@@ -142,7 +142,7 @@ test('Haiko is smaller and floats entirely above the destination marker on both 
  const css=read('css/treasure-world-ui.css');
  const html=read('treasure-hunt.html');
  const geometry=read('css/treasure-world-v2.css');
- assert.match(html,/css\/treasure-world-ui\.css\?v=1\.5\.37/);
+ assert.match(html,/css\/treasure-world-ui\.css\?v=1\.5\.38/);
  assert.match(css,/transform:translate\(-50%,calc\(-100% - 48px\)\)/);
  assert.match(css,/width:96px;\s*height:126px;\s*border:0;/);
  assert.match(css,/@media\(max-width:350px\)[\s\S]*?width:80px;\s*height:110px;/);
@@ -192,7 +192,7 @@ test('Water World header panel is transparent but the three header controls rema
  assert.match(css,/body\.th-page:has\(#thV2World:not\(\[hidden\]\)\) \.th-test-badge\{/);
  assert.match(html,/class="th-heading"><small>HAIKO’S ADVENTURE<\/small><h1>Treasure Hunt<\/h1>/);
  assert.match(html,/class="th-test-badge" id="thMapTotal"/);
- assert.match(html,/css\/treasure-world-ui\.css\?v=1\.5\.37/);
+ assert.match(html,/css\/treasure-world-ui\.css\?v=1\.5\.38/);
 });
 
 test('the World geographic image starts behind three independent floating header elements',()=>{
@@ -295,7 +295,7 @@ test('Coral Coast fills the screen behind independently floating headers',()=>{
  assert.match(geometry,/\.th-v2-area-canvas\{[\s\S]*?position:relative;/);
  assert.match(geometry,/\.th-v2-map-section\{/);
  assert.ok(html.indexOf('id="thV2AreaTitle"')<html.indexOf('id="thV2AreaCanvas"'));
- assert.match(html,/css\/treasure-world-ui\.css\?v=1\.5\.37/);
+ assert.match(html,/css\/treasure-world-ui\.css\?v=1\.5\.38/);
 });
 
 test('scrolling and tapping Coral Coast remain controlled by the same map',()=>{
@@ -326,8 +326,8 @@ test('Coral Coast foreground map has a geographic fallthrough behind the floatin
  assert.match(declarations,/background-size:100% 1300px;/);
  assert.match(declarations,/overflow-y:auto;/);
  assert.match(art,/<svg xmlns="http:\/\/www.w3.org\/2000\/svg"/);
- assert.match(html,/css\/treasure-world-ui\.css\?v=1\.5\.37/);
- assert.match(home,/id="playTreasure" href="treasure-hunt\.html\?v=1\.5\.37"/);
+ assert.match(html,/css\/treasure-world-ui\.css\?v=1\.5\.38/);
+ assert.match(home,/id="playTreasure" href="treasure-hunt\.html\?v=1\.5\.38"/);
 });
 
 test('Haiko is centered in safe space instead of beneath floating text',()=>{
@@ -347,13 +347,16 @@ test('Haiko is centered in safe space instead of beneath floating text',()=>{
  assert.match(css,/scroll-padding-top:calc\(105px \+ env\(safe-area-inset-top,0px\)\)/);
  assert.match(html,/js\/treasure-campaign-v2\.js\?v=1\.5\.37/);
 });
-test('partially obscured Haiko does not draw through heading text',()=>{
+
+test('Haiko stays rendered at its map coordinates during scrolling',()=>{
  const css=read('css/treasure-world-ui.css');
  const js=read('js/treasure-campaign-v2.js');
- assert.match(js,/shark\.top>=safe\.top&&shark\.bottom\+15<=safe\.bottom/);
- assert.match(js,/marker\.classList\.add\('th-v2-haiko-occluded'\)/);
- assert.match(js,/marker\.classList\.remove\('th-v2-haiko-occluded'\)/);
+ assert.doesNotMatch(css,/th-v2-haiko-occluded/);
+ assert.doesNotMatch(js,/th-v2-haiko-occluded/);
+ assert.doesNotMatch(js,/marker\.classList\.(?:add|remove)\(/);
+ assert.match(js,/button\.hidden=clear/);
  assert.match(js,/map\.addEventListener\?\.\('scroll',update,\{passive:true\}\)/);
- assert.match(css,/#thV2Area \.th-v2-map-haiko\.th-v2-area-haiko\.th-v2-haiko-occluded\{/);
- assert.match(css,/opacity:0!important;\s*visibility:hidden!important;/);
+ assert.match(js,/focusHaiko\('area',currentAreaNode,currentAreaMarker,'smooth'\)/);
+ assert.match(css,/#thV2Area \.th-v2-map-haiko\.th-v2-area-haiko\{/);
+ assert.match(css,/\.th-v2-haiko-sprite\{[\s\S]*?visibility:visible!important;/);
 });
