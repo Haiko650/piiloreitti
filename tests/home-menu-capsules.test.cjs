@@ -14,7 +14,7 @@ test('three approved home-menu actions follow the same DOM and visual order',()=
   for(const id of IDs){
     assert.equal((html.match(new RegExp('id="'+id+'"','g'))||[]).length,1);
   }
-  assert.match(html,/<a class="menuButton menuTreasure" id="playTreasure" href="treasure-hunt\.html">/);
+  assert.match(html,/<a class="menuButton menuTreasure" id="playTreasure" href="treasure-hunt\.html\?v=1\.5\.36">/);
   assert.doesNotMatch(html,/css\/treasure-home\.css/);
   assert.doesNotMatch(html,/playPractice|menuPractice|Practice Mode|practiceNote/);
 });
