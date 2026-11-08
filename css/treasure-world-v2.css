@@ -300,3 +300,123 @@
  .th-v2-map-heading h2{font-size:20px}
 }
 @media(prefers-reduced-motion:reduce){.th-v2-map-haiko{animation:none}}
+
+/* DEV 1.5.46: Coral Coast level medallions. Keep every interactive element
+   as a real button; paint the dorsal-fin result entirely with CSS. No
+   image-baked text, no score numerals, no decorative starfish badges. */
+#thV2Area .th-v2-node{
+  box-sizing:border-box;
+  width:70px;
+  height:70px;
+  min-height:70px;
+  padding:0 0 3px;
+  gap:0;
+  overflow:visible;
+  isolation:isolate;
+  border:4px solid #fff4d5;
+  border-radius:50%;
+  background:linear-gradient(160deg,#83fff4 0%,#2ad9d7 29%,#0ca8bd 59%,#066389 100%);
+  color:#fff;
+  box-shadow:inset 0 3px 0 #ffffffb5,inset 0 -3px 0 #075a85,
+             0 4px 0 #006684,0 8px 12px #063c5c95;
+  font-family:"Trebuchet MS",system-ui,sans-serif;
+  font-weight:950;
+  line-height:1;
+  text-align:center;
+  text-shadow:0 2px 1px #074d75,0 3px 3px #052d5588;
+  -webkit-tap-highlight-color:transparent;
+  transition:filter .15s ease,box-shadow .15s ease;
+}
+#thV2Area .th-v2-node::before{
+  content:"";
+  position:absolute;
+  z-index:0;
+  top:5px;left:10px;right:10px;
+  height:23px;
+  border-radius:90% 90% 35% 35%;
+  background:linear-gradient(180deg,#ffffff9c,#ffffff00);
+  pointer-events:none;
+}
+#thV2Area .th-v2-node strong{
+  position:relative;
+  z-index:1;
+  display:block;
+  font-family:"Trebuchet MS",system-ui,sans-serif;
+  font-size:30px;
+  line-height:1;
+  font-weight:1000;
+  transform:translateY(-3px);
+  -webkit-text-stroke:.45px #0b6787;
+  paint-order:stroke fill;
+}
+#thV2Area .th-v2-node.is-next{
+  border-color:#fff3b5;
+  background:linear-gradient(160deg,#9cfff2 0%,#3de8cf 30%,#11b9be 62%,#07708f 100%);
+  box-shadow:inset 0 3px 0 #ffffffca,inset 0 -3px 0 #057b82,
+             0 0 0 4px #ffdc7470,0 4px 0 #b78d37,0 9px 15px #074161a6;
+}
+#thV2Area .th-v2-node.is-complete{
+  background:linear-gradient(160deg,#9ffff3 0%,#36dcd7 28%,#0da6b2 60%,#076389 100%);
+  border-color:#fff7dc;
+}
+#thV2Area .th-v2-node.is-locked:disabled{
+  opacity:.9;
+  background:linear-gradient(165deg,#9bd5dc 0%,#5c9eac 50%,#386e85 100%);
+  color:#ebffff;
+  border-color:#c7e8e4;
+  box-shadow:inset 0 2px 0 #ffffff73,inset 0 -3px 0 #38667a,
+             0 3px 0 #285b6b,0 7px 12px #063c5c7c;
+  text-shadow:0 2px 2px #244e64;
+}
+#thV2Area .th-v2-fin-rating{
+  position:absolute;
+  z-index:3;
+  left:50%;
+  bottom:-16px;
+  transform:translateX(-50%);
+  box-sizing:border-box;
+  width:64px;
+  height:25px;
+  padding:2px 4px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:2px;
+  border:2px solid #fff9e4;
+  border-radius:999px;
+  background:linear-gradient(180deg,#fffefa 0%,#fff0cb 60%,#f5ce89 100%);
+  box-shadow:0 3px 0 #b38347,0 5px 7px #053f646b;
+  pointer-events:none;
+}
+#thV2Area .th-v2-fin-icon{
+  display:block;
+  flex:none;
+  width:15px;
+  height:17px;
+  clip-path:polygon(0 100%,11% 81%,27% 53%,48% 22%,67% 0,73% 42%,88% 79%,100% 100%);
+  background:linear-gradient(125deg,#ffefb0 0%,#fdbb22 48%,#e07e0b 100%);
+  filter:drop-shadow(0 1px 1px #80591b88);
+}
+#thV2Area .th-v2-fin-rating--silver .th-v2-fin-icon{
+  background:linear-gradient(125deg,#faffff 0%,#c2e2ed 53%,#6c9fae 100%);
+}
+#thV2Area .th-v2-fin-rating--blue .th-v2-fin-icon{
+  background:linear-gradient(125deg,#b3f8ff 0%,#35b5ed 53%,#1268aa 100%);
+}
+#thV2Area .th-v2-node:focus-visible{
+  outline:3px solid #fff3a5;
+  outline-offset:6px;
+}
+#thV2Area .th-v2-node.is-next:active{
+  filter:brightness(1.08);
+  box-shadow:inset 0 2px 0 #ffffffc7,0 2px 0 #a88035,0 5px 9px #063c5c85;
+}
+@media(max-width:370px){
+  #thV2Area .th-v2-node{width:64px;height:64px;min-height:64px}
+  #thV2Area .th-v2-node strong{font-size:28px}
+  #thV2Area .th-v2-fin-rating{width:60px;height:23px;bottom:-15px}
+  #thV2Area .th-v2-fin-icon{width:14px;height:16px}
+}
+@media(prefers-reduced-motion:reduce){
+  #thV2Area .th-v2-node{transition:none}
+}

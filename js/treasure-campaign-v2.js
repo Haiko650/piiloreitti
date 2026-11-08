@@ -419,11 +419,27 @@
         button.disabled=!available;
         const number=document.createElement('strong');
         number.textContent=String(node.index+1);
-        const medal=document.createElement('small');
-        medal.textContent=score===null?(available?'PLAY':'LOCKED'):finsFor(id,score)+' fins';
-        button.append(number,medal);
+        button.append(number);
+        // The level number identifies the stop; a completed result is
+        // represented by its actual number of dorsal fins, never by a
+        // visible numeral or PLAY/LOCKED label.
+        const earned=score===null?0:finsFor(id,score);
+        if(earned){
+          const tier=earned===3?'gold':earned===2?'silver':'blue';
+          const rating=document.createElement('span');
+          rating.className='th-v2-fin-rating th-v2-fin-rating--'+tier;
+          rating.setAttribute('aria-hidden','true');
+          for(let fin=0;fin<earned;fin++){
+            const icon=document.createElement('span');
+            icon.className='th-v2-fin-icon';
+            rating.append(icon);
+          }
+          button.append(rating);
+        }
         button.setAttribute('aria-label','Level '+(node.index+1)+', '+
-          (score===null?(available?'ready to play':'locked'):'best '+score+' moves'));
+          (score===null?(available?'ready to play':'locked'):
+           'best '+score+' moves, '+earned+' '+(earned===3?'gold':earned===2?'silver':'blue')+
+           ' '+(earned===1?'fin':'fins')));
         button.addEventListener('click',()=>openLevel(levels.findIndex(item=>item.id===id)));
         sectionElement.append(button);
         if(id===currentId){

@@ -74,7 +74,7 @@ function harness(initial=original(),navigationOptions=null){
     }[s]||null),
     body:{dataset:{}}
   };
-  $('headerBack').href='index.html?pathle-update=1.5.45';
+  $('headerBack').href='index.html?pathle-update=1.5.46';
   $('thLeaveDialog').hidden=true;
   $('thCampaignError').hidden=true;
   $('thVictory').hidden=true;
@@ -254,6 +254,43 @@ test('three tutorial finishes unlock Water World and first Coral Coast stage',as
   assert.equal(Object.keys(h.storage.data.extensions.treasureHuntV2.records).length,3);
 });
 
+test('Coral Coast uses only dorsal-fin silhouettes for completed level results',async()=>{
+  const saved=original();
+  const records={};
+  for(const level of release.levels.slice(0,3))
+    records[level.id]={bestMoves:solver.solve(level).optimalMoves};
+  const stages=release.levels.slice(3);
+  const optimal=stages.map(level=>solver.solve(level).optimalMoves);
+  records[stages[0].id]={bestMoves:optimal[0]}; // three golden fins
+  records[stages[1].id]={bestMoves:grading.getThresholds(optimal[1]).goldMaxMoves+1}; // two silver
+  records[stages[2].id]={bestMoves:grading.getThresholds(optimal[2]).silverMaxMoves+1}; // one blue
+  saved.extensions.treasureHuntV2={version:2,records,unlockedAreas:['coral-coast']};
+  const h=harness(saved);await idle();
+  h.root.PathleTreasureCampaign.openArea('coral-coast');
+  const markers=h.$('thV2AreaCanvas').children.flatMap(s=>s.children)
+    .filter(s=>s.classList.contains('th-v2-node'));
+  assert.equal(markers.length,4);
+  for(const [index,count,tier] of [[0,3,'gold'],[1,2,'silver'],[2,1,'blue']]){
+    const marker=markers.find(m=>m.children[0].textContent===String(index+1));
+    assert.equal(marker.children.length,2,'Completed stops have only number and fin tray');
+    assert.equal(marker.children[1].className,'th-v2-fin-rating th-v2-fin-rating--'+tier);
+    assert.equal(marker.children[1]['aria-hidden'],'true');
+    assert.equal(marker.children[1].children.length,count);
+    assert.ok(marker.children[1].children.every(fin=>fin.className==='th-v2-fin-icon'));
+    assert.match(marker['aria-label'],new RegExp(count+' '+tier+' '+(count===1?'fin':'fins')));
+    assert.ok(!marker.children.some(item=>/fins|PLAY|LOCKED/i.test(item.textContent)),
+      'Score text must not appear visibly in numbered markers');
+  }
+  const next=markers.find(m=>m.children[0].textContent==='4');
+  assert.equal(next.classList.contains('is-next'),true);
+  assert.equal(next.children.length,1,'An unplayed level has no earned fins');
+  assert.match(next['aria-label'],/ready to play/);
+  assert.equal(next.disabled,false);
+  assert.equal(h.$('thV2AreaCanvas').children[0].children
+    .filter(item=>item.classList.contains('th-v2-area-haiko')).length,1,
+    'Progress Haiko remains a distinct overlay');
+});
+
 test('Coral Coast current stage changes only after a successful saved victory',async()=>{
   const h=harness();await idle();
   for(let i=0;i<3;i++)await clear(h,i);
@@ -355,7 +392,7 @@ test('Coral Coast World button and Android Back preserve hierarchical navigation
   assert.equal(h.root.location.assigned.length,1);
   const worldHome=new URL(h.root.location.assigned[0],'https://haiko650.github.io/piiloreitti/');
   assert.equal(worldHome.pathname,'/piiloreitti/index.html');
-  assert.equal(worldHome.searchParams.get('pathle-update'),'1.5.45');
+  assert.equal(worldHome.searchParams.get('pathle-update'),'1.5.46');
   assert.match(worldHome.searchParams.get('fresh'),/^\d+$/,
     'The Water World home button requests fresh HTML');
 });
@@ -372,7 +409,7 @@ test('Coral Coast top-left home button opens main menu directly',async()=>{
   assert.equal(h.root.location.assigned.length,1);
   const areaHome=new URL(h.root.location.assigned[0],'https://haiko650.github.io/piiloreitti/');
   assert.equal(areaHome.pathname,'/piiloreitti/index.html');
-  assert.equal(areaHome.searchParams.get('pathle-update'),'1.5.45');
+  assert.equal(areaHome.searchParams.get('pathle-update'),'1.5.46');
   assert.match(areaHome.searchParams.get('fresh'),/^\d+$/,
     'Coral Coast Home must bypass stale cached HTML');
   assert.equal(h.root.PathleTreasureCampaign.getView(),'area',

@@ -5,7 +5,7 @@
 The main menu shows a compact **tappable** build label at the top center,
 between Settings and the DEV toggle:
 
-**DEV · v1.5.45**
+**DEV · v1.5.46**
 
 **The sole release-version source is `version.json`.** The installed
 `js/version.js` constant, the main-menu fallback label, versioned
@@ -226,3 +226,11 @@ mode never writes files; it explains which files need synchronization.
 - Set that world-section aspect ratio to 941:1672 so the portrait illustration is neither distorted nor cropped on phones. The Coral Coast capsule, Haiko progress sprite, scroll/navigation behavior and persistent save data stay separate overlays.
 - The artwork manifest generates cache-versioned image requests from the approved WebP's content hash. The release synchronizer now also manages this runtime image fingerprint for future graphic swaps.
 - Tests cover WebP dimensions, image provenance, the world-only section assignment, safe cache keys and responsive section sizing.
+
+
+## Coral Coast level-marker visual refresh (DEV v1.5.46)
+- The playable Coral Coast area map uses 70px glossy aqua 2.5D level medallions with an ivory rim, soft top highlight, deep ocean shadow and larger white level number. Compact screens use 64px markers.
+- Completed scores appear exclusively as CSS-drawn dorsal-fin silhouettes, never as numeric "3 fins" labels: three gold fins (best), two silver fins (middle) or one blue fin (completion). A narrow cream plaque holds only the earned fin icons.
+- Unplayed stops have no earned result/fins. The next playable stop uses a gentle golden focus ring; locked stops are muted. Screen-reader labels retain full results and play/locked status.
+- Level coordinates, continuous route, Haiko avatar, gameplay/save values and map images remain unchanged; only the Coral Coast markers and their DOM presentation are updated.
+- New unit/regression checks validate all three rating tiers, the absent score for unplayed levels, keyboard focus, and the CSS-only fin visuals.
