@@ -5,7 +5,7 @@
 The main menu shows a compact **tappable** build label at the top center,
 between Settings and the DEV toggle:
 
-**DEV · v1.5.40**
+**DEV · v1.5.41**
 
 The installed version is defined in `js/version.js`. The published
 GitHub Pages version is described by `version.json` in the repo root.
@@ -174,3 +174,10 @@ automatically reload while Daily or Treasure Hunt is in progress.
 - The pink top-left Water World overview control now displays a small, white vector house in place of the back arrow. The original arrow remains on Coral Coast, tutorial and puzzle screens.
 - The existing main-menu navigation was verified: `goBackOneStep()` routes the Water World view to `exitToHome()`, which loads `index.html`; the anchor's `href="index.html"` remains a fallback when scripts are unavailable. Coral Coast returns to Water World.
 - The control's accessible label is now `Go to main menu` on Water World and `Go back one screen` on all other views. No map art, Haiko sprite, progress or saved-game behavior is changed.
+
+
+## Coral Coast home button matches Water World (DEV v1.5.41)
+- In Coral Coast, the upper-left pink control now shows the same white home icon and visual styling as in Water World, instead of a back arrow.
+- The upper-left control on either illustrated map navigates directly to `index.html` using the existing `exitToHome()` function, and updates its accessible label to `Go to main menu`.
+- The independent `← World` Coral Coast map button and Android/browser Back continue to follow the map hierarchy, returning to Water World; tutorial/level header back arrows retain their current behavior.
+- Tests verify home routing from both illustrated maps and the existing subordinate World navigation. The sprite, art, achievements and stored data remain unchanged.

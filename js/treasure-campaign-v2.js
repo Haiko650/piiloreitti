@@ -207,7 +207,7 @@
     stopHaikoWatch();
     view=which;
     if(headerBack)headerBack.setAttribute('aria-label',
-      which==='world'?'Go to main menu':'Go back one screen');
+      (which==='world'||which==='area')?'Go to main menu':'Go back one screen');
     map.hidden=false;panel.hidden=true;mapButton.hidden=true;
     tutorialView.hidden=which!=='tutorial';
     worldView.hidden=which!=='world';
@@ -642,6 +642,13 @@
   if(headerBack)headerBack.addEventListener('click',event=>{
     if(!ready)return;
     event.preventDefault();
+    // Both illustrated maps use a HOME icon. Only the separate "← World"
+    // area control, system Back and gameplay Back follow the map hierarchy.
+    if(view==='world'||view==='area'){
+      if(busy||!errorBox.hidden)return;
+      exitToHome();
+      return;
+    }
     goBackOneStep();
   });
   if(navHistory&&typeof root.addEventListener==='function')

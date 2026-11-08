@@ -1,4 +1,4 @@
-/* Pathle Treasure Hunt · World and Coral Coast outer UI (DEV 1.5.40).
+/* Pathle Treasure Hunt · World and Coral Coast outer UI (DEV 1.5.41).
    This file styles the world heading, navigation and page chrome only.
    Map art, node positions, pin hit areas, route geometry and gameplay
    are intentionally owned by treasure-world-v2.css and its JS modules. */
@@ -603,11 +603,13 @@ body.th-page:has(#thV2World:not([hidden])) .th-header .th-water-world-logo{
   -webkit-user-drag:none;
 }
 
-/* DEV v1.5.40: the World overview goes straight to the main menu.
-   Show a home icon instead of a back arrow only on this top-level map. */
+/* DEV v1.5.41: identical home buttons on the Water World overview
+   and Coral Coast map. Gameplay/tutorial keep the ordinary back arrow. */
 .th-back-home-icon{display:none}
-body.th-page:has(#thV2World:not([hidden])) .th-back .th-back-arrow{display:none}
-body.th-page:has(#thV2World:not([hidden])) .th-back .th-back-home-icon{
+body.th-page:has(#thV2World:not([hidden])) .th-back .th-back-arrow,
+body.th-page:has(#thV2Area:not([hidden])) .th-back .th-back-arrow{display:none}
+body.th-page:has(#thV2World:not([hidden])) .th-back .th-back-home-icon,
+body.th-page:has(#thV2Area:not([hidden])) .th-back .th-back-home-icon{
   display:block;
   width:21px;
   height:21px;
@@ -616,7 +618,8 @@ body.th-page:has(#thV2World:not([hidden])) .th-back .th-back-home-icon{
   filter:drop-shadow(0 1px 1px #a62c4d);
 }
 @media(max-width:360px){
-  body.th-page:has(#thV2World:not([hidden])) .th-back .th-back-home-icon{
+  body.th-page:has(#thV2World:not([hidden])) .th-back .th-back-home-icon,
+  body.th-page:has(#thV2Area:not([hidden])) .th-back .th-back-home-icon{
     width:20px;
     height:20px;
   }

@@ -325,7 +325,7 @@ test('new visitor without shared DB gets one safe initialized record',async()=>{
   assert.equal(h.root.PathleTreasureCampaign.getView(),'tutorial');
 });
 
-test('Water World home button and Android Back preserve hierarchical navigation',async()=>{
+test('Coral Coast World button and Android Back preserve hierarchical navigation',async()=>{
   const nav={};
   const h=harness(original(),nav);await idle();
   for(let i=0;i<3;i++)await clear(h,i);
@@ -334,11 +334,10 @@ test('Water World home button and Android Back preserve hierarchical navigation'
   assert.equal(h.$('headerBack')['aria-label'],'Go to main menu');
   h.root.PathleTreasureCampaign.openArea('coral-coast');
   assert.equal(h.root.PathleTreasureCampaign.getView(),'area');
-  assert.equal(h.$('headerBack')['aria-label'],'Go back one screen');
-  h.$('headerBack').click();
-  assert.equal(h.root.PathleTreasureCampaign.getView(),'world',
-    'The header arrow on Coral Coast must not leave Treasure Hunt');
   assert.equal(h.$('headerBack')['aria-label'],'Go to main menu');
+  h.$('thV2AreaWorld').click();
+  assert.equal(h.root.PathleTreasureCampaign.getView(),'world',
+    'The separate World button on Coral Coast returns to Water World');
   assert.deepEqual(h.root.location.assigned,[]);
   h.root.PathleTreasureCampaign.openArea('coral-coast');
   h.root.history.back(); // Android system Back / browser Back
@@ -346,7 +345,22 @@ test('Water World home button and Android Back preserve hierarchical navigation'
   assert.deepEqual(h.root.location.assigned,[]);
   h.$('headerBack').click();
   assert.deepEqual(h.root.location.assigned,['index.html'],
-    'Water World has no parent map, so Back exits to the main menu');
+    'The Water World home button opens the main menu');
+});
+
+test('Coral Coast top-left home button opens main menu directly',async()=>{
+  const nav={};
+  const h=harness(original(),nav);await idle();
+  for(let i=0;i<3;i++)await clear(h,i);
+  h.root.PathleTreasureCampaign.advance(2,3);
+  h.root.PathleTreasureCampaign.openArea('coral-coast');
+  assert.equal(h.root.PathleTreasureCampaign.getView(),'area');
+  assert.equal(h.$('headerBack')['aria-label'],'Go to main menu');
+  h.$('headerBack').click();
+  assert.deepEqual(h.root.location.assigned,['index.html'],
+    'Coral Coast Home must skip Water World');
+  assert.equal(h.root.PathleTreasureCampaign.getView(),'area',
+    'The view remains until browser navigation finishes');
 });
 
 test('native Back from an unfinished level asks before discarding moves',async()=>{
