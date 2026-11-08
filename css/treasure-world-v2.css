@@ -420,3 +420,44 @@
 @media(prefers-reduced-motion:reduce){
   #thV2Area .th-v2-node{transition:none}
 }
+
+/* Coral Coast unreleased preview stops: identical 2.5D vocabulary, muted
+   until a real puzzle is published. The short caption belongs to the
+   map marker and never replaces the level number. */
+#thV2Area .th-v2-node.is-coming-soon:disabled{
+  cursor:default;
+  opacity:1;
+  border-color:#cde9e6;
+  background:linear-gradient(160deg,#b2d7dc 0%,#81b7c3 28%,#5594a8 62%,#386f8a 100%);
+  color:#eaffff;
+  box-shadow:inset 0 3px 0 #ffffffa6,inset 0 -3px 0 #2b6480,
+             0 4px 0 #35617b,0 8px 12px #063c5c78;
+}
+#thV2Area .th-v2-node.is-coming-soon strong{
+  text-shadow:0 2px 2px #38637b;
+  -webkit-text-stroke:.35px #46788c;
+}
+#thV2Area .th-v2-coming-soon-label{
+  position:absolute;
+  left:50%;
+  top:calc(100% + 8px);
+  transform:translateX(-50%);
+  display:block;
+  width:max-content;
+  max-width:112px;
+  padding:4px 7px;
+  border:1.5px solid #d2f7f5;
+  border-radius:999px;
+  background:linear-gradient(180deg,#216e91ed,#0b4c72f5);
+  color:#fffce8;
+  font:900 10px/1.15 "Trebuchet MS",system-ui,sans-serif;
+  letter-spacing:.005em;
+  text-align:center;
+  text-shadow:0 1px 2px #00334f;
+  white-space:nowrap;
+  box-shadow:0 3px 6px #063b5980;
+  pointer-events:none;
+}
+#thV2Area .th-v2-area-section.has-coming-soon{
+  background:linear-gradient(175deg,#79e4e5 0%,#42b5c8 48%,#1b82a9 100%);
+}
