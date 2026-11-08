@@ -371,7 +371,7 @@ test('approved Water World logo replaces only the overview labels',()=>{
  assert.equal(art.toString('ascii',12,16),'VP8X');
  assert.equal(1+art.readUIntLE(24,3),600);
  assert.equal(1+art.readUIntLE(27,3),200);
- assert.match(html,/<img class="th-water-world-logo" src="images\/water-world-logo\.webp" width="600" height="200" alt="Water World"/);
+ assert.match(html,/<img class="th-water-world-logo" src="images\/water-world-logo\.webp\?v=f165cd36d510" width="600" height="200" alt="Water World"/);
  assert.match(css,/\.th-water-world-logo\{display:none\}/);
  assert.match(css,/body\.th-page:has\(#thV2World:not\(\[hidden\]\)\) \.th-heading,\s*body\.th-page:has\(#thV2World:not\(\[hidden\]\)\) \.th-test-badge\{\s*display:none!important;/);
  assert.match(css,/body\.th-page:has\(#thV2World:not\(\[hidden\]\)\) \.th-header \.th-water-world-logo\{\s*display:block;/);
