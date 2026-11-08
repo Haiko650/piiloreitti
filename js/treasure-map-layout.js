@@ -56,6 +56,57 @@
       })))
     })));
   }
+  // Coral Coast's 60-stop route is presentation only. Only entries in
+  // area.levelIds are playable: preview IDs never enter catalog/save data.
+  // Keep the original four nodes in their approved positions; spread the
+  // remaining stops across five additional 1300px illustrated sections.
+  function getPreviewDisplaySections(area){
+    if(!area||area.id!=='coral-coast'||area.status!=='released')
+      return getDisplaySections(area);
+    const released=area.levelIds.length;
+    const total=Math.max(released,area.targetLevelCount||released);
+    const sections=[];
+    const xWave=[.36,.64,.38,.61,.32,.65,.41,.59,.33,.66,.39,.60];
+    for(let index=0;index<total;index++){
+      const preview=index>=released;
+      const levelId=preview
+        ?'map-preview-coral-'+String(index+1).padStart(3,'0')
+        :area.levelIds[index];
+      const declared=area.map.nodes?.[levelId];
+      let sectionId,x,y;
+      if(index<4){
+        sectionId='coral-shallows-01';
+        x=declared?.x??[.36,.63,.405,.595][index];
+        y=declared?.y??[.305,.42,.555,.68][index];
+      }else{
+        const sectionNumber=Math.floor((index-4)/12)+2;
+        const local=(index-4)%12;
+        const count=Math.min(12,total-(4+(sectionNumber-2)*12));
+        sectionId='coral-coast-section-'+String(sectionNumber).padStart(2,'0');
+        x=declared?.x??xWave[local];
+        y=declared?.y??(.09+.82*(local+.5)/count);
+      }
+      if(!FINITE01(x)||!FINITE01(y))
+        throw new RangeError('Invalid Coral Coast map coordinates for stop '+(index+1));
+      let section=sections[sections.length-1];
+      if(!section||section.id!==sectionId){
+        section={id:sectionId,areaId:area.id,nodes:[]};
+        sections.push(section);
+      }
+      section.nodes.push(Object.freeze({levelId,index,x,y,preview}));
+    }
+    const direction=area.map.travelDirection||'down';
+    if(!['up','down'].includes(direction))
+      throw new RangeError('Invalid area map travel direction');
+    const visible=direction==='up'?sections.slice().reverse():sections;
+    return Object.freeze(visible.map(section=>Object.freeze({
+      id:section.id,areaId:section.areaId,
+      nodes:Object.freeze(section.nodes.map(node=>direction==='up'
+        ?Object.freeze({...node,y:1-node.y}):node)),
+      firstIndex:section.nodes[0].index,
+      lastIndex:section.nodes[section.nodes.length-1].index
+    })));
+  }
   function pathForUp(nodes,hasLowerSection=false,hasUpperSection=false){
     if(!Array.isArray(nodes)||!nodes.length)return '';
     // Nodes remain in game progression order: smallest level is lower.
@@ -93,7 +144,7 @@
     }
     return result;
   }
-  const api=Object.freeze({MAX_SECTION_NODES,getSections,getDisplaySections,pathFor,pathForUp});
+  const api=Object.freeze({MAX_SECTION_NODES,getSections,getDisplaySections,getPreviewDisplaySections,pathFor,pathForUp});
   if(typeof module==='object'&&module.exports)module.exports=api;
   if(root)root.PathleTreasureMapLayout=api;
 })(typeof window!=='undefined'?window:null);
