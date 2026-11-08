@@ -119,7 +119,7 @@ test('approved Haiko artwork is the single reusable progress cursor on both maps
  assert.match(art,/HAIKO_IMAGE='images\/haiko-map-upright\.webp'/);
  assert.match(art,/haiko:HAIKO_IMAGE/);
  assert.match(html,/js\/treasure-map-art\.js\?v=1.5.26/);
- assert.match(html,/js\/treasure-campaign-v2\.js\?v=1.5.41/);
+ assert.match(html,/js\/treasure-campaign-v2\.js\?v=1.5.42/);
  assert.match(script,/function makeHaikoMarker\(areaId,description\)/);
  assert.match(script,/picture\.className='th-v2-haiko-sprite'/);
  assert.match(script,/picture\.src=art\.HAIKO_SPRITE_DATA/);
@@ -403,7 +403,7 @@ test('Water World and Coral Coast share the same home button and navigation',()=
  assert.ok(js.includes("root.location.assign(home+separator+'fresh='+Date.now())"));
  assert.ok(js.includes("$('thV2AreaWorld').addEventListener('click',goBackOneStep)"),
    'Separate World button still returns to Water World');
- assert.ok(html.includes('js/treasure-campaign-v2.js?v=1.5.41'));
+ assert.ok(html.includes('js/treasure-campaign-v2.js?v=1.5.42'));
 });
 
 test('returning home and checking updates always request a fresh index document',()=>{
