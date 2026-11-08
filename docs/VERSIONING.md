@@ -5,7 +5,7 @@
 The main menu shows a compact **tappable** build label at the top center,
 between Settings and the DEV toggle:
 
-**DEV · v1.5.43**
+**DEV · v1.5.44**
 
 **The sole release-version source is `version.json`.** The installed
 `js/version.js` constant, the main-menu fallback label, versioned
@@ -211,3 +211,10 @@ mode never writes files; it explains which files need synchronization.
 - Introduced Node 22 release sync/check script and a required GitHub Actions preflight. `version.json` is the sole manually updated semantic release value; generated copies are derived and verified.
 - Replaced dated manual query tags with content-dependent asset fingerprints in both HTML entry pages and their regression assertions. Changed assets fetch fresh while unchanged assets keep their URLs.
 - Kept existing same-origin cache-busted home navigation and Play Store/Android-compatible update check without changing saves, game mechanics, map artwork or UI designs.
+
+
+## Coral Coast closer stops and continuous route (DEV v1.5.44)
+
+- The four released Coral Coast level buttons now have 50% of the previous point-to-point distances in both their horizontal and vertical map coordinates, retaining the original alternating trail and bottom-to-top ordering.
+- The one existing SVG route path is a solid, smooth continuous gold trail instead of a dotted path. Level IDs, ordering, progression, Haiko attachment, scrolling rules and map illustrations are unchanged.
+- The map section remains 1300px tall and ready for later additional levels/sections. The visual change affects Coral Coast only.

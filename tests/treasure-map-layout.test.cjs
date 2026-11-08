@@ -9,14 +9,14 @@ const release=require('../js/treasure-release-v2.js');
 const read=name=>fs.readFileSync(path.join(__dirname,'..',name),'utf8');
 const mutable=o=>JSON.parse(JSON.stringify(o));
 
-test('currently published Coral Coast nodes retain original art section and positions',()=>{
+test('Coral Coast numbered stops are twice as close while retaining their map section',()=>{
   const area=release.catalog.areas[0];
   const sections=layout.getSections(area);
   assert.equal(sections.length,1);
   assert.equal(sections[0].id,'coral-shallows-01');
   assert.equal(sections[0].nodes.length,4);
   assert.deepEqual(sections[0].nodes.map(n=>[n.x,n.y]),[
-    [0.22,0.11],[0.76,0.34],[0.31,0.61],[0.69,0.86]
+    [0.36,0.305],[0.63,0.42],[0.405,0.555],[0.595,0.68]
   ]);
 });
 
@@ -136,13 +136,13 @@ test('Coral Coast level 1 is at the bottom, with unchanged level IDs and map art
   assert.equal(visual.length,1);
   assert.equal(visual[0].id,logical[0].id);
   assert.deepEqual(visual[0].nodes.map(n=>n.levelId),area.levelIds);
-  assert.deepEqual(visual[0].nodes.map(n=>n.x),[.22,.76,.31,.69]);
-  const expectedY=[.89,.66,.39,.14];
+  assert.deepEqual(visual[0].nodes.map(n=>n.x),[.36,.63,.405,.595]);
+  const expectedY=[.695,.58,.445,.32];
   visual[0].nodes.forEach((node,i)=>assert.ok(Math.abs(node.y-expectedY[i])<1e-10));
   assert.ok(visual[0].nodes.every((node,i,all)=>i===0||node.y<all[i-1].y));
-  assert.equal(layout.getSections(area)[0].nodes[0].y,.11,
-    'Original map definition must not mutate for existing saves');
-  assert.equal(layout.pathForUp(visual[0].nodes,false,false).startsWith('M220 1157'),true);
+  assert.equal(layout.getSections(area)[0].nodes[0].y,.305,
+    'Orientation must not mutate the new map coordinates');
+  assert.equal(layout.pathForUp(visual[0].nodes,false,false).startsWith('M360 903.5'),true);
   assert.equal(art.forSection('coral-coast',visual[0].id).base,
     art.forSection('coral-coast',logical[0].id).base);
   assert.deepEqual(release.levels.slice(3).map(l=>l.id),area.levelIds);
@@ -191,4 +191,23 @@ test('downward layout remains available for worlds using a different trail style
   assert.deepEqual(layout.getDisplaySections(area),layout.getSections(area));
   area.map.travelDirection='sideways';
   assert.throws(()=>layout.getDisplaySections(area),/direction/);
+});
+
+test('Coral Coast path stays continuous and neighboring stops are approximately half as distant',()=>{
+  const old=[[.22,.11],[.76,.34],[.31,.61],[.69,.86]];
+  const now=layout.getSections(release.catalog.areas[0]).at(0).nodes.map(n=>[n.x,n.y]);
+  const distance=(a,b)=>Math.hypot((b[0]-a[0])*1000,(b[1]-a[1])*1300);
+  for(let i=1;i<now.length;i++){
+    const ratio=distance(now[i-1],now[i])/distance(old[i-1],old[i]);
+    assert.ok(Math.abs(ratio-.5)<.00001,'Level gap '+i+' should be halved, got '+ratio);
+  }
+  const display=layout.getDisplaySections(release.catalog.areas[0])[0];
+  const d=layout.pathForUp(display.nodes,false,false);
+  assert.equal((d.match(/M/g)||[]).length,1,'Only one continuous stroke starts');
+  assert.equal((d.match(/ C/g)||[]).length,display.nodes.length-1);
+  const renderer=read('js/treasure-campaign-v2.js');
+  assert.match(renderer,/path\.setAttribute\('stroke-linejoin','round'\)/);
+  assert.doesNotMatch(renderer,/path\.setAttribute\('stroke-dasharray'/);
+  assert.match(renderer,/path\.setAttribute\('stroke-linecap','round'\)/);
+  assert.match(renderer,/path\.setAttribute\('d',up/);
 });

@@ -402,7 +402,8 @@
       path.setAttribute('stroke','#fff1ac');
       path.setAttribute('stroke-width','16');
       path.setAttribute('stroke-linecap','round');
-      path.setAttribute('stroke-dasharray','2 28');
+      // A single continuous trail connects all numbered stops.
+      path.setAttribute('stroke-linejoin','round');
       svg.append(path);
       sectionElement.append(svg,detail);
       for(const node of section.nodes){

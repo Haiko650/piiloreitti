@@ -26,8 +26,10 @@
   const nodes=Object.freeze(Object.fromEntries(levels.map((level,index)=>[
     level.id,
     Object.freeze({sectionId:'coral-shallows-01',
-      x:[0.22,0.76,0.31,0.69][index],
-      y:[0.11,0.34,0.61,0.86][index]})
+      // Keep the same left-right rhythm, at half the former physical
+      // distances. Centering both axes preserves the curve and progression.
+      x:[0.36,0.63,0.405,0.595][index],
+      y:[0.305,0.42,0.555,0.68][index]})
   ])));
   const coral=Object.freeze({...worlds.DEFAULT_CATALOG.areas[0],
     status:'released',levelIds:Object.freeze(levels.map(level=>level.id)),

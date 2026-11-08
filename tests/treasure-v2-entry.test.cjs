@@ -74,7 +74,7 @@ function harness(initial=original(),navigationOptions=null){
     }[s]||null),
     body:{dataset:{}}
   };
-  $('headerBack').href='index.html?pathle-update=1.5.43';
+  $('headerBack').href='index.html?pathle-update=1.5.44';
   $('thLeaveDialog').hidden=true;
   $('thCampaignError').hidden=true;
   $('thVictory').hidden=true;
@@ -349,7 +349,7 @@ test('Coral Coast World button and Android Back preserve hierarchical navigation
   assert.equal(h.root.location.assigned.length,1);
   const worldHome=new URL(h.root.location.assigned[0],'https://haiko650.github.io/piiloreitti/');
   assert.equal(worldHome.pathname,'/piiloreitti/index.html');
-  assert.equal(worldHome.searchParams.get('pathle-update'),'1.5.43');
+  assert.equal(worldHome.searchParams.get('pathle-update'),'1.5.44');
   assert.match(worldHome.searchParams.get('fresh'),/^\d+$/,
     'The Water World home button requests fresh HTML');
 });
@@ -366,7 +366,7 @@ test('Coral Coast top-left home button opens main menu directly',async()=>{
   assert.equal(h.root.location.assigned.length,1);
   const areaHome=new URL(h.root.location.assigned[0],'https://haiko650.github.io/piiloreitti/');
   assert.equal(areaHome.pathname,'/piiloreitti/index.html');
-  assert.equal(areaHome.searchParams.get('pathle-update'),'1.5.43');
+  assert.equal(areaHome.searchParams.get('pathle-update'),'1.5.44');
   assert.match(areaHome.searchParams.get('fresh'),/^\d+$/,
     'Coral Coast Home must bypass stale cached HTML');
   assert.equal(h.root.PathleTreasureCampaign.getView(),'area',
