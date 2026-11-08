@@ -5,7 +5,7 @@
 The main menu shows a compact **tappable** build label at the top center,
 between Settings and the DEV toggle:
 
-**DEV · v1.5.46**
+**DEV · v1.5.47**
 
 **The sole release-version source is `version.json`.** The installed
 `js/version.js` constant, the main-menu fallback label, versioned
@@ -234,3 +234,10 @@ mode never writes files; it explains which files need synchronization.
 - Unplayed stops have no earned result/fins. The next playable stop uses a gentle golden focus ring; locked stops are muted. Screen-reader labels retain full results and play/locked status.
 - Level coordinates, continuous route, Haiko avatar, gameplay/save values and map images remain unchanged; only the Coral Coast markers and their DOM presentation are updated.
 - New unit/regression checks validate all three rating tiers, the absent score for unplayed levels, keyboard focus, and the CSS-only fin visuals.
+
+## Coral Coast 60-stop preview trail (DEV v1.5.47)
+- Coral Coast now displays a continuous winding 60-stop trail from the bottom of the map to the top, over six independently scrollable illustrated sections.
+- The four released puzzle markers remain at their original coordinates. Stops 5–60 show their number plus a visible "Coming soon" label and are permanently disabled until the corresponding actual puzzles ship.
+- Placeholder stops are map-only synthetic presentation nodes; they never enter the playable release catalog, progress save format, fin calculation or unlock rules.
+- Future sections temporarily reuse the existing illustrated Coral Coast map background; their art assets can be swapped independently later. Haiko remains over the first unfinished real puzzle.
+- The area and Water World completion counters continue to reflect four genuinely released levels (not 60 placeholders).
