@@ -1,4 +1,4 @@
-/* Pathle Treasure Hunt · Water World outer UI (DEV 1.5.17).
+/* Pathle Treasure Hunt · Water World outer UI (DEV 1.5.32).
    This file styles the world heading, navigation and page chrome only.
    Map art, node positions, pin hit areas, route geometry and gameplay
    are intentionally owned by treasure-world-v2.css and its JS modules. */
@@ -14,20 +14,16 @@ body.th-page:has(#thV2World:not([hidden])) .th-header{
   gap:clamp(6px,2.2vw,12px);
   min-height:65px;
   padding:8px clamp(8px,2.5vw,13px);
-  border:3px solid #fff0ad;
-  border-radius:23px;
-  background:linear-gradient(180deg,#a7fff2 0%,#3ce9df 28%,#17b7d1 68%,#0b8cac 100%);
-  box-shadow:inset 0 2px 0 #f6ffffe8,inset 0 -3px 0 #087eae,0 4px 0 #07577e,0 8px 14px #00476a88;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
 }
+/* The header is not a colored panel: its individual navigation controls float
+   over the page's open-ocean background. */
 body.th-page:has(#thV2World:not([hidden])) .th-header::before{
-  content:"";
-  position:absolute;
-  inset:4px 12px auto;
-  height:31%;
-  border-radius:70% 70% 40% 40%;
-  background:linear-gradient(180deg,#ffffff7d,#ffffff06);
-  pointer-events:none;
-  z-index:0;
+  content:none;
+  display:none;
 }
 body.th-page:has(#thV2World:not([hidden])) .th-header > *{
   position:relative;

@@ -9,8 +9,8 @@ test('Water World presentation uses a dedicated final-loaded ocean skin',()=>{
  const html=read('treasure-hunt.html');
  const ui=read('css/treasure-world-ui.css');
  const world=html.slice(html.indexOf('id="thV2World"'),html.indexOf('id="thV2Area"'));
- assert.ok(html.indexOf('css/treasure-world-ui.css?v=1.5.29')>
-           html.indexOf('css/treasure-world-v2.css?v=1.5.31'));
+ assert.ok(html.indexOf('css/treasure-world-ui.css?v=1.5.32')>
+           html.indexOf('css/treasure-world-v2.css?v=1.5.32'));
  assert.doesNotMatch(world,/th-v2-world-hero|th-v2-world-brand|th-v2-world-emblem/);
  assert.doesNotMatch(world,/thV2WorldTitle|thV2WorldStatus|Choose an area to explore/);
  assert.ok(world.indexOf('id="thV2WorldBack"')<world.indexOf('id="thV2WorldCanvas"'),
@@ -173,4 +173,24 @@ test('area completion is displayed below the area name, never below Haiko',()=>{
  assert.match(script,/areaSummary\.textContent=cleared\+' \/ '\+area\.levelIds\.length\+' CLEARED/);
  assert.match(css,/#thV2Area \.th-v2-area-progress\{/);
  assert.doesNotMatch(script,/marker\.append\(label\)/);
+});
+
+test('Water World header panel is transparent but the three header controls remain',()=>{
+ const css=read('css/treasure-world-ui.css');
+ const html=read('treasure-hunt.html');
+ const selector='body.th-page:has(#thV2World:not([hidden])) .th-header';
+ const start=css.indexOf(selector+'{');
+ assert.ok(start>=0);
+ const declaration=css.slice(start+selector.length+1,css.indexOf('}',start));
+ assert.match(declaration,/border:0;/);
+ assert.match(declaration,/background:transparent;/);
+ assert.match(declaration,/box-shadow:none;/);
+ const shine=css.slice(css.indexOf(selector+'::before{'),css.indexOf('}',css.indexOf(selector+'::before{')));
+ assert.match(shine,/content:none;/);
+ assert.match(shine,/display:none;/);
+ assert.match(css,/body\.th-page:has\(#thV2World:not\(\[hidden\]\)\) \.th-back\{/);
+ assert.match(css,/body\.th-page:has\(#thV2World:not\(\[hidden\]\)\) \.th-test-badge\{/);
+ assert.match(html,/class="th-heading"><small>HAIKO’S ADVENTURE<\/small><h1>Treasure Hunt<\/h1>/);
+ assert.match(html,/class="th-test-badge" id="thMapTotal"/);
+ assert.match(html,/css\/treasure-world-ui\.css\?v=1\.5\.32/);
 });

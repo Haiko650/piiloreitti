@@ -5,7 +5,7 @@
 The main menu shows a compact **tappable** build label at the top center,
 between Settings and the DEV toggle:
 
-**DEV · v1.5.31**
+**DEV · v1.5.32**
 
 The installed version is defined in `js/version.js`. The published
 GitHub Pages version is described by `version.json` in the repo root.
@@ -113,3 +113,10 @@ automatically reload while Daily or Treasure Hunt is in progress.
 - Water World destination names are enlarged to a 16–20px responsive font (16–17px on narrow mobile screens), while progress and Explore/Soon remain visually smaller at 10–11px.
 - The capsule grows slightly to 54% of its map section (maximum 220px) and 82px minimum height to avoid clipping longer names.
 - Approved turquoise/blue capsule visuals, status text, Haiko, iconography, click areas, map coordinates and progress data remain unchanged. Android visual verification is still required.
+
+
+## Larger map destination typography and floating header (DEV v1.5.32)
+- Water World area names are now 21–27 CSS pixels (20–22 on narrow phones), and remain visually dominant over the 10–11px progress and Explore/Soon captions.
+- Destination capsules span up to 62% of map width (maximum 240px), remain centered on their existing geographic positions, and accommodate longer names without clipping on 320–490px viewports.
+- Removed the header's opaque turquoise panel, golden frame, corner radius, shadow and the pseudo-element highlight. The colored back-arrow control, title lettering and golden WATER WORLD badge remain independently visible against the ocean page background.
+- No map art, Haiko progress cursor, saving, unlocks or gameplay logic changed. Only the development branch was modified.

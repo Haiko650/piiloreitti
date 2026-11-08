@@ -89,7 +89,7 @@ test('Water World area signs match the approved home Treasure capsule look',()=>
   const css=read('css/treasure-world-v2.css');
   const html=read('treasure-hunt.html');
   const js=read('js/treasure-campaign-v2.js');
-  assert.match(html,/css\/treasure-world-v2\.css\?v=1\.5\.31/);
+  assert.match(html,/css\/treasure-world-v2\.css\?v=1\.5\.32/);
   assert.match(menu,/#welcomeScreen #playTreasure\{/);
   assert.match(menu,/linear-gradient\(180deg,#b9ffff 0%,#44f6ed 22%,#06dacb 69%,#00adbd 100%\)/);
   assert.match(css,/linear-gradient\(180deg,#b9ffff 0%,#44f6ed 22%,#06dacb 69%,#00adbd 100%\)/);
@@ -104,7 +104,7 @@ test('Water World area signs match the approved home Treasure capsule look',()=>
   assert.match(js,/button\.append\(status\)/);
   assert.match(js,/button\.disabled=!access\.available/);
   for(const viewport of [320,360,390,430]){
-    const width=Math.min(viewport*.54,220);
+    const width=Math.min(viewport*.62,240);
     const leftCoral=.32*viewport-width/2;
     const rightOpen=.69*viewport+width/2;
     assert.ok(leftCoral>=0,'Coral Coast capsule must fit the screen');
@@ -119,11 +119,23 @@ test('area titles have larger typography than progress and action captions',()=>
   const narrow=css.slice(css.indexOf('@media(max-width:370px){'),css.indexOf('@media(max-width:370px){')+230);
   const progress=cssBlock(css,'.th-v2-world-pin-progress');
   const action=cssBlock(css,'.th-v2-world-pin-action');
-  assert.match(pin,/font-size:clamp\(16px,4\.6vw,20px\)/);
+  assert.match(pin,/font-size:clamp\(21px,5\.8vw,27px\)/);
   assert.match(forced,/font-size:clamp\(16px,4\.6vw,20px\)/);
-  assert.match(narrow,/font-size:clamp\(16px,4\.6vw,17px\)/);
+  assert.match(narrow,/font-size:clamp\(20px,5\.8vw,22px\)/);
   assert.match(progress,/font-size:clamp\(10px,2\.55vw,11px\)/);
   assert.match(action,/font-size:clamp\(10px,2\.45vw,11px\)/);
-  assert.match(pin,/width:min\(54%,220px\)/);
-  assert.match(pin,/min-height:82px/);
+  assert.match(pin,/width:min\(62%,240px\)/);
+  assert.match(pin,/min-height:88px/);
+});
+
+test('region title grows while longer names remain inside the display',()=>{
+  const css=read('css/treasure-world-v2.css');
+  assert.match(css,/font-size:clamp\(21px,5\.8vw,27px\)/);
+  assert.match(css,/font-size:clamp\(20px,5\.8vw,22px\)/);
+  assert.match(css,/width:min\(62%,240px\)/);
+  for(const screen of [320,360,375,390,430,490]){
+    const width=Math.min(.62*screen,240);
+    assert.ok(.32*screen-width/2>=0,'Coral Coast clipped on '+screen);
+    assert.ok(.69*screen+width/2<=screen+.001,'Open Ocean clipped on '+screen);
+  }
 });
