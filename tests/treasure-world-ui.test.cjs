@@ -345,7 +345,7 @@ test('Haiko is centered in safe space instead of beneath floating text',()=>{
  assert.match(css,/#thV2AreaCanvas\.th-v2-area-canvas\{\s*padding-top:260px;\s*padding-bottom:110px;/);
  assert.match(css,/scroll-padding-top:calc\(190px \+ env\(safe-area-inset-top,0px\)\)/);
  assert.match(css,/scroll-padding-top:calc\(105px \+ env\(safe-area-inset-top,0px\)\)/);
- assert.match(html,/js\/treasure-campaign-v2\.js\?v=1\.5\.40/);
+ assert.match(html,/js\/treasure-campaign-v2\.js\?v=1\.5\.41/);
 });
 
 test('Haiko stays rendered at its map coordinates during scrolling',()=>{
@@ -390,13 +390,12 @@ test('Water World and Coral Coast share the same home button and navigation',()=
  assert.ok(html.includes('<a class="th-back" href="index.html"'));
  assert.ok(html.includes('class="th-back-home-icon"'));
  assert.ok(html.includes('class="th-back-arrow"'));
- for(const kind of ['World','Area']){
-   const prefix='body.th-page:has(#thV2'+kind+':not([hidden]))';
-   assert.ok(css.includes(prefix+' .th-back .th-back-arrow{display:none}'),
-     kind+' must hide its back arrow');
-   assert.ok(css.includes(prefix+' .th-back .th-back-home-icon{'),
-     kind+' must display the same home icon');
- }
+ const world='body.th-page:has(#thV2World:not([hidden]))';
+ const area='body.th-page:has(#thV2Area:not([hidden]))';
+ assert.ok(css.includes(world+' .th-back .th-back-arrow,\n'+area+' .th-back .th-back-arrow{display:none}'),
+   'Both maps must hide the back arrow');
+ assert.ok(css.includes(world+' .th-back .th-back-home-icon,\n'+area+' .th-back .th-back-home-icon{'),
+   'Both maps must use the identical home icon rule');
  assert.ok(css.includes('.th-back-home-icon{display:none}'),
    'Tutorial and puzzle keep original back arrow');
  assert.ok(js.includes("(which==='world'||which==='area')?'Go to main menu':'Go back one screen'"));
