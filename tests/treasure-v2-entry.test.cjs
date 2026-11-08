@@ -450,7 +450,7 @@ test('Coral Coast uses its Haiko sprite as viewport anchor and ignores stale wat
   assert.equal(node.wasScrolled,true,'Area return still centers the current level');
   active.notify(true);
   assert.equal(h.$('thV2AreaHere').hidden,true);
-  h.$('headerBack').click();
+  h.$('thV2AreaWorld').click();
   assert.equal(active.disconnected,true);
   assert.equal(h.$('thV2AreaHere').hidden,true);
   assert.equal(h.root.PathleTreasureCampaign.getView(),'world');
