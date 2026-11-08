@@ -5,7 +5,7 @@
 The main menu shows a compact **tappable** build label at the top center,
 between Settings and the DEV toggle:
 
-**DEV · v1.5.39**
+**DEV · v1.5.40**
 
 The installed version is defined in `js/version.js`. The published
 GitHub Pages version is described by `version.json` in the repo root.
@@ -168,3 +168,9 @@ automatically reload while Daily or Treasure Hunt is in progress.
 - Only Water World overview now shows the centered image, replacing visually the HAIKO’S ADVENTURE and Treasure Hunt heading and the yellow WATER WORLD badge. The pink upper-left back control stays available.
 - Other map/level views, particularly Coral Coast, keep their headers unchanged. This is a logo/UI-only change; no map art, coordinates, player progress, save logic or Haiko marker changes.
 - The logo remains separate from the world map illustration and is sized for narrow phones.
+
+
+## Home icon on Water World overview (DEV v1.5.40)
+- The pink top-left Water World overview control now displays a small, white vector house in place of the back arrow. The original arrow remains on Coral Coast, tutorial and puzzle screens.
+- The existing main-menu navigation was verified: `goBackOneStep()` routes the Water World view to `exitToHome()`, which loads `index.html`; the anchor's `href="index.html"` remains a fallback when scripts are unavailable. Coral Coast returns to Water World.
+- The control's accessible label is now `Go to main menu` on Water World and `Go back one screen` on all other views. No map art, Haiko sprite, progress or saved-game behavior is changed.

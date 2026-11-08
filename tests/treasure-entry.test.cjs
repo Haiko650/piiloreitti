@@ -75,7 +75,7 @@ function finished(level){
 
 test('the canonical Treasure Hunt URL loads v2 tutorial and Water World (not retired 30 maps)',async()=>{
   const html=read('treasure-hunt.html'),home=read('index.html');
-  assert.match(home,/id="playTreasure" href="treasure-hunt.html\?v=1\.5\.39"/);
+  assert.match(home,/id="playTreasure" href="treasure-hunt.html\?v=1\.5\.40"/);
   assert.match(html,/js\/treasure-bootstrap-v2\.js/);
   assert.match(html,/js\/treasure-campaign-v2\.js/);
   assert.match(html,/js\/treasure-worlds\.js/);

@@ -325,17 +325,20 @@ test('new visitor without shared DB gets one safe initialized record',async()=>{
   assert.equal(h.root.PathleTreasureCampaign.getView(),'tutorial');
 });
 
-test('header arrow and Android Back return from Coral Coast to Water World, then home',async()=>{
+test('Water World home button and Android Back preserve hierarchical navigation',async()=>{
   const nav={};
   const h=harness(original(),nav);await idle();
   for(let i=0;i<3;i++)await clear(h,i);
   h.root.PathleTreasureCampaign.advance(2,3);
   assert.equal(h.root.PathleTreasureCampaign.getView(),'world');
+  assert.equal(h.$('headerBack')['aria-label'],'Go to main menu');
   h.root.PathleTreasureCampaign.openArea('coral-coast');
   assert.equal(h.root.PathleTreasureCampaign.getView(),'area');
+  assert.equal(h.$('headerBack')['aria-label'],'Go back one screen');
   h.$('headerBack').click();
   assert.equal(h.root.PathleTreasureCampaign.getView(),'world',
     'The header arrow on Coral Coast must not leave Treasure Hunt');
+  assert.equal(h.$('headerBack')['aria-label'],'Go to main menu');
   assert.deepEqual(h.root.location.assigned,[]);
   h.root.PathleTreasureCampaign.openArea('coral-coast');
   h.root.history.back(); // Android system Back / browser Back

@@ -206,6 +206,8 @@
   function showSection(which){
     stopHaikoWatch();
     view=which;
+    if(headerBack)headerBack.setAttribute('aria-label',
+      which==='world'?'Go to main menu':'Go back one screen');
     map.hidden=false;panel.hidden=true;mapButton.hidden=true;
     tutorialView.hidden=which!=='tutorial';
     worldView.hidden=which!=='world';
@@ -476,6 +478,7 @@
     stopHaikoWatch();
     map.hidden=true;panel.hidden=false;mapButton.hidden=false;
     view='level';
+    if(headerBack)headerBack.setAttribute('aria-label','Go back one screen');
     ui.selectLevel(index);
     rememberRoute('level');
     ui.fitBoard();
