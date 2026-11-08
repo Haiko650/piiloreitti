@@ -368,16 +368,21 @@
     areaCanvas.replaceChildren();
     currentAreaNode=null;
     currentAreaMarker=null;
-    const sections=layout.getDisplaySections(area);
+    const sections=layout.getPreviewDisplaySections(area);
     const currentId=area.levelIds.find(id=>!progress.records[id])||
       area.levelIds[area.levelIds.length-1];
     let currentNodeElement=null;
     for(let sectionIndex=0;sectionIndex<sections.length;sectionIndex++){
       const section=sections[sectionIndex];
-      const images=art.forSection(area.id,section.id);
+      // Future sections reuse the existing Coral Coast illustration until their
+      // own geographic artwork is released; the map stops stay independent.
+      const images=art.forSection(area.id,section.id)||
+        art.forSection(area.id,'coral-shallows-01');
       const sectionElement=document.createElement('section');
       sectionElement.className='th-v2-map-section th-v2-area-section';
       sectionElement.dataset.sectionId=section.id;
+      if(section.nodes.some(node=>node.preview))
+        sectionElement.classList.add('has-coming-soon');
       sectionElement.setAttribute('aria-label',area.title+' map section '+(sectionIndex+1));
       art.applyLayer(sectionElement,'--th-base-art',images?.base);
       art.applyLayer(sectionElement,'--th-detail-art',images?.details);
@@ -408,12 +413,14 @@
       sectionElement.append(svg,detail);
       for(const node of section.nodes){
         const id=node.levelId;
-        const score=progress.records[id]?.bestMoves??null;
-        const available=model.canPlay(progress,catalog,id,finsFor);
+        const preview=node.preview===true;
+        const score=preview?null:(progress.records[id]?.bestMoves??null);
+        const available=!preview&&model.canPlay(progress,catalog,id,finsFor);
         const button=document.createElement('button');
         button.type='button';
         button.className='th-v2-node';
-        button.classList.add(score!==null?'is-complete':available?'is-next':'is-locked');
+        button.classList.add(preview?'is-coming-soon':
+          score!==null?'is-complete':available?'is-next':'is-locked');
         button.style.left=(node.x*100)+'%';
         button.style.top=(node.y*100)+'%';
         button.disabled=!available;
@@ -436,11 +443,18 @@
           }
           button.append(rating);
         }
+        if(preview){
+          const coming=document.createElement('span');
+          coming.className='th-v2-coming-soon-label';
+          coming.textContent='Coming soon';
+          button.append(coming);
+        }
         button.setAttribute('aria-label','Level '+(node.index+1)+', '+
-          (score===null?(available?'ready to play':'locked'):
+          (preview?'coming soon':score===null?(available?'ready to play':'locked'):
            'best '+score+' moves, '+earned+' '+(earned===3?'gold':earned===2?'silver':'blue')+
            ' '+(earned===1?'fin':'fins')));
-        button.addEventListener('click',()=>openLevel(levels.findIndex(item=>item.id===id)));
+        if(!preview)
+          button.addEventListener('click',()=>openLevel(levels.findIndex(item=>item.id===id)));
         sectionElement.append(button);
         if(id===currentId){
           currentNodeElement=button;
