@@ -1,4 +1,4 @@
-/* Pathle Treasure Hunt · Water World outer UI (DEV 1.5.32).
+/* Pathle Treasure Hunt · Water World outer UI (DEV 1.5.34).
    This file styles the world heading, navigation and page chrome only.
    Map art, node positions, pin hit areas, route geometry and gameplay
    are intentionally owned by treasure-world-v2.css and its JS modules. */
@@ -8,25 +8,44 @@ body.th-page:has(#thV2World:not([hidden])){
     radial-gradient(circle at 86% 8%,#fff8c85a 0 5px,transparent 7px),
     radial-gradient(ellipse at 50% -9%,#73f8ed 0%,#1dbbd1 30%,#0783ad 58%,#06557f 100%);
 }
-/* DEV 1.5.33: put the geographical map BELOW the floating controls, not
-   below an empty header-height strip. In world view the header is removed
-   from flex flow; the scrollable map begins at the very top of the screen. */
+/* DEV 1.5.34: the empty colored strip was the BODY background.
+   Previous absolute header removed the header's own color but still let
+   the separate flex/scroll canvas leave parts of the page uncovered.
+   Make the real, illustrated map viewport fill the WHOLE visible screen.
+   Only the World view uses this. The title/actions are a fixed overlay.
+   These rules change layout, never map assets or saved coordinates. */
 body.th-page:has(#thV2World:not([hidden])) .th-shell{
   position:relative;
-  padding-top:0;
+  padding:0;
   gap:0;
 }
-body.th-page:has(#thV2World:not([hidden])) #thCampaignMap{
-  flex:1 1 auto;
-  min-height:0;
-  margin-top:0;
+#thCampaignMap.th-v2-campaign-map:has(#thV2World:not([hidden])){
+  position:fixed;
+  inset:0;
+  z-index:1;
+  display:block;
+  box-sizing:border-box;
+  width:100vw;
+  min-width:100vw;
+  max-width:100vw;
+  height:100dvh;
+  min-height:100dvh;
+  max-height:100dvh;
+  margin:0;
+  padding:0;
+  overflow-x:hidden;
+  overflow-y:auto;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
 }
 body.th-page:has(#thV2World:not([hidden])) .th-header{
-  position:absolute;
+  position:fixed;
   z-index:100;
   top:calc(10px + env(safe-area-inset-top,0px));
-  left:12px;
-  right:12px;
+  left:max(12px,calc((100vw - 490px)/2 + 12px));
+  right:max(12px,calc((100vw - 490px)/2 + 12px));
   width:auto;
   pointer-events:none;
   isolation:isolate;

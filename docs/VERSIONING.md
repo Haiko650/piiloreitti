@@ -5,7 +5,7 @@
 The main menu shows a compact **tappable** build label at the top center,
 between Settings and the DEV toggle:
 
-**DEV · v1.5.33**
+**DEV · v1.5.34**
 
 The installed version is defined in `js/version.js`. The published
 GitHub Pages version is described by `version.json` in the repo root.
@@ -126,3 +126,10 @@ automatically reload while Daily or Treasure Hunt is in progress.
 - The previous transparent header still occupied its own flex row, so its turquoise page background showed instead of the map. In Water World ONLY, the header is now an absolute overlay at the top of the shell, and the map begins at the shell's top edge beneath it.
 - Back-arrow, outlined Treasure Hunt title and gold WATER WORLD capsule stay as distinct elements; the header has no background, border, shadow or decorative pseudo-element. The wrapper passes through touches while the back arrow remains interactive.
 - Applies only when Water World is visible; tutorial, Coral Coast area view and puzzle layouts retain their own flow. The map scroll position, artwork, Haiko, region pins and game saves are unchanged.
+
+
+## Water World map truly fills the viewport behind floating controls (DEV v1.5.34)
+- Root cause: the world header had a transparent background but the map remained a separate flex scrolling region, leaving parts of the body's flat turquoise gradient visible. The former absolute-header fix did not guarantee geographic artwork beneath it.
+- In Water World only, the real `#thCampaignMap` is now a fixed, full viewport (inset: 0; width: 100vw; height: 100dvh) scrollable map. No body-colored strip remains between the map and top controls.
+- The independent header floats fixed above the map, centered in the original 490px max-width shell. The pink back button is clickable; the title passes clicks through. World destination buttons and the Haiko marker remain in the map and continue to scroll.
+- Coral Coast, tutorial and puzzle layouts are untouched, as are map art assets, coordinates, unlocks and saves. Browser/Android screenshot check is recommended in addition to CI CSS regressions.
