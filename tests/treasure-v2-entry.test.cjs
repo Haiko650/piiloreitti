@@ -27,6 +27,7 @@ function element(id){
       contains(c){return classes.has(c)||String(item.className||'').split(/\s+/).includes(c)}
     },
     setAttribute(name,value){this[name]=value},
+    getAttribute(name){return this[name]??null},
     append(...more){children.push(...more)},
     replaceChildren(...more){children.splice(0,children.length,...more)},
     addEventListener(name,fn){(events[name]??=[]).push(fn)},
@@ -73,6 +74,7 @@ function harness(initial=original(),navigationOptions=null){
     }[s]||null),
     body:{dataset:{}}
   };
+  $('headerBack').href='index.html?pathle-update=1.5.42';
   $('thLeaveDialog').hidden=true;
   $('thCampaignError').hidden=true;
   $('thVictory').hidden=true;
@@ -344,8 +346,12 @@ test('Coral Coast World button and Android Back preserve hierarchical navigation
   assert.equal(h.root.PathleTreasureCampaign.getView(),'world');
   assert.deepEqual(h.root.location.assigned,[]);
   h.$('headerBack').click();
-  assert.deepEqual(h.root.location.assigned,['index.html'],
-    'The Water World home button opens the main menu');
+  assert.equal(h.root.location.assigned.length,1);
+  const worldHome=new URL(h.root.location.assigned[0],'https://haiko650.github.io/piiloreitti/');
+  assert.equal(worldHome.pathname,'/piiloreitti/index.html');
+  assert.equal(worldHome.searchParams.get('pathle-update'),'1.5.42');
+  assert.match(worldHome.searchParams.get('fresh'),/^\d+$/,
+    'The Water World home button requests fresh HTML');
 });
 
 test('Coral Coast top-left home button opens main menu directly',async()=>{
@@ -357,8 +363,12 @@ test('Coral Coast top-left home button opens main menu directly',async()=>{
   assert.equal(h.root.PathleTreasureCampaign.getView(),'area');
   assert.equal(h.$('headerBack')['aria-label'],'Go to main menu');
   h.$('headerBack').click();
-  assert.deepEqual(h.root.location.assigned,['index.html'],
-    'Coral Coast Home must skip Water World');
+  assert.equal(h.root.location.assigned.length,1);
+  const areaHome=new URL(h.root.location.assigned[0],'https://haiko650.github.io/piiloreitti/');
+  assert.equal(areaHome.pathname,'/piiloreitti/index.html');
+  assert.equal(areaHome.searchParams.get('pathle-update'),'1.5.42');
+  assert.match(areaHome.searchParams.get('fresh'),/^\d+$/,
+    'Coral Coast Home must bypass stale cached HTML');
   assert.equal(h.root.PathleTreasureCampaign.getView(),'area',
     'The view remains until browser navigation finishes');
 });

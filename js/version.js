@@ -148,6 +148,9 @@
     // The new URL bypasses cached index.html; same origin keeps IndexedDB data.
     const url=new URL(root.location.href);
     url.searchParams.set('pathle-update',availableVersion);
+    // Each explicit update requests new HTML even if a browser/CDN
+    // cached the same versioned URL during a previous attempt.
+    url.searchParams.set('fresh',String(Date.now()));
     root.location.assign(url.toString());
   });
 

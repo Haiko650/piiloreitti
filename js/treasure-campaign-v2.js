@@ -71,8 +71,15 @@
     navHistory.pushState({...old,[navKey]:routeInfo(kind)},'');
   }
   function exitToHome(){
-    if(root.location&&typeof root.location.assign==='function')
-      root.location.assign('index.html');
+    if(root.location&&typeof root.location.assign==='function'){
+      // Always request fresh home HTML when returning from Treasure Hunt.
+      // Without a unique URL, Android Chrome can reuse the previous build
+      // of index.html (and its old version.js reference) from cache.
+      // The link's version is the fallback if JavaScript is unavailable.
+      const home=headerBack?.getAttribute?.('href')||'index.html';
+      const separator=home.includes('?')?'&':'?';
+      root.location.assign(home+separator+'fresh='+Date.now());
+    }
   }
   function restoreCurrentHistory(){
     if(!navHistory)return;

@@ -5,7 +5,7 @@
 The main menu shows a compact **tappable** build label at the top center,
 between Settings and the DEV toggle:
 
-**DEV · v1.5.41**
+**DEV · v1.5.42**
 
 The installed version is defined in `js/version.js`. The published
 GitHub Pages version is described by `version.json` in the repo root.
@@ -181,3 +181,10 @@ automatically reload while Daily or Treasure Hunt is in progress.
 - The upper-left control on either illustrated map navigates directly to `index.html` using the existing `exitToHome()` function, and updates its accessible label to `Go to main menu`.
 - The independent `← World` Coral Coast map button and Android/browser Back continue to follow the map hierarchy, returning to Water World; tutorial/level header back arrows retain their current behavior.
 - Tests verify home routing from both illustrated maps and the existing subordinate World navigation. The sprite, art, achievements and stored data remain unchanged.
+
+
+## Always fetch fresh main menu when returning from Treasure Hunt (DEV v1.5.42)
+- Root cause: both map home buttons navigated to the unversioned `index.html` URL, allowing Android Chrome to reuse a cached home HTML page with the previous `js/version.js` and the old version label.
+- The header home link now has a versioned same-origin fallback (`index.html?pathle-update=1.5.42`). The controller reads that link and appends a unique `fresh=...` timestamp whenever the user returns to the main menu, preventing repeat URL cache hits.
+- The version-update dialog also appends `fresh=...` to each user-triggered update navigation. Manifest checks retain their original no-store behavior and the update check remains nonblocking.
+- The URL stays on the same origin, so IndexedDB saves, local progress and the puzzles are unchanged.
