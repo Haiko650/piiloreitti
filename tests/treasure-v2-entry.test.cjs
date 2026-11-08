@@ -222,25 +222,31 @@ test('three tutorial finishes unlock Water World and first Coral Coast stage',as
   assert.equal(h.root.PathleTreasureCampaign.getView(),'area');
   const area=h.$('thV2AreaCanvas');
   const sections=area.children.filter(x=>x.classList.contains('th-v2-map-section'));
-  assert.equal(sections.length,1);
-  assert.equal(sections[0].children.filter(x=>x.classList.contains('th-v2-node')).length,4);
-  assert.ok(sections[0].properties['--th-base-art'].includes('section-01-base.svg'));
-  assert.ok(sections[0].properties['--th-detail-art'].includes('section-01-details.svg'));
+  assert.equal(sections.length,6);
+  assert.equal(sections.flatMap(section=>section.children)
+    .filter(x=>x.classList.contains('th-v2-node')).length,60);
+  const previews=sections.flatMap(section=>section.children)
+    .filter(x=>x.classList.contains('is-coming-soon'));
+  assert.equal(previews.length,56);
+  assert.ok(previews.every(x=>x.disabled&&x.children[1].textContent==='Coming soon'));
+  assert.equal(sections.at(-1).children.filter(x=>x.classList.contains('th-v2-node')).length,4);
+  assert.ok(sections.at(-1).properties['--th-base-art'].includes('section-01-base.svg'));
+  assert.ok(sections.at(-1).properties['--th-detail-art'].includes('section-01-details.svg'));
   for(const className of ['th-v2-art-base','th-v2-art-details']){
-    const artwork=sections[0].children.find(x=>x.classList.contains(className));
+    const artwork=sections.at(-1).children.find(x=>x.classList.contains(className));
     assert.ok(artwork,'Missing '+className);
     assert.equal(artwork.children.length,1);
     assert.equal(artwork.children[0].className,'th-v2-map-art-img');
     assert.match(artwork.children[0].src,/^data:image\/svg\+xml;charset=UTF-8,/);
   }
-  assert.equal(sections[0].children.filter(x=>x.classList.contains('th-v2-map-haiko')).length,1);
-  const haiko=sections[0].children.find(x=>x.classList.contains('th-v2-area-haiko'));
+  assert.equal(sections.at(-1).children.filter(x=>x.classList.contains('th-v2-map-haiko')).length,1);
+  const haiko=sections.at(-1).children.find(x=>x.classList.contains('th-v2-area-haiko'));
   assert.equal(haiko.children.length,1,'Area Haiko should have no progress badge');
   assert.equal(haiko.children[0].className,'th-v2-haiko-sprite');
   assert.match(h.$('thV2AreaSummary').textContent,/^0 \/ 4 CLEARED/);
   assert.ok(haiko.properties['--th-haiko-art'].includes('haiko-map-upright.webp'));
-  const first=sections[0].children.find(x=>x.classList.contains('is-next'));
-  const fourth=sections[0].children.find(x=>x.classList.contains('th-v2-node')&&
+  const first=sections.at(-1).children.find(x=>x.classList.contains('is-next'));
+  const fourth=sections.at(-1).children.find(x=>x.classList.contains('th-v2-node')&&
     x.children[0].textContent==='4');
   assert.ok(parseFloat(first.style.top)>parseFloat(fourth.style.top),
     'Level 1 must appear below level 4 on the vertical map');
@@ -269,7 +275,7 @@ test('Coral Coast uses only dorsal-fin silhouettes for completed level results',
   h.root.PathleTreasureCampaign.openArea('coral-coast');
   const markers=h.$('thV2AreaCanvas').children.flatMap(s=>s.children)
     .filter(s=>s.classList.contains('th-v2-node'));
-  assert.equal(markers.length,4);
+  assert.equal(markers.length,60);
   for(const [index,count,tier] of [[0,3,'gold'],[1,2,'silver'],[2,1,'blue']]){
     const marker=markers.find(m=>m.children[0].textContent===String(index+1));
     assert.equal(marker.children.length,2,'Completed stops have only number and fin tray');
@@ -286,7 +292,7 @@ test('Coral Coast uses only dorsal-fin silhouettes for completed level results',
   assert.equal(next.children.length,1,'An unplayed level has no earned fins');
   assert.match(next['aria-label'],/ready to play/);
   assert.equal(next.disabled,false);
-  assert.equal(h.$('thV2AreaCanvas').children[0].children
+  assert.equal(h.$('thV2AreaCanvas').children.at(-1).children
     .filter(item=>item.classList.contains('th-v2-area-haiko')).length,1,
     'Progress Haiko remains a distinct overlay');
 });
