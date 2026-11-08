@@ -108,9 +108,59 @@
   function hideError(){
     errorBox.hidden=true;errorRetry.onclick=null;shell.inert=false;
   }
-  /* The Return button appears only when the current map marker is outside
-     the scrollable map viewport. A new map invalidates old observations. */
+  /* Haiko is drawn ABOVE its destination. Centering just the destination
+     with scrollIntoView() put Haiko underneath the fixed area headings.
+     Treat the SHARK + current pin as a single focus group, with a safe area
+     bounded by the floating controls on both maps. */
+  const HAIKO_SAFE_GAP=18;
+  const HAIKO_BOTTOM_GUARD=74; // phone navigation and Return to Haiko
+  function visibleRect(node){
+    if(typeof node?.getBoundingClientRect!=='function')return null;
+    const r=node.getBoundingClientRect();
+    return r&&[r.top,r.bottom,r.left,r.right].every(Number.isFinite)?r:null;
+  }
+  function haikoSafeBounds(kind){
+    const viewport=visibleRect(map);
+    if(!viewport)return null;
+    const fixedHeader=visibleRect(document.querySelector('.th-header'));
+    const areaHeading=kind==='area'
+      ?visibleRect(document.querySelector('#thV2Area .th-v2-map-heading')):null;
+    // Use actual fixed-element bounds, with phone-safe fallback sizes.
+    // Do not hardcode a scroll offset solely from viewport height.
+    const fallbackTop=viewport.top+(kind==='area'?168:84);
+    const occupiedBottom=Math.max(fallbackTop,fixedHeader?.bottom||0,
+      areaHeading?.bottom||0);
+    const top=Math.max(viewport.top,occupiedBottom+HAIKO_SAFE_GAP);
+    const bottom=viewport.bottom-HAIKO_BOTTOM_GUARD;
+    return {top,bottom,left:viewport.left,right:viewport.right};
+  }
+  function focusHaiko(kind,pin,marker,behavior='auto'){
+    if(!pin||!marker)return;
+    const fallback=()=>pin.scrollIntoView?.({block:'center',behavior});
+    const safe=haikoSafeBounds(kind);
+    const shark=visibleRect(marker),button=visibleRect(pin);
+    if(!safe||!shark||!button||typeof map.scrollTo!=='function'||
+       !Number.isFinite(map.scrollTop)||!Number.isFinite(map.scrollHeight)||
+       !Number.isFinite(map.clientHeight)){
+      fallback();
+      return;
+    }
+    const groupTop=Math.min(shark.top,button.top);
+    // The shark has a small yellow pointer below its DOM box.
+    const groupBottom=Math.max(shark.bottom+15,button.bottom);
+    const preferredCenter=(safe.top+safe.bottom)/2;
+    const currentCenter=(groupTop+groupBottom)/2;
+    const delta=currentCenter-preferredCenter;
+    const maximum=Math.max(0,map.scrollHeight-map.clientHeight);
+    const target=Math.max(0,Math.min(maximum,map.scrollTop+delta));
+    map.scrollTo({top:Math.round(target),behavior});
+  }
+  /* Return to Haiko should appear as soon as the character is obscured by
+     the floating headers or bottom controls, not only after it leaves the
+     physical viewport. When the player manually scrolls Haiko beneath the
+     toolbar, hide the sprite temporarily instead of drawing it across text. */
   let haikoObserver=null,haikoFallback=null,haikoWatchId=0;
+  let haikoObservedMarker=null;
   function stopHaikoWatch(){
     haikoWatchId++;
     if(haikoObserver){haikoObserver.disconnect();haikoObserver=null;}
@@ -119,38 +169,50 @@
       root.removeEventListener?.('resize',haikoFallback);
       haikoFallback=null;
     }
+    if(haikoObservedMarker){
+      haikoObservedMarker.classList?.remove('th-v2-haiko-occluded');
+      haikoObservedMarker=null;
+    }
     worldReturn.hidden=true;
     areaReturn.hidden=true;
   }
-  function watchHaiko(kind,marker){
+  function watchHaiko(kind,marker,pin){
     if(!marker||view!==kind)return;
     const watchId=haikoWatchId;
     const button=kind==='world'?worldReturn:areaReturn;
-    const setVisible=isMarkerVisible=>{
+    haikoObservedMarker=marker;
+    let intersecting=true;
+    const update=()=>{
       if(haikoWatchId!==watchId||view!==kind)return;
-      button.hidden=Boolean(isMarkerVisible);
+      const safe=haikoSafeBounds(kind);
+      const shark=visibleRect(marker),currentPin=visibleRect(pin);
+      const measured=Boolean(safe&&shark&&currentPin&&safe.bottom>safe.top+30);
+      const clear=measured
+        ?intersecting&&shark.top>=safe.top&&shark.bottom+15<=safe.bottom&&
+         currentPin.bottom<=safe.bottom&&currentPin.top>=safe.top&&
+         shark.right>safe.left&&shark.left<safe.right
+        :intersecting;
+      button.hidden=clear;
+      if(measured){
+        if(clear)marker.classList.remove('th-v2-haiko-occluded');
+        else marker.classList.add('th-v2-haiko-occluded');
+      }
     };
+    haikoFallback=update;
+    map.addEventListener?.('scroll',update,{passive:true});
+    root.addEventListener?.('resize',update);
     if(typeof root.IntersectionObserver==='function'){
       haikoObserver=new root.IntersectionObserver(entries=>{
         for(const entry of entries){
-          if(entry.target===marker)setVisible(entry.isIntersecting);
+          if(entry.target===marker){
+            intersecting=entry.isIntersecting;
+            update();
+          }
         }
       },{root:map,threshold:0});
       haikoObserver.observe(marker);
-    }else if(typeof marker.getBoundingClientRect==='function'&&
-             typeof map.getBoundingClientRect==='function'){
-      // Older webviews: use the same scroll container and real DOM bounds.
-      const refresh=()=>{
-        const target=marker.getBoundingClientRect();
-        const viewport=map.getBoundingClientRect();
-        setVisible(target.bottom>viewport.top&&target.top<viewport.bottom&&
-                   target.right>viewport.left&&target.left<viewport.right);
-      };
-      haikoFallback=refresh;
-      map.addEventListener?.('scroll',refresh,{passive:true});
-      root.addEventListener?.('resize',refresh);
-      refresh();
     }
+    update();
   }
   function showSection(which){
     stopHaikoWatch();
@@ -177,7 +239,7 @@
   let currentAreaNode=null;
   let currentAreaMarker=null;
   // Haiko is a single artwork layer, reused on every Treasure Hunt map.
-  // Keep progress text in the same marker so current position is unmistakable.
+  // Progress remains under the area name; Haiko is the map position cursor.
   function makeHaikoMarker(areaId,description){
     const marker=document.createElement('div');
     marker.className='th-v2-map-haiko';
@@ -293,8 +355,8 @@
       const pin=currentWorldPin,marker=currentWorldMarker;
       requestAnimationFrame(()=>{
         if(view!=='world'||currentWorldMarker!==marker)return;
-        pin.scrollIntoView?.({block:'center',behavior:'auto'});
-        watchHaiko('world',marker);
+        focusHaiko('world',pin,marker);
+        watchHaiko('world',marker,pin);
       });
     }
   }
@@ -386,8 +448,8 @@
       const node=currentAreaNode,marker=currentAreaMarker;
       requestAnimationFrame(()=>{
         if(view!=='area'||currentAreaMarker!==marker)return;
-        node.scrollIntoView?.({block:'center',behavior:'auto'});
-        watchHaiko('area',marker);
+        focusHaiko('area',node,marker);
+        watchHaiko('area',marker,node);
       });
     }
   }
@@ -558,11 +620,11 @@
     if(index<0)showWorld();else openLevel(index);
   });
   $('thV2WorldBack').addEventListener('click',()=>{
-    currentWorldPin?.scrollIntoView?.({block:'center',behavior:'smooth'});
+    focusHaiko('world',currentWorldPin,currentWorldMarker,'smooth');
   });
   $('thV2AreaWorld').addEventListener('click',goBackOneStep);
   $('thV2AreaHere').addEventListener('click',()=>{
-    currentAreaNode?.scrollIntoView?.({block:'center',behavior:'smooth'});
+    focusHaiko('area',currentAreaNode,currentAreaMarker,'smooth');
   });
   mapButton.addEventListener('click',requestMap);
   leaveStay.addEventListener('click',dismissLeave);

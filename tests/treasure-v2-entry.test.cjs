@@ -459,3 +459,35 @@ test('a finished Coral Coast area keeps Haiko on the final unlocked level',async
   assert.match(h.$('thV2AreaSummary').textContent,/^4 \/ 4 CLEARED/);
   assert.match(marker['aria-label'],/all levels cleared/);
 });
+
+test('Return to Haiko centers full shark+pin and detects fixed-heading overlap',async()=>{
+ const h=harness();await idle();
+ for(let i=0;i<3;i++)await clear(h,i);
+ h.root.PathleTreasureCampaign.advance(2,3);
+ h.root.PathleTreasureCampaign.openArea('coral-coast');
+ const map=h.$('thCampaignMap');
+ const section=h.$('thV2AreaCanvas').children[0];
+ const pin=section.children.find(item=>item.classList.contains('is-next'));
+ const marker=section.children.find(item=>item.classList.contains('th-v2-area-haiko'));
+ assert.ok(pin&&marker);
+ map.scrollTop=0;map.scrollHeight=1670;map.clientHeight=780;
+ map.getBoundingClientRect=()=>({top:0,bottom:780,left:0,right:390});
+ pin.getBoundingClientRect=()=>({top:520-map.scrollTop,bottom:580-map.scrollTop,left:110,right:180});
+ marker.getBoundingClientRect=()=>({top:340-map.scrollTop,bottom:466-map.scrollTop,left:90,right:186});
+ map.scrollTo=({top,behavior})=>{map.scrollTop=top;map.lastScroll={top,behavior};};
+ h.$('thV2AreaHere').click();
+ assert.equal(map.scrollTop,14);
+ assert.equal(map.lastScroll.behavior,'smooth');
+ const refresh=()=>{for(const fn of map.events.scroll||[])fn();};
+ refresh();
+ assert.equal(h.$('thV2AreaHere').hidden,true);
+ assert.equal(marker.classList.contains('th-v2-haiko-occluded'),false);
+ map.scrollTop=210;refresh();
+ assert.equal(h.$('thV2AreaHere').hidden,false);
+ assert.equal(marker.classList.contains('th-v2-haiko-occluded'),true);
+ h.$('thV2AreaHere').click();
+ assert.equal(map.scrollTop,14);
+ refresh();
+ assert.equal(h.$('thV2AreaHere').hidden,true);
+ assert.equal(marker.classList.contains('th-v2-haiko-occluded'),false);
+});

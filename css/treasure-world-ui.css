@@ -1,4 +1,4 @@
-/* Pathle Treasure Hunt · World and Coral Coast outer UI (DEV 1.5.36).
+/* Pathle Treasure Hunt · World and Coral Coast outer UI (DEV 1.5.37).
    This file styles the world heading, navigation and page chrome only.
    Map art, node positions, pin hit areas, route geometry and gameplay
    are intentionally owned by treasure-world-v2.css and its JS modules. */
@@ -541,4 +541,42 @@ body.th-page:has(#thV2Area:not([hidden])) .th-header :is(.th-back):focus-visible
    above the taller pin while keeping the arrow and location visible. */
 #thV2World .th-v2-map-haiko.th-v2-world-haiko{
   transform:translate(-50%,calc(-100% - 60px));
+}
+
+/* DEV 1.5.37: keep Haiko and its destination in the unobstructed viewport.
+   The fixed Treasure Hunt and Coral Coast titles occupy the upper 170-190px.
+   These scroll-padding values also improve native/fallback scrollIntoView. */
+#thCampaignMap.th-v2-campaign-map:has(#thV2World:not([hidden])){
+  scroll-padding-top:calc(105px + env(safe-area-inset-top,0px));
+  scroll-padding-bottom:82px;
+  overscroll-behavior-y:contain;
+}
+#thCampaignMap.th-v2-campaign-map:has(#thV2Area:not([hidden])){
+  scroll-padding-top:calc(190px + env(safe-area-inset-top,0px));
+  scroll-padding-bottom:82px;
+  overscroll-behavior-y:contain;
+}
+/* The last Coral Coast level is high on its single 1300px section. A small
+   illustrated ocean run-up lets the shark clear the two floating headings
+   even at scrollTop = 0. The existing SVG remains the only map artwork. */
+#thV2AreaCanvas.th-v2-area-canvas{
+  padding-top:260px;
+  padding-bottom:110px;
+}
+#thV2AreaCanvas.th-v2-area-canvas::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:260px;
+  pointer-events:none;
+  background:linear-gradient(180deg,transparent 50%,#7ae9ec 100%);
+}
+/* When scrolled behind a fixed title or bottom controls, don't paint Haiko
+   through the text. Return to Haiko becomes available instead. */
+#thV2World .th-v2-map-haiko.th-v2-world-haiko.th-v2-haiko-occluded,
+#thV2Area .th-v2-map-haiko.th-v2-area-haiko.th-v2-haiko-occluded{
+  opacity:0!important;
+  visibility:hidden!important;
 }

@@ -5,7 +5,7 @@
 The main menu shows a compact **tappable** build label at the top center,
 between Settings and the DEV toggle:
 
-**DEV · v1.5.36**
+**DEV · v1.5.37**
 
 The installed version is defined in `js/version.js`. The published
 GitHub Pages version is described by `version.json` in the repo root.
@@ -147,3 +147,10 @@ automatically reload while Daily or Treasure Hunt is in progress.
 - The Coral Coast map's full-screen scroll container additionally paints its existing `section-01-base.svg` as a scroll-bound geographic fallback (1300px tall, the exact illustration section height). This avoids showing the flat body gradient anywhere around the two floating headers even if the map has unpainted gaps.
 - Both actual embedded SVG layers, their source images, level/area position coordinates, Haiko, back navigation, and saved progress remain unchanged. No new map artwork was created.
 - Mobile visual confirmation is still required; use a build-specific direct URL when checking changes to avoid stale GitHub Pages HTML.
+
+
+## Keep Haiko clear of floating titles during map navigation (DEV v1.5.37)
+- Both map views now center the combined Haiko sprite and its current level/area pin inside the screen region not covered by fixed titles or lower controls. Centering only the pin could leave the shark obscured above it.
+- The same safe-region calculation is used on initial map entry and with Return to Haiko. Older webviews that cannot measure geometry retain native scrollIntoView fallback.
+- Coral Coast gets a 260px ocean-backed scroll lead-in and 110px lower buffer so the highest of the released levels can be positioned below its fixed heading. Scroll-padding provides comparable behavior for native scroll.
+- When a player manually scrolls Haiko under fixed headings, the marker is temporarily hidden and Return to Haiko offered, rather than letting the shark appear through text. Existing art, positions, save data and puzzle mechanics are unchanged.
