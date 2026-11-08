@@ -9,7 +9,7 @@ test('Water World presentation uses a dedicated final-loaded ocean skin',()=>{
  const html=read('treasure-hunt.html');
  const ui=read('css/treasure-world-ui.css');
  const world=html.slice(html.indexOf('id="thV2World"'),html.indexOf('id="thV2Area"'));
- assert.ok(html.indexOf('css/treasure-world-ui.css?v=1.5.34')>
+ assert.ok(html.indexOf('css/treasure-world-ui.css?v=1.5.35')>
            html.indexOf('css/treasure-world-v2.css?v=1.5.32'));
  assert.doesNotMatch(world,/th-v2-world-hero|th-v2-world-brand|th-v2-world-emblem/);
  assert.doesNotMatch(world,/thV2WorldTitle|thV2WorldStatus|Choose an area to explore/);
@@ -142,7 +142,7 @@ test('Haiko is smaller and floats entirely above the destination marker on both 
  const css=read('css/treasure-world-ui.css');
  const html=read('treasure-hunt.html');
  const geometry=read('css/treasure-world-v2.css');
- assert.match(html,/css\/treasure-world-ui\.css\?v=1\.5\.34/);
+ assert.match(html,/css\/treasure-world-ui\.css\?v=1\.5\.35/);
  assert.match(css,/transform:translate\(-50%,calc\(-100% - 48px\)\)/);
  assert.match(css,/width:96px;\s*height:126px;\s*border:0;/);
  assert.match(css,/@media\(max-width:350px\)[\s\S]*?width:80px;\s*height:110px;/);
@@ -192,7 +192,7 @@ test('Water World header panel is transparent but the three header controls rema
  assert.match(css,/body\.th-page:has\(#thV2World:not\(\[hidden\]\)\) \.th-test-badge\{/);
  assert.match(html,/class="th-heading"><small>HAIKO’S ADVENTURE<\/small><h1>Treasure Hunt<\/h1>/);
  assert.match(html,/class="th-test-badge" id="thMapTotal"/);
- assert.match(html,/css\/treasure-world-ui\.css\?v=1\.5\.34/);
+ assert.match(html,/css\/treasure-world-ui\.css\?v=1\.5\.35/);
 });
 
 test('the World geographic image starts behind three independent floating header elements',()=>{
@@ -230,8 +230,9 @@ test('the World geographic image starts behind three independent floating header
  assert.match(declaration,/box-shadow:none;/);
  assert.match(html,/<header class="th-header">[\s\S]*?class="th-back"[\s\S]*?class="th-heading"[\s\S]*?class="th-test-badge"/);
  assert.match(html,/id="thV2WorldCanvas"/);
- // No layout shift is applied to area/tutorial/levels.
- assert.doesNotMatch(css,/body\.th-page:has\(#thV2Area:not\(\[hidden\]\)\) \.th-header/);
+ // Both illustrated maps now float the header; tutorial and levels do not.
+ assert.match(css,/body\.th-page:has\(#thV2Area:not\(\[hidden\]\)\) \.th-header/);
+ assert.doesNotMatch(css,/body\.th-page:has\(#thV2Tutorial:not\(\[hidden\]\)\) \.th-header/);
 });
 
 test('the overlay map does not reveal the body gradient behind the toolbar',()=>{
@@ -252,4 +253,59 @@ test('the overlay map does not reveal the body gradient behind the toolbar',()=>
  assert.match(mapCSS,/\.th-v2-world-art\{/);
  assert.match(mapCSS,/\.th-v2-world-section\{/);
  assert.match(html,/id="thV2WorldPins"/);
+});
+
+test('Coral Coast fills the screen behind independently floating headers',()=>{
+ const css=read('css/treasure-world-ui.css');
+ const geometry=read('css/treasure-world-v2.css');
+ const html=read('treasure-hunt.html');
+ const area='body.th-page:has(#thV2Area:not([hidden]))';
+ const mapSelector='#thCampaignMap.th-v2-campaign-map:has(#thV2Area:not([hidden]))';
+ const block=selector=>{
+   const at=css.indexOf(selector+'{');
+   assert.ok(at>=0,'Missing '+selector);
+   return css.slice(at+selector.length+1,css.indexOf('}',at));
+ };
+ assert.match(block(area+' .th-shell'),/position:relative;[\s\S]*?padding:0;[\s\S]*?gap:0;/);
+ const m=block(mapSelector);
+ for(const field of ['position:fixed','inset:0','z-index:1','width:100vw',
+   'height:100dvh','min-height:100dvh','max-height:100dvh',
+   'margin:0','padding:0','overflow-y:auto','background:transparent']){
+   assert.ok(m.includes(field),'Area map must cover viewport: '+field);
+ }
+ const header=block(area+' .th-header');
+ assert.match(header,/position:fixed;/);
+ assert.match(header,/z-index:100;/);
+ assert.match(header,/pointer-events:none;/);
+ assert.match(header,/background:transparent;/);
+ assert.match(header,/border:0;/);
+ assert.match(header,/box-shadow:none;/);
+ const transparentShine=block(area+' .th-header::before');
+ assert.match(transparentShine,/content:none;/);
+ assert.match(transparentShine,/display:none;/);
+ assert.match(block(area+' .th-back'),/pointer-events:auto;/);
+ assert.match(block(area+' .th-heading'),/pointer-events:none;/);
+ assert.match(block(area+' .th-test-badge'),/background:linear-gradient/);
+ const second=block('#thV2Area .th-v2-map-heading');
+ assert.match(second,/position:fixed;/);
+ assert.match(second,/z-index:95;/);
+ assert.match(second,/background:transparent;/);
+ assert.match(second,/pointer-events:none;/);
+ assert.match(block('#thV2Area #thV2AreaWorld'),/pointer-events:auto;/);
+ assert.match(geometry,/\.th-v2-area-canvas\{[\s\S]*?position:relative;/);
+ assert.match(geometry,/\.th-v2-map-section\{/);
+ assert.ok(html.indexOf('id="thV2AreaTitle"')<html.indexOf('id="thV2AreaCanvas"'));
+ assert.match(html,/css\/treasure-world-ui\.css\?v=1\.5\.35/);
+});
+
+test('scrolling and tapping Coral Coast remain controlled by the same map',()=>{
+ const css=read('css/treasure-world-ui.css');
+ const js=read('js/treasure-campaign-v2.js');
+ const html=read('treasure-hunt.html');
+ assert.match(css,/#thCampaignMap\.th-v2-campaign-map:has\(#thV2Area:not\(\[hidden\]\)\)\{[\s\S]*?overflow-y:auto;/);
+ assert.match(js,/node\.scrollIntoView\?\.\(\{block:'center',behavior:'auto'\}\)/);
+ assert.match(js,/watchHaiko\('area',marker\)/);
+ assert.match(js,/\$\('thV2AreaWorld'\)\.addEventListener\('click'/);
+ assert.match(html,/id="thV2AreaWorld"/);
+ assert.match(html,/id="thV2AreaCanvas"/);
 });

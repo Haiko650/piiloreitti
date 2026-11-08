@@ -1,4 +1,4 @@
-/* Pathle Treasure Hunt · Water World outer UI (DEV 1.5.34).
+/* Pathle Treasure Hunt · World and Coral Coast outer UI (DEV 1.5.35).
    This file styles the world heading, navigation and page chrome only.
    Map art, node positions, pin hit areas, route geometry and gameplay
    are intentionally owned by treasure-world-v2.css and its JS modules. */
@@ -141,6 +141,185 @@ body.th-page:has(#thV2World:not([hidden])) .th-header :is(.th-back):focus-visibl
 }
 @media(prefers-reduced-motion:reduce){
   #thV2World #thV2WorldBack{transition:none;}
+}
+
+
+/* DEV 1.5.35 — Coral Coast uses the same full-bleed map and floating
+   header as Water World, instead of the game's ordinary flex header.
+   No separate turquoise strip or block is reserved above the map. */
+body.th-page:has(#thV2Area:not([hidden])) .th-shell{
+  position:relative;
+  padding:0;
+  gap:0;
+}
+#thCampaignMap.th-v2-campaign-map:has(#thV2Area:not([hidden])){
+  position:fixed;
+  inset:0;
+  z-index:1;
+  display:block;
+  box-sizing:border-box;
+  width:100vw;
+  min-width:100vw;
+  max-width:100vw;
+  height:100dvh;
+  min-height:100dvh;
+  max-height:100dvh;
+  margin:0;
+  padding:0;
+  overflow-x:hidden;
+  overflow-y:auto;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
+}
+/* Same individually floating Treasure Hunt back arrow, title and badge. */
+body.th-page:has(#thV2Area:not([hidden])) .th-header{
+  position:fixed;
+  z-index:100;
+  top:calc(10px + env(safe-area-inset-top,0px));
+  left:max(12px,calc((100vw - 490px)/2 + 12px));
+  right:max(12px,calc((100vw - 490px)/2 + 12px));
+  width:auto;
+  pointer-events:none;
+  isolation:isolate;
+  gap:clamp(6px,2.2vw,12px);
+  min-height:65px;
+  padding:8px clamp(8px,2.5vw,13px);
+  border:0;
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
+}
+/* The header is not a colored panel: its individual navigation controls float
+   over the page's open-ocean background. */
+body.th-page:has(#thV2Area:not([hidden])) .th-header::before{
+  content:none;
+  display:none;
+}
+body.th-page:has(#thV2Area:not([hidden])) .th-header > *{
+  position:relative;
+  z-index:1;
+}
+body.th-page:has(#thV2Area:not([hidden])) .th-back{
+  pointer-events:auto;
+}
+body.th-page:has(#thV2Area:not([hidden])) .th-heading{
+  pointer-events:none;
+}
+body.th-page:has(#thV2Area:not([hidden])) .th-back{
+  width:40px;
+  height:40px;
+  border:3px solid #ffe9d8;
+  border-radius:50%;
+  background:linear-gradient(180deg,#ffcbbd 0%,#ff8b91 55%,#f54c68 100%);
+  color:#fff;
+  font-size:27px;
+  font-weight:1000;
+  text-shadow:0 2px 1px #a62c4d;
+  box-shadow:inset 0 2px 0 #fff6e8,0 3px 0 #ad2753;
+}
+body.th-page:has(#thV2Area:not([hidden])) .th-heading{
+  min-width:0;
+  text-align:center;
+}
+body.th-page:has(#thV2Area:not([hidden])) .th-heading small{
+  display:block;
+  color:#075475;
+  font-size:clamp(8px,2.2vw,10px);
+  font-weight:950;
+  letter-spacing:.06em;
+  text-shadow:0 1px 0 #e8ffff96;
+}
+body.th-page:has(#thV2Area:not([hidden])) .th-heading h1{
+  margin:1px 0 0;
+  color:#fff;
+  font-family:"Trebuchet MS",system-ui,sans-serif;
+  font-size:clamp(18px,5vw,27px);
+  font-weight:1000;
+  letter-spacing:-.048em;
+  line-height:1.05;
+  white-space:nowrap;
+  -webkit-text-stroke:.8px #007c94;
+  paint-order:stroke fill;
+  text-shadow:0 2px 0 #076e95,0 3px 3px #0060807a;
+}
+body.th-page:has(#thV2Area:not([hidden])) .th-test-badge{
+  display:grid;
+  place-items:center;
+  flex:0 0 auto;
+  max-width:82px;
+  min-height:37px;
+  padding:5px 7px;
+  border:2px solid #fff9c9;
+  border-radius:999px;
+  background:linear-gradient(180deg,#fff7cd 0%,#ffe679 42%,#ffd044 100%);
+  color:#774308;
+  box-shadow:inset 0 1px 0 #fff,0 3px 0 #c58c20;
+  font-size:clamp(8px,2.2vw,10px);
+  font-weight:1000;
+  line-height:1.1;
+  text-align:center;
+}
+body.th-page:has(#thV2Area:not([hidden])) .th-header :is(.th-back):focus-visible{
+  outline:3px solid #fff;
+  outline-offset:3px;
+}
+@media(max-width:360px){
+  body.th-page:has(#thV2Area:not([hidden])) .th-header{padding:7px;gap:5px;left:8px;right:8px;}
+  body.th-page:has(#thV2Area:not([hidden])) .th-back{width:35px;height:35px;}
+  body.th-page:has(#thV2Area:not([hidden])) .th-test-badge{max-width:70px;min-height:33px;padding:4px;}
+}
+@media(max-height:650px){
+  body.th-page:has(#thV2Area:not([hidden])) .th-header{min-height:55px;padding-block:5px;}
+}
+
+/* The Coral Coast progress header also leaves the map free to run beneath
+   it; keep its World/back action tappable without intercepting map taps. */
+#thV2Area .th-v2-map-heading{
+  position:fixed;
+  z-index:95;
+  top:calc(98px + env(safe-area-inset-top,0px));
+  left:max(12px,calc((100vw - 490px)/2 + 12px));
+  right:max(12px,calc((100vw - 490px)/2 + 12px));
+  margin:0;
+  padding:0 4px;
+  min-width:0;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
+  pointer-events:none;
+}
+#thV2Area .th-v2-map-heading > div{
+  min-width:0;
+  pointer-events:none;
+  text-shadow:0 2px 4px #004565;
+}
+#thV2Area .th-v2-map-heading h2{
+  text-shadow:0 2px 5px #03446e,0 0 10px #003959aa;
+}
+#thV2Area .th-v2-map-heading .th-v2-area-progress{
+  text-shadow:0 1px 3px #013b57;
+}
+#thV2Area #thV2AreaWorld{
+  pointer-events:auto;
+  flex:none;
+  padding:8px 13px;
+  border:2px solid #d5faff;
+  border-radius:999px;
+  background:linear-gradient(180deg,#73eaf1,#1489b6);
+  color:#fff;
+  box-shadow:inset 0 1px 0 #ffffffcc,0 4px 0 #09567d,0 8px 13px #00365480;
+  text-shadow:0 1px 2px #074866;
+}
+@media(max-width:360px){
+  #thV2Area .th-v2-map-heading{
+    top:calc(89px + env(safe-area-inset-top,0px));
+    left:8px;
+    right:8px;
+  }
+  #thV2Area #thV2AreaWorld{padding:7px 9px;}
 }
 
 /* Return to Haiko: one shared fixed overlay on both illustrated maps.

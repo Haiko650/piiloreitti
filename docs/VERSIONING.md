@@ -5,7 +5,7 @@
 The main menu shows a compact **tappable** build label at the top center,
 between Settings and the DEV toggle:
 
-**DEV · v1.5.34**
+**DEV · v1.5.35**
 
 The installed version is defined in `js/version.js`. The published
 GitHub Pages version is described by `version.json` in the repo root.
@@ -133,3 +133,10 @@ automatically reload while Daily or Treasure Hunt is in progress.
 - In Water World only, the real `#thCampaignMap` is now a fixed, full viewport (inset: 0; width: 100vw; height: 100dvh) scrollable map. No body-colored strip remains between the map and top controls.
 - The independent header floats fixed above the map, centered in the original 490px max-width shell. The pink back button is clickable; the title passes clicks through. World destination buttons and the Haiko marker remain in the map and continue to scroll.
 - Coral Coast, tutorial and puzzle layouts are untouched, as are map art assets, coordinates, unlocks and saves. Browser/Android screenshot check is recommended in addition to CI CSS regressions.
+
+
+## Coral Coast full-screen illustrated map with two floating headers (DEV v1.5.35)
+- The Coral Coast view used the normal flex layout and a geographic canvas located below both the main header and the area summary, revealing a blank turquoise region above the imagery. This is corrected using the same fixed, full-viewport scrollable map as Water World.
+- The Treasure Hunt back control, title, Water World badge, Coral Coast heading, progress and in-area World action are independent overlays with transparent containers. The two back buttons remain interactive, while the wrappers do not block map touches.
+- All actual Coral Coast section SVG art starts at y=0 under the headers, including when auto-scrolling to Haiko. This changes no map assets, buttons, save data, unlocking, navigation history or level positions.
+- Previous tutorial and gameplay screen layouts continue to use the original flow layout. Android visual inspection is still advised after CI.

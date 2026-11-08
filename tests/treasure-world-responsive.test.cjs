@@ -165,3 +165,16 @@ test('the scrollable world canvas fills the visual viewport on all phone sizes',
    assert.ok(w-left-right>=296,'Header too narrow for controls on '+w);
  }
 });
+
+test('Coral Coast's edge-to-edge map has the same viewport contract as Water World',()=>{
+ const css=read('css/treasure-world-ui.css');
+ const world=css.match(/#thCampaignMap\.th-v2-campaign-map:has\(#thV2World:not\(\[hidden\]\)\)\{([^}]+)\}/)?.[1];
+ const area=css.match(/#thCampaignMap\.th-v2-campaign-map:has\(#thV2Area:not\(\[hidden\]\)\)\{([^}]+)\}/)?.[1];
+ assert.ok(world&&area);
+ for(const token of ['position:fixed','inset:0','width:100vw','height:100dvh','overflow-y:auto']){
+   assert.ok(world.includes(token),'World '+token);
+   assert.ok(area.includes(token),'Coral Coast '+token);
+ }
+ assert.match(css,/@media\(max-width:360px\)\{[\s\S]*?#thV2Area \.th-v2-map-heading\{/);
+ assert.match(css,/#thV2Area \.th-v2-map-heading\{[^}]*top:calc\(98px \+ env\(safe-area-inset-top,0px\)\)/);
+});
