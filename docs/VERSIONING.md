@@ -5,7 +5,7 @@
 The main menu shows a compact **tappable** build label at the top center,
 between Settings and the DEV toggle:
 
-**DEV · v1.5.30**
+**DEV · v1.5.31**
 
 The installed version is defined in `js/version.js`. The published
 GitHub Pages version is described by `version.json` in the repo root.
@@ -107,3 +107,9 @@ automatically reload while Daily or Treasure Hunt is in progress.
 - An accessible current area is bright turquoise and has a clear progress line and Explore action below its name. Future/locked regions use a muted ocean-blue variant of the same capsule, retain "Soon", and remain disabled.
 - On narrow Android screens width is capped at 52% of the section and 212 CSS pixels, preventing the Coral Coast and Open Ocean signs from reaching the map edges.
 - World map art, area coordinates, Haiko sprite, progress and level logic remain unchanged. The main-menu CSS remains the reference; only the Treasure Hunt destination appearance was updated.
+
+
+## Larger primary area names (DEV v1.5.31)
+- Water World destination names are enlarged to a 16–20px responsive font (16–17px on narrow mobile screens), while progress and Explore/Soon remain visually smaller at 10–11px.
+- The capsule grows slightly to 54% of its map section (maximum 220px) and 82px minimum height to avoid clipping longer names.
+- Approved turquoise/blue capsule visuals, status text, Haiko, iconography, click areas, map coordinates and progress data remain unchanged. Android visual verification is still required.
