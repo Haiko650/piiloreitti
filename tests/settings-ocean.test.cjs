@@ -20,7 +20,7 @@ test('ocean Settings dialog has its own glossy styling and does not replace othe
   assert.match(css,/#settingsModal #howPlaySettings\.guideSettingsButton\{/);
   assert.match(css,/#settingsModal #doneSettings\.primary\{/);
   const menu=html.indexOf('css/menu-capsules.css');
-  const settings=html.indexOf('css/settings-ocean.css?v=20261106-settings1');
+  const settings=html.indexOf('css/settings-ocean.css?v=5b65398f32ec');
   assert.ok(settings>menu,'Settings skin must load after menu skin');
 });
 

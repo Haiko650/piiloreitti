@@ -14,7 +14,7 @@ test('three approved home-menu actions follow the same DOM and visual order',()=
   for(const id of IDs){
     assert.equal((html.match(new RegExp('id="'+id+'"','g'))||[]).length,1);
   }
-  assert.match(html,/<a class="menuButton menuTreasure" id="playTreasure" href="treasure-hunt\.html\?v=1\.5\.42">/);
+  assert.match(html,/<a class="menuButton menuTreasure" id="playTreasure" href="treasure-hunt\.html\?v=1\.5\.43">/);
   assert.doesNotMatch(html,/css\/treasure-home\.css/);
   assert.doesNotMatch(html,/playPractice|menuPractice|Practice Mode|practiceNote/);
 });
@@ -23,7 +23,7 @@ test('a single dedicated stylesheet owns the main-menu button visuals',()=>{
   const html=read('index.html');
   const legacy=read('css/styles.css');
   const capsules=read('css/menu-capsules.css');
-  assert.match(html,/css\/menu-capsules\.css\?v=20261106-compact/);
+  assert.match(html,/css\/menu-capsules\.css\?v=42b32bbe5004/);
   assert.doesNotMatch(legacy,/\.(?:menuButton|menuDaily|menuTreasure|menuPractice|menuHideout|menuIcon)\b|#(?:playDaily|playTreasure|playPractice|openHideout)\b/);
   for(const id of IDs){
     assert.ok(capsules.includes('#'+id+'{'),'Missing '+id+' styling');

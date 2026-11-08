@@ -23,7 +23,7 @@ test('the newly supplied Pathle logo replaces both obsolete menu logos',()=>{
  }
  const html=fs.readFileSync(path.join(base,'index.html'),'utf8');
  const css=fs.readFileSync(path.join(base,'css/home-reef.css'),'utf8');
- assert.match(html,/images\/pathle-logo\.webp\?v=1\.5\.8/);
+ assert.match(html,/images\/pathle-logo\.webp\?v=9721ef72970c/);
  assert.match(html,/width="1807" height="696"/);
  assert.doesNotMatch(html,/pathle-logo-menu(?:-full)?\.webp/);
  assert.match(css,/aspect-ratio:1807\/696/);

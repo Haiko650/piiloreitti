@@ -10,7 +10,7 @@ test('the welcome screen displays the separate illustrated Pathle logo, not text
   const match=html.match(/<div class="homeBrand">([\s\S]*?)<\/div>/);
   assert.ok(match,'Welcome screen brand not found');
   assert.match(match[1],/<h1 class="pathleHomeLogoHeading">/);
-  assert.match(match[1],/<img class="pathleHomeLogoImage" src="images\/pathle-logo\.webp\?v=1\.5\.8" alt="Pathle"/);
+  assert.match(match[1],/<img class="pathleHomeLogoImage" src="images\/pathle-logo\.webp\?v=9721ef72970c" alt="Pathle"/);
   assert.doesNotMatch(match[1],/pathleLogoText|pathleLogoWave/);
   assert.doesNotMatch(match[1],/OCEAN JOURNEY|class="tag"/,
     "The former logo subtitle must not appear on the home screen");
@@ -30,7 +30,7 @@ test('logo is responsive and does not replace background or swimming Haiko',()=>
   assert.match(css,/aspect-ratio:1807\/696/);
   assert.match(css,/object-fit:contain/);
   assert.match(css,/@media\(max-height:680px\)/);
-  assert.match(html,/css\/home-reef\.css\?v=20261106-haiko-up1/);
-  assert.match(html,/home-swimming-art" src="images\/haiko-swimming-menu\.webp\?v=1\.5\.4"/);
+  assert.match(html,/css\/home-reef\.css\?v=5a4eeb2f3cd7/);
+  assert.match(html,/home-swimming-art" src="images\/haiko-swimming-menu\.webp\?v=23b8cf3245ec"/);
   assert.match(css,/home-reef-background\.webp/);
 });

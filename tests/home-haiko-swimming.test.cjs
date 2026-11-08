@@ -9,7 +9,7 @@ test('home exclusively uses swimming Haiko, other sprites remain unchanged',()=>
  const home=html.match(/<div[^>]+class="haiko-avatar restored-haiko home-haiko"[^>]*>[\s\S]*?<\/div>/);
  assert.ok(home);
  assert.match(home[0],/class="home-swimming-art"/);
- assert.match(home[0],/src="images\/haiko-swimming-menu\.webp\?v=1\.5\.4"/);
+ assert.match(home[0],/src="images\/haiko-swimming-menu\.webp\?v=23b8cf3245ec"/);
  assert.match(home[0],/swimming to the right/);
  assert.match(html,/class="haiko-avatar restored-haiko hideout-haiko"/);
  assert.match(html,/class="haiko-avatar restored-haiko brand-haiko"/);
@@ -23,7 +23,7 @@ test('menu shark image is independent of coral reef and styles avoid clipping',(
  assert.match(css,/animation:haikoHomeBob/);
  assert.match(css,/home-reef-background\.webp/);
  const html=read('index.html');
- assert.match(html,/css\/home-reef\.css\?v=20261106-haiko-up1/);
+ assert.match(html,/css\/home-reef\.css\?v=5a4eeb2f3cd7/);
 });
 test('new image is a valid transparent WebP in the repository',()=>{
  const data=fs.readFileSync(path.join(__dirname,'..','images/haiko-swimming-menu.webp'));

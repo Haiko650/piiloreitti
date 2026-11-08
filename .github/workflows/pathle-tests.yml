@@ -19,8 +19,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Validate release manifest, generated HTML and asset fingerprints
+        run: node scripts/sync-release.cjs --check
       - name: Check JavaScript syntax
         run: |
+          node --check scripts/sync-release.cjs
           for file in js/*.js; do
             node --check "$file"
           done
