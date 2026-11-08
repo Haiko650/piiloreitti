@@ -166,7 +166,7 @@ test('the scrollable world canvas fills the visual viewport on all phone sizes',
  }
 });
 
-test('Coral Coast's edge-to-edge map has the same viewport contract as Water World',()=>{
+test('Coral Coast edge-to-edge map has the same viewport contract as Water World',()=>{
  const css=read('css/treasure-world-ui.css');
  const world=css.match(/#thCampaignMap\.th-v2-campaign-map:has\(#thV2World:not\(\[hidden\]\)\)\{([^}]+)\}/)?.[1];
  const area=css.match(/#thCampaignMap\.th-v2-campaign-map:has\(#thV2Area:not\(\[hidden\]\)\)\{([^}]+)\}/)?.[1];
