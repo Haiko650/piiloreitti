@@ -106,7 +106,7 @@ test('art assets are independent of stable level IDs and allow replacement image
 
 test('player-facing area renderer obtains art by section ID, not by level ID',()=>{
   const body=read('js/treasure-campaign-v2.js');
-  assert.match(body,/layout\.getDisplaySections\(area\)/);
+  assert.match(body,/layout\.getPreviewDisplaySections\(area\)/);
   assert.match(body,/layout\.pathForUp\(section\.nodes/);
   assert.match(body,/art\.forSection\(area\.id,section\.id\)/);
   assert.match(body,/art\.forArea\(areaId\)\?\.haiko/);
@@ -226,4 +226,23 @@ test('Coral Coast path stays continuous and neighboring stops are approximately 
   assert.doesNotMatch(renderer,/path\.setAttribute\('stroke-dasharray'/);
   assert.match(renderer,/path\.setAttribute\('stroke-linecap','round'\)/);
   assert.match(renderer,/path\.setAttribute\('d',up/);
+});
+
+test('Coral Coast preview route has exactly 60 map stops, without publishing them',()=>{
+  const area=release.catalog.areas[0];
+  const sections=layout.getPreviewDisplaySections(area);
+  assert.equal(sections.length,6);
+  assert.equal(sections[0].nodes.at(-1).index,59);
+  assert.equal(sections.at(-1).id,'coral-shallows-01');
+  const nodes=sections.flatMap(section=>section.nodes);
+  assert.equal(nodes.length,60);
+  assert.equal(nodes.filter(node=>node.preview).length,56);
+  assert.deepEqual(sections.at(-1).nodes.map(node=>node.levelId),area.levelIds);
+  assert.ok(sections.every(section=>
+    section.nodes.every((node,i,list)=>i===0||node.y<list[i-1].y)));
+  assert.ok(sections.every(section=>
+    section.nodes.every(node=>node.x>=.25&&node.x<=.75&&node.y>=0&&node.y<=1)));
+  assert.equal(release.levels.length,7,'No new playable stages are generated');
+  assert.equal(worldsForPreview().levelIds.length,4);
+  function worldsForPreview(){return release.catalog.areas[0];}
 });
