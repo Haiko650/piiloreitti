@@ -155,7 +155,8 @@ test('approved Haiko artwork is the single reusable progress cursor on both maps
  assert.match(script,/watchHaiko\('area',marker,node\)/);
  assert.match(css,/#thV2World \.th-v2-map-haiko\.th-v2-world-haiko,/);
  assert.match(css,/#thV2Area \.th-v2-map-haiko\.th-v2-area-haiko\{/);
- assert.match(css,/z-index:12/);
+ assert.match(css,/z-index:24/);
+ assert.doesNotMatch(css,/z-index:12/);
  assert.match(css,/background-image:\s*var\(--th-haiko-art,none\)/);
  assert.doesNotMatch(script,/th-v2-haiko-progress/);
  assert.doesNotMatch(css,/th-v2-haiko-progress/);
