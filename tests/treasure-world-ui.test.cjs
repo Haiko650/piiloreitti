@@ -330,6 +330,15 @@ test('Coral Coast foreground map has a geographic fallthrough behind the floatin
  assert.match(home,/id="playTreasure" href="treasure-hunt\.html\?v=1\.5\.50"/);
 });
 
+test('Coral Coast map footer has no instructional text or oversized empty padding',()=>{
+ const html=read('treasure-hunt.html');
+ const css=read('css/treasure-world-ui.css');
+ assert.doesNotMatch(html,/class="th-v2-map-explain"/);
+ assert.doesNotMatch(html,/Start at the bottom and follow the winding reef trail upward/);
+ assert.match(css,/#thV2AreaCanvas\\.th-v2-area-canvas\\{\\s*padding-top:24px;\\s*padding-bottom:24px;/);
+ assert.match(html,/id="thV2AreaSummary"/,'Keep the progress total near the title');
+});
+
 test('Haiko is centered in safe space instead of beneath floating text',()=>{
  const css=read('css/treasure-world-ui.css');
  const js=read('js/treasure-campaign-v2.js');
@@ -342,7 +351,7 @@ test('Haiko is centered in safe space instead of beneath floating text',()=>{
  assert.match(js,/map\.scrollTo\(\{top:Math\.round\(target\),behavior\}\)/);
  assert.match(js,/focusHaiko\('world',currentWorldPin,currentWorldMarker,'smooth'\)/);
  assert.match(js,/focusHaiko\('area',currentAreaNode,currentAreaMarker,'smooth'\)/);
- assert.match(css,/#thV2AreaCanvas\.th-v2-area-canvas\{\s*padding-top:24px;\s*padding-bottom:110px;/);
+ assert.match(css,/#thV2AreaCanvas\.th-v2-area-canvas\{\s*padding-top:24px;\s*padding-bottom:24px;/);
  assert.match(css,/#thV2AreaCanvas\.th-v2-area-canvas::before\{\s*display:none;/);
  assert.match(css,/scroll-padding-top:calc\(190px \+ env\(safe-area-inset-top,0px\)\)/);
  assert.match(css,/scroll-padding-top:calc\(105px \+ env\(safe-area-inset-top,0px\)\)/);
