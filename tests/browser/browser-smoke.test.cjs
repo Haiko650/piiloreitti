@@ -512,9 +512,18 @@ test('six Coral Coast illustrations join without section gaps at phone/tablet si
         'Illustrated sections have a visible layout gap at '+width+': '+geometry.seams);
       assert.ok(geometry.scrollHeight>geometry.clientHeight*2);
       const scroller=page.locator('#thCampaignMap');
+      // Fully loaded images may still await asynchronous bitmap decoding;
+      // otherwise a screenshot immediately after a six-section jump can
+      // capture only the gradient fallback rather than the real artwork.
+      await page.locator('#thV2AreaCanvas .th-v2-art-base img')
+        .evaluateAll(async images=>{await Promise.all(images.map(img=>img.decode()));});
+      const painted=()=>page.evaluate(()=>new Promise(resolve=>
+        requestAnimationFrame(()=>requestAnimationFrame(resolve))));
       await scroller.evaluate(el=>{el.scrollTop=0;el.dispatchEvent(new Event('scroll'));});
+      await painted();
       await screenshot(page,'coral-coast-final-top-'+width);
       await scroller.evaluate(el=>{el.scrollTop=el.scrollHeight;el.dispatchEvent(new Event('scroll'));});
+      await painted();
       await screenshot(page,'coral-coast-final-bottom-'+width);
       assert.deepEqual(exceptions,[],'JavaScript error during map scroll at '+width);
     }finally{await context.close();}
