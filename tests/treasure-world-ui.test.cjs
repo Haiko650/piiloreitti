@@ -335,7 +335,7 @@ test('Coral Coast map footer has no instructional text or oversized empty paddin
  const css=read('css/treasure-world-ui.css');
  assert.doesNotMatch(html,/class="th-v2-map-explain"/);
  assert.doesNotMatch(html,/Start at the bottom and follow the winding reef trail upward/);
- assert.match(css,/#thV2AreaCanvas\\.th-v2-area-canvas\\{\\s*padding-top:24px;\\s*padding-bottom:24px;/);
+ assert.match(css,/#thV2AreaCanvas\.th-v2-area-canvas\{\s*padding-top:24px;\s*padding-bottom:24px;/);
  assert.match(html,/id="thV2AreaSummary"/,'Keep the progress total near the title');
 });
 
