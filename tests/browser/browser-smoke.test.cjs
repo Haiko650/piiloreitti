@@ -306,10 +306,20 @@ test('record diagnostic browser resource and Coral Coast paint metrics',{timeout
     await page.locator('#thV2World:not([hidden])').waitFor();
     await page.locator('.th-v2-world-pin.is-current').click();
     await page.locator('#thV2Area:not([hidden])').waitFor();
-    const coast=await page.evaluate(async()=>{
+    // The production map deliberately defers offscreen art. In this isolated
+    // measurement, explicitly activate all six images, with a bounded wait,
+    // before sampling a full-map scroll. Never alter production lazy loading.
+    const beforeFullDecode=await page.locator('#thV2AreaCanvas .th-v2-art-base img')
+      .evaluateAll(images=>images.filter(img=>img.naturalWidth>0).length);
+    await page.locator('#thV2AreaCanvas .th-v2-art-base img')
+      .evaluateAll(images=>images.forEach(img=>{img.loading='eager';}));
+    await page.waitForFunction(()=>{
+      const images=[...document.querySelectorAll('#thV2AreaCanvas .th-v2-art-base img')];
+      return images.length===6&&images.every(img=>img.complete&&img.naturalWidth>0);
+    },null,{timeout:20000});
+    const coast=await page.evaluate(()=>{
       const panels=[...document.querySelectorAll('#thV2AreaCanvas .th-v2-area-section')];
       const artworks=panels.map(panel=>panel.querySelector('.th-v2-art-base img'));
-      for(const image of artworks)await image.decode();
       const entries=performance.getEntriesByType('resource');
       const mapped=entries.filter(entry=>entry.name.includes('coral-coast-section-'));
       const byUrl=new Map();
@@ -319,16 +329,18 @@ test('record diagnostic browser resource and Coral Coast paint metrics',{timeout
       const visibleHeight=map.clientHeight;
       let frames=0,maxFrameMs=0,averageFrameMs=0;
       await new Promise(resolve=>{
+        const start=Math.max(0,totalHeight-visibleHeight);
+        map.scrollTop=start;
         let last=performance.now();
         function sample(now){
           const delta=now-last;last=now;
           if(frames>0){maxFrameMs=Math.max(maxFrameMs,delta);averageFrameMs+=delta;}
           frames++;
+          map.scrollTop=Math.round(start*(1-frames/45));
           if(frames>=45){averageFrameMs/=Math.max(1,frames-1);resolve();}
           else requestAnimationFrame(sample);
         }
         requestAnimationFrame(sample);
-        map.scrollTop=Math.max(0,totalHeight-visibleHeight);
       });
       return {
         sections:panels.length,
@@ -348,6 +360,8 @@ test('record diagnostic browser resource and Coral Coast paint metrics',{timeout
     assert.deepEqual(exceptions,[]);
     const metrics={kind:'CI diagnostics, not device performance benchmark',
       testViewport:'Chromium mobile 390x844, localhost/no-store, unthrottled',
+      loadedAreaImagesBeforeForcedDecode:beforeFullDecode,
+      mode:'all six map images forced eager for full-map scroll measurement',
       measuredAt:new Date(started).toISOString(),home,coast};
     fs.writeFileSync(path.join(output,'browser-performance-metrics.json'),
       JSON.stringify(metrics,null,2)+'\n');
