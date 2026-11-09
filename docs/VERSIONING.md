@@ -5,7 +5,7 @@
 The main menu shows a compact **tappable** build label at the top center,
 between Settings and the DEV toggle:
 
-**DEV · v1.5.48**
+**DEV · v1.5.49**
 
 **The sole release-version source is `version.json`.** The installed
 `js/version.js` constant, the main-menu fallback label, versioned
@@ -256,3 +256,12 @@ mode never writes files; it explains which files need synchronization.
 - The six-artwork cache revision is calculated from their Git blob fingerprints by `scripts/sync-release.cjs`, so later swaps get fresh browser URLs.
 - Existing SVG originals remain in the repository for rollback. All level positions, playable content (four actual levels), disabled Coming soon nodes, Haiko position, save IDs and fin scores remain unchanged.
 - Because the illustrations were generated separately, a final visual pass on Android is recommended for transitions at section boundaries and overlay alignment.
+
+## Seamless Coral Coast master — DEV v1.5.49
+
+- Rebuilt the six Coral Coast WebP section assets from a single 852 × 11076-pixel vertically continuous master (top to bottom 06 → 01). Slices remain 852 × 1846 pixels for efficient loading and retain the exact same section IDs.
+- At all five junctions, the original conflicting coastal edges are replaced with soft caustic-water transitions taken from the established Pathle ocean artwork. No path, numeric markers or Haiko are baked into the images.
+- Match CSS fallback background crop to the cover-fit artwork. The route is still a separate connected SVG layer, with a more natural S-curve at the end of each long section.
+- When scrolling away from Haiko, large fixed title text collapses so it does not cover other numbered markers. The back/World controls stay available.
+- No changes to published puzzle identities, 4 playable levels, Coming soon placeholders through level 60, progress storage, scoring or main branch.
+- Automated Node regression tests and release checks should be run for this release; visual Android review is still recommended.
