@@ -265,6 +265,8 @@
     if(!source)return;
     const image=document.createElement('img');
     image.className='th-v2-map-art-img';
+    image.decoding='async';
+    image.loading='lazy';
     image.src=source;
     image.alt='';
     image.draggable=false;
