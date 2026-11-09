@@ -82,3 +82,9 @@ Never modify the `main` branch without explicit approval.
 - [ ] Longer session on a lower-end Android device; note heat, memory, jank and image reloads.
 
 **Important:** Previous legacy campaign results are archived evidence, not a substitute for these checks.
+
+## Final technical audit (9 November 2026) — NOT a handset test
+
+The GitHub CI verified nine Chromium mobile flows (320, 360, 390 and 768px viewports), including app-like page switching, history-based Back, six images without gaps and saved progress after reload. This is **mobile emulation in a Linux runner**, not native Android.
+
+On-device sign-off remains **PENDING**. Follow the eight physical Android checklist items in [technical acceptance review](TECHNICAL-ACCEPTANCE-2026-11-09.md). When performed, record results as owner-reported manual checks, keeping them separate from the automated tests.

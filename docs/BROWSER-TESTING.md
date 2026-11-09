@@ -7,7 +7,7 @@ browser context/IndexedDB are created for every browser scenario.
 
 ## Scenarios
 
-Current workflow contains six browser scenarios and the Node regression suite. See the CI run for exact counts.
+Current workflow contains nine browser scenarios and the Node regression suite (203 tests as of 9 November 2026). See the CI run for exact counts.
 
 - Home menu and image decode at 390 × 844, entering Daily Challenge, returning home
 - New player on Treasure Hunt at 360 × 740: three-step tutorial entry
@@ -52,3 +52,9 @@ The CI screenshot artifact additionally includes `browser-performance-metrics.js
 ## Map image resource duplication (DEV 1.5.57)
 
 Coral Coast has six actual WebP <img> elements over a water-gradient fallback. Prior to this patch the same six WebPs were also CSS backgrounds, producing twelve resource entries (six `css`, six `img`) in test Chromium. The map now draws from the image elements only; the fallback stays a gradient on missing images. Browser diagnostics assert six unique map-image entries, six decoded map images and no duplicate CSS image background. Metrics are from a local test runner rather than a physical device.
+
+## Final acceptance expansion (9 Nov 2026)
+
+The Chromium test suite now additionally checks same-document browser Back navigation (level → area → world), real IndexedDB score retention across reload and app-like page switching, and all six Coral Coast art sections at 320/390/768px width. Each responsive width checks that the five map seams have a 0px layout gap and that all 60 markers remain present. For screenshots, wait for `img.decode()` and two animation frames after jumping to distant map sections; mere successful resource loading does not guarantee the bitmap has been painted.
+
+This is **not physical Android certification**. See [technical acceptance review](TECHNICAL-ACCEPTANCE-2026-11-09.md).
