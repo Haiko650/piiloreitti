@@ -155,7 +155,7 @@ test('Coral Coast renders 60 markers, disabled previews and Return to Haiko',{ti
     assert.ok((await image.boundingBox()).width>0,'Return to Haiko portrait is missing');
     await screenshot(page,'coral-coast-top-390');
     await page.locator('#thV2AreaHere').click();
-    await page.locator('#thV2AreaHere[hidden]').waitFor({timeout:12000});
+    await page.locator('#thV2AreaHere').waitFor({state:'hidden',timeout:12000});
     await page.locator('#thV2AreaWorld').click();
     await page.locator('#thV2World:not([hidden])').waitFor();
     assert.deepEqual(exceptions,[],'Uncaught browser JavaScript errors');
