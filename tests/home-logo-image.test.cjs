@@ -30,7 +30,7 @@ test('logo is responsive and does not replace background or swimming Haiko',()=>
   assert.match(css,/aspect-ratio:1807\/696/);
   assert.match(css,/object-fit:contain/);
   assert.match(css,/@media\(max-height:680px\)/);
-  assert.match(html,/css\/home-reef\.css\?v=5a4eeb2f3cd7/);
+  assert.match(html,/css\/home-reef\.css\?v=509cb544ef44/);
   assert.match(html,/home-swimming-art" src="images\/haiko-swimming-menu\.webp\?v=23b8cf3245ec"/);
   assert.match(css,/home-reef-background\.webp/);
 });

@@ -173,7 +173,7 @@ body.th-page:has(#thV2Area:not([hidden])) .th-shell{
   background:transparent;
   /* Geographic artwork follows the scroll position and covers any unused
      area at the top, rather than allowing the BODY gradient to show. */
-  background-image:url("../images/maps/water-world/coral-coast/section-01-base.svg");
+  background-image:url("../images/maps/water-world/coral-coast/section-01-base.svg?v=eae2d4b1a735");
   background-size:100% 1300px;
   background-position:center top;
   background-repeat:no-repeat;

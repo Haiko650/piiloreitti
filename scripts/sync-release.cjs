@@ -53,6 +53,29 @@ const overrideHash={'js/version.js':(()=>{
   const b=Buffer.from(versionJS);
   return crypto.createHash('sha1').update('blob '+b.length+'\0').update(b).digest('hex').slice(0,12);
 })()};
+// Fingerprint image URLs referenced from CSS, not just HTML. A new image
+// must invalidate its stylesheet and the page's link to that stylesheet.
+// Keep relative asset paths intact so the same files work on GitHub Pages.
+for(const filename of fs.readdirSync(path.join(root,'css')).filter(name=>name.endsWith('.css'))){
+  const p='css/'+filename;
+  const source=read(p);
+  const refreshed=source.replace(/url\(\s*(["']?)(\.\.\/images\/[^)'"]+)\1\s*\)/g,(original,quote,sourceUrl)=>{
+    const fragmentAt=sourceUrl.indexOf('#');
+    const raw=fragmentAt===-1?sourceUrl:sourceUrl.slice(0,fragmentAt);
+    const fragment=fragmentAt===-1?'':sourceUrl.slice(fragmentAt);
+    const relative=raw.split('?')[0];
+    const image=path.posix.normalize(path.posix.join('css',relative));
+    if(!image.startsWith('images/')||!fs.existsSync(path.join(root,image)))
+      throw Error('Missing or unsafe CSS image asset: '+sourceUrl+' in '+p);
+    return 'url('+quote+relative+'?v='+sha(image)+fragment+quote+')';
+  });
+  if(refreshed!==source){
+    stage(p,refreshed);
+    const b=Buffer.from(refreshed);
+    overrideHash[p]=crypto.createHash('sha1')
+      .update('blob '+b.length+'\0').update(b).digest('hex').slice(0,12);
+  }
+}
 // The illustrated Coral Coast overview is loaded at runtime rather than
 // from an HTML tag. Fingerprint that image too, so future art replacements
 // receive new cache keys without any hand-edited JavaScript constants.

@@ -5,7 +5,7 @@
 The main menu shows a compact **tappable** build label at the top center,
 between Settings and the DEV toggle:
 
-**DEV · v1.5.52**
+**DEV · v1.5.53**
 
 **The sole release-version source is `version.json`.** The installed
 `js/version.js` constant, the main-menu fallback label, versioned
@@ -286,3 +286,10 @@ mode never writes files; it explains which files need synchronization.
 - The art was cropped and optimized to a transparent, 256 × 256 WebP (`images/haiko-return-lost.webp`). The same image file is reused by both buttons, with Git blob fingerprinting for browser cache safety.
 - Increased the circular mascot slot slightly to 42px (38px on small phones) so the confused expression and question marks remain visible.
 - The button label, positioning, floating appearance, visibility and click behavior are unchanged. No gameplay/save changes; `main` remains untouched.
+
+## Technical repair WP1–WP2 — DEV v1.5.53
+
+- Baseline before code audit: `1081123822c952bc03352cb6fab827af4599de90`; backup branch `pathle-backup-before-code-review-20261109`. CI baseline 194/194.
+- `scripts/sync-release.cjs` now fingerprints relative `../images/...` paths in CSS stylesheets. A changed image gets a new `?v=<Git blob SHA>` inside CSS, and the stylesheet's own fingerprint in HTML is updated as well.
+- No visual, game logic, score or save migrations. All CSS background assets remain in their previous paths and dimensions.
+- Tests assert that CSS image references match the corresponding asset bytes and that HTML links match generated CSS bytes.
