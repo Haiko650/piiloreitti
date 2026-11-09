@@ -1,3 +1,5 @@
+> **Historical Android test log (5 November 2026).** These outcomes belong to earlier builds, not proof that DEV 1.5.57 was manually verified. The player-facing 30-level campaign was replaced by a three-level tutorial followed by Coral Coast with four released stages and 56 preview markers. The version badge and update-check flow are implemented in newer builds; verify them again on a phone.
+
 # Pathle Android testing log
 
 Branch: `pathle-modular-dev`. Canonical phone-testing URL:
@@ -47,8 +49,7 @@ persistence under item 3. Do not inflate the manual test count.
 - [ ] Test game reopen after exiting during an incomplete run; this may
       intentionally restart the incomplete attempt, but must preserve
       previously completed levels.
-- [ ] Check the visible version/build info and update-check flow
-      **after** these are implemented (currently pending).
+- [ ] Recheck the **implemented** version badge and update-check flow in DEV 1.5.57 on a real Android phone.
 
 ### Explicitly not yet tested
 
@@ -59,8 +60,7 @@ persistence under item 3. Do not inflate the manual test count.
 - Multiple Android browsers and devices.
 - Current incomplete-run persistence is intentionally NOT implemented;
   closing the browser can lose an unfinished attempt.
-- A visible version/build indicator and an explicit "check for update"
-  control are still proposed, not implemented.
+- A visible version/build indicator and explicit update-check control are implemented in recent builds, but require an up-to-date manual Android check.
 
 ## Release safeguards
 
@@ -69,3 +69,16 @@ syntax checks and Node regression tests on development pushes. CI passing
 does not substitute for Android screen and touch testing.
 
 Never modify the `main` branch without explicit approval.
+
+## Current round (DEV 1.5.57) — proposed, not yet player-verified
+
+- [ ] Start with a fresh Treasure Hunt save, complete the three-level tutorial, confirm the Water World overview appears.
+- [ ] Open Coral Coast: 60 distinct map markers are visible; only 1–4 are playable and 5–60 say Coming soon.
+- [ ] Scroll bottom to top across all six uninterrupted WebP illustrations without blank gaps, flicker or misplaced Haiko.
+- [ ] Move away from Haiko and use Return to Haiko; verify appearance and tap target on a real phone.
+- [ ] Return one screen at a time with both the upper-left button and Android Back.
+- [ ] Verify Daily Adventure and Treasure Hunt progress after closing, reopening and switching apps.
+- [ ] Test the build badge and update check while online and after a connection interruption.
+- [ ] Longer session on a lower-end Android device; note heat, memory, jank and image reloads.
+
+**Important:** Previous legacy campaign results are archived evidence, not a substitute for these checks.

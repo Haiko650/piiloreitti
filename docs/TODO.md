@@ -4,7 +4,7 @@ Tähän tiedostoon kerätään sovitut myöhemmin toteutettavat tehtävät. Työ
 
 ## Water Worldin kartat – erillinen graafinen vaihe
 
-- [ ] **Water Worldin ja sen alueiden karttagrafiikan viimeistely.** World-overview-kartta ja aluekartat (esim. Coral Coast) tehdään myöhemmin omana graafisena työnään. Karttakuvat, reitit, tasosolmut ja Haikon karttamerkki pysyvät erillisinä vaihdettavina tasoina. Nykyinen Water Worldin otsake-, ohje- ja navigointikehys uudistettiin DEV v1.5.17:ssa, mutta karttasisältöön ei vielä tehty muutoksia.
+- [ ] **Water Worldin ja sen alueiden karttagrafiikan viimeistely.** World-overview-kartta ja aluekartat (esim. Coral Coast) tehdään myöhemmin omana graafisena työnään. Karttakuvat, reitit, tasosolmut ja Haikon karttamerkki pysyvät erillisinä vaihdettavina tasoina. DEV 1.5.57:ssa Water Worldin eteläinen yleiskartta ja Coral Coastin kuusi jatkuvaa WebP-maisemaosiota ovat jo käytössä. Jäljellä ovat tulevien alueiden omat kuvat, yksityiskohtien viimeistely ja nykyisten 56 ennakkotason muuttaminen myöhemmin oikeasti pelattaviksi.
 
 ## Viimeistelyvaihe
 

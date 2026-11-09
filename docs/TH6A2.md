@@ -1,3 +1,5 @@
+> **HISTORICAL MILESTONE RECORD — not the current gameplay/artwork manifest (9 Nov 2026).** This document preserves an earlier TH.6A design and may describe replaced SVG maps, old Android issues or unavailable levels. For current DEV 1.5.57, use [architecture](ARCHITECTURE.md), [project README](../README.md) and the live `js/treasure-map-art.js` manifest. Coral Coast now has six WebP map sections and 60 visible map markers; only levels 1–4 are playable.
+
 # Pathle Treasure Hunt TH.6A.2 – first playable Water World slice
 
 **Branch:** `pathle-modular-dev`
