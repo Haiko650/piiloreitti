@@ -9,6 +9,10 @@
   // Keep the approved 941 × 1672 artwork replaceable without editing UI.
   const CORAL_COAST_OVERVIEW=BASE+'coral-coast-overview.webp';
   const CORAL_COAST_ART_REV='2eba2b0cd091';
+  // Combined fingerprint of the six illustrated, independently replaceable
+  // playable Coral Coast sections (synchronized by scripts/sync-release.cjs).
+  const CORAL_COAST_SECTIONS_REV='267ecb7a0bd7';
+  const COAST_IMAGE_PREFIX=BASE+'coral-coast/coral-coast-section-';
   // Shared upright transparent Haiko sprite for Water World and area progress maps.
   const HAIKO_IMAGE='images/haiko-map-upright.webp';
   // Self-contained image: the map works even when a separate media request is blocked.
@@ -38,9 +42,28 @@
         haiko:HAIKO_IMAGE,
         sections:Object.freeze({
           'coral-shallows-01':Object.freeze({
-            base:BASE+'coral-coast/section-01-base.svg',
-            details:BASE+'coral-coast/section-01-details.svg',
-            alt:'Coral Coast shallows, bright reef and sea grasses'
+            base:BASE+'coral-coast/coral-coast-section-01-lagoon.webp',
+            details:null,alt:'Turquoise Lagoon — Coral Coast levels 1–4'
+          }),
+          'coral-coast-section-02':Object.freeze({
+            base:BASE+'coral-coast/coral-coast-section-02-gardens.webp',
+            details:null,alt:'Coral Gardens — coming soon levels 5–16'
+          }),
+          'coral-coast-section-03':Object.freeze({
+            base:BASE+'coral-coast/coral-coast-section-03-seagrass.webp',
+            details:null,alt:'Seagrass Bay — coming soon levels 17–28'
+          }),
+          'coral-coast-section-04':Object.freeze({
+            base:BASE+'coral-coast/coral-coast-section-04-shipwreck.webp',
+            details:null,alt:'Shipwreck Reef — coming soon levels 29–40'
+          }),
+          'coral-coast-section-05':Object.freeze({
+            base:BASE+'coral-coast/coral-coast-section-05-rocky.webp',
+            details:null,alt:'Rocky Passage — coming soon levels 41–52'
+          }),
+          'coral-coast-section-06':Object.freeze({
+            base:BASE+'coral-coast/coral-coast-section-06-gate.webp',
+            details:null,alt:'Current Gate — coming soon levels 53–60'
           })
         })
       })
@@ -75,6 +98,9 @@
     // mobile browsers replace old imagery without clearing stored saves.
     if(url===CORAL_COAST_OVERVIEW)
       return url+'?v='+CORAL_COAST_ART_REV;
+    if(typeof url==='string'&&url.startsWith(COAST_IMAGE_PREFIX)&&
+       url.endsWith('.webp'))
+      return url+'?v='+CORAL_COAST_SECTIONS_REV;
     if(Object.prototype.hasOwnProperty.call(MAP_SVG_SOURCE,url)){
       return 'data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(MAP_SVG_SOURCE[url]);
     }
@@ -91,7 +117,9 @@
     const allowedHaiko=url===HAIKO_IMAGE;
     if((allowedMap||allowedHaiko)&&!url.includes('..')){
       const source=url===CORAL_COAST_OVERVIEW
-        ?url+'?v='+CORAL_COAST_ART_REV:url;
+        ?url+'?v='+CORAL_COAST_ART_REV
+        :url.startsWith(COAST_IMAGE_PREFIX)&&url.endsWith('.webp')
+          ?url+'?v='+CORAL_COAST_SECTIONS_REV:url;
       node.style.setProperty(variable,'url("'+source+'")');
     }else{
       node.style.setProperty(variable,'none');
