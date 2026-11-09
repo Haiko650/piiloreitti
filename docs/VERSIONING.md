@@ -5,7 +5,7 @@
 The main menu shows a compact **tappable** build label at the top center,
 between Settings and the DEV toggle:
 
-**DEV · v1.5.50**
+**DEV · v1.5.51**
 
 **The sole release-version source is `version.json`.** The installed
 `js/version.js` constant, the main-menu fallback label, versioned
@@ -272,3 +272,10 @@ mode never writes files; it explains which files need synchronization.
 - Disabled the `#thV2AreaCanvas::before` placeholder gradient without touching other map or World UI layers.
 - Kept the 110 px bottom padding, all six illustrated map sections, route and 60 markers, existing Haiko/current-level positioning logic, and all saved scores unchanged.
 - Updated mobile-layout regressions to verify the 24 px padding and the absence of the former gradient strip.
+
+## Coral Coast map footer cleanup — DEV v1.5.51
+
+- Removed the unnecessary explanatory paragraph below the illustrated Coral Coast area map, rather than hiding the gameplay progress summary in the floating title.
+- Reduced `#thV2AreaCanvas` bottom padding from 110px to 24px to eliminate the dark unused band underneath the beach artwork, matching the 24px top padding.
+- Preserved Return to Haiko, all six illustrated sections, all 60 map nodes, the top summary, progress storage, and back-navigation.
+- Added a regression asserting no footer text and verifying 24px bottom padding.
