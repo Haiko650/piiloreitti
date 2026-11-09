@@ -40,3 +40,9 @@ If Chromium system libraries are missing on Linux, install them via
 No gameplay code, settings, or production save migrations are needed for these
 tests. Avoid writing to the live website or calling \`PathleStorage\` in a real
 player's session.
+
+## Performance and recovery diagnostics (DEV 1.5.56)
+
+The browser suite also tests malformed, retired `localStorage` cosmetics against an otherwise valid IndexedDB player save. It must boot without modifying those raw keys or losing other save data.
+
+The CI screenshot artifact additionally includes `browser-performance-metrics.json`. It records one unthrottled Chromium run on localhost: navigation timings, resource counts, transferred bytes, decoded map images and sampled animation frame intervals. Treat this as a regression investigation aid only, not a real-device FPS, battery, network-compression or memory benchmark. Avoid hard pass/fail thresholds for variable CI timings. Compare multiple comparable runs before taking action.

@@ -5,7 +5,7 @@
 The main menu shows a compact **tappable** build label at the top center,
 between Settings and the DEV toggle:
 
-**DEV · v1.5.55**
+**DEV · v1.5.56**
 
 **The sole release-version source is `version.json`.** The installed
 `js/version.js` constant, the main-menu fallback label, versioned
@@ -307,3 +307,11 @@ mode never writes files; it explains which files need synchronization.
 - Merged two adjacent `#playDaily` rules in `css/menu-capsules.css` without changing cascade precedence or actual declarations.
 - Added real Chromium computed-style checks at standard and narrow mobile viewports to prevent future marker-size regressions, on top of existing navigation and screenshots.
 - Changes are cosmetic/stylesheet-only; no player data, game rules, progress records or production branch changes.
+
+## Cosmetic persistence hardening and diagnostics — DEV v1.5.56
+
+- Normalizes malformed retired localStorage cosmetic inventory, equipment and season values before use. This guards browser boot without removing, overwriting or automatically migrating legacy keys. IndexedDB progress and reward logic are unchanged.
+- Added isolated Chromium reload test that seeds corrupt old cosmetics and validates that a valid IndexedDB save, its revision, settings and unrelated extensions survive. A separate test verifies gameplay remains enterable.
+- Added browser performance diagnostics in CI, with resource count, transfer size, image decode, DOM map size, and frame timing. The results are illustrative CI measurements rather than real Android-device benchmarks.
+- Removed eight duplicate HTML5 DOCTYPE prefixes from `index.html`, leaving one standards-mode doctype; a new Node test covers both entry pages.
+- The existing cosmetic localStorage keys are intentionally retained until a future user-data migration is designed and tested. Do not delete them automatically.

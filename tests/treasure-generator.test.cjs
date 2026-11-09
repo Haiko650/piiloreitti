@@ -116,6 +116,6 @@ test('canonical Treasure Hunt loads v2 release after worlds and before the board
   assert.match(bootstrap,/root.PathleTreasureLevels=release.levels/);
   assert.match(bootstrap,/root.PathleTreasureCampaignMode=true/);
   const home=source('index.html');
-  assert.match(home,/id="playTreasure" href="treasure-hunt.html\?v=1\.5\.55"/);
+  assert.match(home,/id="playTreasure" href="treasure-hunt.html\?v=1\.5\.56"/);
   assert.match(source('js/treasure-ui.js'),/const levels = window.PathleTreasureLevels/);
 });

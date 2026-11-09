@@ -180,16 +180,29 @@ let sound=useIndexedDaily?pathleInitialSave.settings.sound:load(SOUND);
 if(typeof sound!=='boolean'){sound=load(OLD_SOUND);if(typeof sound!=='boolean')sound=true}
 let mode='daily',game=null,screen='home',devEnabled=false,devDay=1,devGame=null;
 const GUIDE_STORE='pathle_haiko_guides_v12',REWARD_SEEN='pathle_gold_glasses_seen_v11',EQUIP_STORE='pathle_haiko_equipment_v12',CHEST_STORE='pathle_chapter1_chest_v12',MUSIC_KEY='pathle_music_v12',AMBIENT_KEY='pathle_ambient_v12';
-let equipment=load(EQUIP_STORE)||{glasses:load(REWARD_SEEN)?'gold':'purple'};
+// Retired, locally stored cosmetics are not part of the validated gameplay
+// save. Treat malformed values as optional: they must never block startup or
+// cause an IndexedDB progress reset. Do not delete or rewrite legacy keys.
+const legacyEquipment=load(EQUIP_STORE);
+let equipment=legacyEquipment&&typeof legacyEquipment==='object'&&!Array.isArray(legacyEquipment)
+ ?legacyEquipment:{glasses:load(REWARD_SEEN)?'gold':'purple'};
 // Per-season reward inventory. The original Haiko has fully replaced image variants for glasses,
 // while head/hand items and furniture get independent visual layers. Future seasons reset only cosmetics.
 const COSMETIC_SEASONS={ocean:{chapterCount:52, name:'Ocean Adventure'},space:{chapterCount:52,name:'Space Adventure'}};
 const COSMETIC_CATALOG={gold_glasses:{season:'ocean',slot:'glasses',appearance:'gold'},captains_chair:{season:'ocean',slot:'sceneItem',appearance:'chair'}};
 const SEASON_STORE='pathle_cosmetic_season_v121';
 const COSMETIC_INVENTORY='pathle_cosmetic_inventory_v121';
-let activeSeason=load(SEASON_STORE)||'ocean';
-let ownedCosmetics=load(COSMETIC_INVENTORY)||[];
-if(equipment.glasses==='gold'&&!ownedCosmetics.includes('gold_glasses')){ownedCosmetics.push('gold_glasses');save(COSMETIC_INVENTORY,ownedCosmetics)}
+const legacySeason=load(SEASON_STORE);
+let activeSeason=typeof legacySeason==='string'&&
+ Object.prototype.hasOwnProperty.call(COSMETIC_SEASONS,legacySeason)?legacySeason:'ocean';
+const legacyInventory=load(COSMETIC_INVENTORY);
+let ownedCosmetics=Array.isArray(legacyInventory)
+ ?[...new Set(legacyInventory.filter(id=>typeof id==='string'&&id.length>0&&id.length<=128))]
+ :[];
+// The gold-glasses image variant is retired. If a legacy owner had it
+// selected, keep the hint in memory only; do not mutate damaged local data.
+if(equipment.glasses==='gold'&&!ownedCosmetics.includes('gold_glasses'))
+ ownedCosmetics.push('gold_glasses');
 // Call this ONLY when a later complete adventure season is released, never on chapter change.
 function beginCosmeticSeason(id){if(!COSMETIC_SEASONS[id]||id===activeSeason)return;activeSeason=id;save(SEASON_STORE,id);ownedCosmetics=[];save(COSMETIC_INVENTORY,ownedCosmetics);equipment={glasses:'purple',sceneItem:null,hat:null,handItem:null};save(EQUIP_STORE,equipment);equipGold()}
 function equipCosmetic(itemId){const c=COSMETIC_CATALOG[itemId];if(!c||c.season!==activeSeason||!ownedCosmetics.includes(itemId))return false;equipment={...equipment,[c.slot]:c.appearance};save(EQUIP_STORE,equipment);equipGold();return true}

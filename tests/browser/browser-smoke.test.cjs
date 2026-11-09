@@ -230,3 +230,127 @@ test('Coral Coast renders 60 markers, disabled previews and Return to Haiko',{ti
     assert.deepEqual(exceptions,[],'Uncaught browser JavaScript errors');
   }finally{await context.close();}
 });
+
+
+test('damaged retired cosmetics cannot block gameplay or overwrite IndexedDB',{timeout:60000},async()=>{
+  const {page,context,exceptions}=await mobilePage(390,844);
+  try{
+    await page.goto(origin+'/index.html',{waitUntil:'load'});
+    await page.waitForFunction(()=>window.PathleSaveBoot?.status==='created'&&
+      !document.querySelector('#welcomeScreen').inert);
+    await page.evaluate(async()=>{
+      await window.PathleStorage.update(data=>{
+        data.settings.sound=false;
+        data.extensions.legacyProtectionProbe={marker:'keep-me'};
+        return data;
+      });
+      localStorage.setItem('pathle_haiko_equipment_v12',JSON.stringify({glasses:'gold'}));
+      localStorage.setItem('pathle_cosmetic_inventory_v121',JSON.stringify({broken:true}));
+      localStorage.setItem('pathle_cosmetic_season_v121',JSON.stringify('not-a-season'));
+    });
+    const rawBefore=await page.evaluate(()=>Object.fromEntries([
+      'pathle_haiko_equipment_v12','pathle_cosmetic_inventory_v121',
+      'pathle_cosmetic_season_v121'].map(k=>[k,localStorage.getItem(k)])));
+    const revisionBefore=await page.evaluate(async()=>(
+      await window.PathleStorage.load()).revision);
+    await page.reload({waitUntil:'load'});
+    await page.waitForFunction(()=>window.PathleSaveBoot?.status==='loaded'&&
+      !document.querySelector('#welcomeScreen').inert);
+    const state=await page.evaluate(async()=>{
+      const snapshot=await window.PathleStorage.load();
+      return {revision:snapshot.revision,sound:snapshot.data.settings.sound,
+        extension:snapshot.data.extensions.legacyProtectionProbe};
+    });
+    assert.equal(state.revision,revisionBefore,'Retired cosmetics rotated the live save');
+    assert.equal(state.sound,false);
+    assert.equal(state.extension.marker,'keep-me');
+    const rawAfter=await page.evaluate(()=>Object.fromEntries([
+      'pathle_haiko_equipment_v12','pathle_cosmetic_inventory_v121',
+      'pathle_cosmetic_season_v121'].map(k=>[k,localStorage.getItem(k)])));
+    assert.deepEqual(rawAfter,rawBefore,'Malformed retired local data was overwritten');
+    await page.locator('#playDaily').click();
+    await page.locator('#gameScreen:not([hidden])').waitFor();
+    const saved=await page.evaluate(async()=>(
+      await window.PathleStorage.load()).data);
+    assert.equal(saved.settings.sound,false);
+    assert.equal(saved.extensions.legacyProtectionProbe.marker,'keep-me');
+    assert.deepEqual(exceptions,[],'Malformed retired cosmetic data caused browser errors');
+  }finally{await context.close();}
+});
+
+test('record diagnostic browser resource and Coral Coast paint metrics',{timeout:90000},async()=>{
+  const {page,context,exceptions}=await mobilePage(390,844);
+  try{
+    const started=Date.now();
+    await page.goto(origin+'/index.html',{waitUntil:'load'});
+    await page.waitForFunction(()=>!document.querySelector('#welcomeScreen').inert);
+    const home=await page.evaluate(async()=>{
+      await Promise.all([...document.querySelectorAll('#welcomeScreen img')]
+        .filter(img=>!img.hidden).map(img=>img.decode().catch(()=>null)));
+      const resources=performance.getEntriesByType('resource');
+      const nav=performance.getEntriesByType('navigation')[0];
+      return {
+        navigationDurationMs:Math.round(nav?.duration||0),
+        domContentLoadedMs:Math.round(nav?.domContentLoadedEventEnd||0),
+        loadEventEndMs:Math.round(nav?.loadEventEnd||0),
+        resourceCount:resources.length,
+        transferredBytes:Math.round(resources.reduce((n,r)=>n+(r.transferSize||0),0)),
+        decodedHomeImages:[...document.querySelectorAll('#welcomeScreen img')]
+          .filter(img=>img.naturalWidth>0).length
+      };
+    });
+    await page.goto(origin+'/treasure-hunt.html',{waitUntil:'load'});
+    await page.locator('#thV2Tutorial:not([hidden])').waitFor();
+    await seedTutorialCompletion(page);
+    await page.reload({waitUntil:'load'});
+    await page.locator('#thV2World:not([hidden])').waitFor();
+    await page.locator('.th-v2-world-pin.is-current').click();
+    await page.locator('#thV2Area:not([hidden])').waitFor();
+    const coast=await page.evaluate(async()=>{
+      const panels=[...document.querySelectorAll('#thV2AreaCanvas .th-v2-area-section')];
+      const artworks=panels.map(panel=>panel.querySelector('.th-v2-art-base img'));
+      for(const image of artworks)await image.decode();
+      const entries=performance.getEntriesByType('resource');
+      const mapped=entries.filter(entry=>entry.name.includes('coral-coast-section-'));
+      const byUrl=new Map();
+      for(const entry of mapped)byUrl.set(entry.name,(byUrl.get(entry.name)||0)+1);
+      const map=document.getElementById('thCampaignMap');
+      const totalHeight=map.scrollHeight;
+      const visibleHeight=map.clientHeight;
+      let frames=0,maxFrameMs=0,averageFrameMs=0;
+      await new Promise(resolve=>{
+        let last=performance.now();
+        function sample(now){
+          const delta=now-last;last=now;
+          if(frames>0){maxFrameMs=Math.max(maxFrameMs,delta);averageFrameMs+=delta;}
+          frames++;
+          if(frames>=45){averageFrameMs/=Math.max(1,frames-1);resolve();}
+          else requestAnimationFrame(sample);
+        }
+        requestAnimationFrame(sample);
+        map.scrollTop=Math.max(0,totalHeight-visibleHeight);
+      });
+      return {
+        sections:panels.length,
+        decodedSectionImages:artworks.filter(img=>img?.naturalWidth>0).length,
+        imageResourceCount:mapped.length,
+        uniqueImageResourceUrls:byUrl.size,
+        maximumDuplicateResourceEntries:Math.max(0,...byUrl.values()),
+        mapContentHeightPx:totalHeight,
+        mapViewportHeightPx:visibleHeight,
+        meanFrameIntervalMs:Math.round(averageFrameMs*10)/10,
+        maxFrameIntervalMs:Math.round(maxFrameMs*10)/10
+      };
+    });
+    assert.equal(coast.sections,6);
+    assert.equal(coast.decodedSectionImages,6);
+    assert.ok(coast.mapContentHeightPx>coast.mapViewportHeightPx);
+    assert.deepEqual(exceptions,[]);
+    const metrics={kind:'CI diagnostics, not device performance benchmark',
+      testViewport:'Chromium mobile 390x844, localhost/no-store, unthrottled',
+      measuredAt:new Date(started).toISOString(),home,coast};
+    fs.writeFileSync(path.join(output,'browser-performance-metrics.json'),
+      JSON.stringify(metrics,null,2)+'\n');
+    console.log('[Pathle performance diagnostics] '+JSON.stringify(metrics));
+  }finally{await context.close();}
+});
