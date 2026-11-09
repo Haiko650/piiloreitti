@@ -91,7 +91,7 @@ test('Water World area signs match the approved home Treasure capsule look',()=>
   const css=read('css/treasure-world-v2.css');
   const html=read('treasure-hunt.html');
   const js=read('js/treasure-campaign-v2.js');
-  assert.match(html,/css\/treasure-world-v2\.css\?v=fcee5bf37aa0/);
+  assert.match(html,/css\/treasure-world-v2\.css\?v=cd1679c45679/);
   assert.match(menu,/#welcomeScreen #playTreasure\{/);
   assert.match(menu,/linear-gradient\(180deg,#b9ffff 0%,#44f6ed 22%,#06dacb 69%,#00adbd 100%\)/);
   assert.match(css,/linear-gradient\(180deg,#b9ffff 0%,#44f6ed 22%,#06dacb 69%,#00adbd 100%\)/);
@@ -204,4 +204,11 @@ test('Coral Coast top padding is compact while final Haiko stays visible',()=>{
  const area=css.match(/#thCampaignMap\.th-v2-campaign-map:has\(#thV2Area:not\(\[hidden\]\)\)\{([^}]+)\}/)?.[1];
  assert.ok(area?.includes('overflow-y:auto'));
  assert.ok(area?.includes('background-image:url'));
+});
+
+test('tablet Coral Coast preserves its native WebP illustration ratio',()=>{
+ const css=read('css/treasure-world-v2.css');
+ assert.ok(css.includes('width:min(100%,852px)'));
+ assert.ok(css.includes('aspect-ratio:852 / 1846'));
+ assert.ok(css.includes('object-fit:contain'));
 });

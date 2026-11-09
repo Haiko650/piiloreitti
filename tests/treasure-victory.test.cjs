@@ -10,6 +10,7 @@ function makeHarness() {
   const levels = [{id:'one',optimalMoves:12},{id:'two',optimalMoves:24},{id:'three',optimalMoves:35}];
   const elements = {};
   const handlers = new Map();
+  const browserHandlers = new Map();
   let nextLevelClicks = 0;
   let restarts = 0;
   const doc = {activeElement:null,
@@ -42,10 +43,10 @@ function makeHarness() {
   const source=fs.readFileSync(path.join(__dirname,'../js/treasure-victory.js'),'utf8');
   const context={window:{PathleTreasureLevels:levels,PathleTreasureGrading:{
     rateRun(level,run){return grading.rateMoves(run.score,level.optimalMoves);}
-  }},document:doc};
+  },addEventListener(type,fn){browserHandlers.set(type,fn);}},document:doc};
   vm.runInNewContext(source,context,{filename:'treasure-victory.js'});
   function win(index,score) {handlers.get('pathle:treasure-complete')({detail:{level:levels[index],run:{score},levelIndex:index}});}
-  return {win,elements,doc,handlers,get nextLevelClicks(){return nextLevelClicks;},get restarts(){return restarts;}};
+  return {win,elements,doc,handlers,browserHandlers,get nextLevelClicks(){return nextLevelClicks;},get restarts(){return restarts;}};
 }
 
 test('gold result displays three fins, exact optimum and modal without touching the board',()=>{
@@ -107,4 +108,12 @@ test('invalid completion payload is rejected instead of showing the wrong result
  const h=makeHarness();
  assert.throws(()=>h.handlers.get('pathle:treasure-complete')({detail:{level:{id:'missing'},run:{score:12},levelIndex:0}}),/invalid level completion data/);
  assert.equal(h.elements.thVictory.hidden,true);
+});
+
+test('Android system Back also closes the visible result overlay',()=>{
+ const h=makeHarness();h.win(0,13);
+ assert.equal(h.elements.thVictory.hidden,false);
+ h.browserHandlers.get('popstate')({state:null});
+ assert.equal(h.elements.thVictory.hidden,true);
+ assert.equal(h.elements.game.inert,false);
 });
