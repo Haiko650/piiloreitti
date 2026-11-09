@@ -192,13 +192,14 @@ test('Coral Coast geographic fallback remains aligned with existing 1300px art s
  assert.match(background,/background-attachment:local;/);
 });
 
-test('Coral Coast last Haiko clears floating headings with ocean scroll lead-in',()=>{
+test('Coral Coast top padding is compact while final Haiko stays visible',()=>{
  const css=read('css/treasure-world-ui.css');
  const layout=read('js/treasure-release-v2.js');
- assert.match(css,/#thV2AreaCanvas\.th-v2-area-canvas\{\s*padding-top:260px;/);
+ assert.match(css,/#thV2AreaCanvas\.th-v2-area-canvas\{\s*padding-top:24px;/);
+ assert.match(css,/#thV2AreaCanvas\.th-v2-area-canvas::before\{\s*display:none;/);
  assert.match(layout,/y:\[0\.305,0\.42,0\.555,0\.68\]/);
  const lastY=(1-.68)*1300;
- const sharkTop=260+lastY-126-48;
+ const sharkTop=24+lastY-126-48;
  assert.ok(sharkTop>168+18,'Final Haiko must clear the Coral Coast title');
  const area=css.match(/#thCampaignMap\.th-v2-campaign-map:has\(#thV2Area:not\(\[hidden\]\)\)\{([^}]+)\}/)?.[1];
  assert.ok(area?.includes('overflow-y:auto'));
