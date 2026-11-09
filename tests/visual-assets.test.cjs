@@ -31,7 +31,7 @@ test('shared Haiko fin replaces the fallback while other absent artwork retains 
   for(const theme of ['coral-reef','coast','ocean']) {
     assert.match(visuals.sprite('fin',theme,'<svg>fin</svg>'),/images\/skins\/haiko-fin\.webp/);
   }
-  const image=file('images/skins/haiko-fin.webp');
+  const image=fs.readFileSync(path.join(__dirname,'..','images/skins/haiko-fin.webp'));
   assert.equal(image.toString('ascii',0,4),'RIFF');
   assert.equal(image.toString('ascii',8,12),'WEBP');
   assert.equal(visuals.sprite('treasure','coast','<svg>pearl</svg>'),'<svg>pearl</svg>');
