@@ -12,7 +12,7 @@ All production and game-save changes must be reviewed on `pathle-modular-dev`; `
 | 4. Image and runtime performance | Partially complete | Reduced `css/styles.css` from 396,296 to 71,357 characters. Browser network/memory and mobile frame time measurements still required; no performance claim without measurements. |
 | 5. Save migration and cosmetic persistence | Pending | Requires migration, backup, and Android recovery tests; avoid changing currently working stores prematurely. |
 | 6. Puzzle generator resilience | In progress | Added deterministic Daily board sampling and invariants; future special effects need synchronized engine/solver changes. |
-| 7. Browser visual regression checks | Pending | Add browser screenshots and navigation smoke tests in an isolated, opt-in CI job before risky CSS refactors. |
+| 7. Browser visual regression checks | In progress | Added separate headless Chromium CI job for first-run tutorial, mobile Daily flow, six-section Coral Coast, 60 stops, disabled Coming soon markers, Return to Haiko, and screenshot artifacts. CI must pass before finishing this stage. |
 | 8. Legacy cleanup and final review | Pending | Review use of v1 Treasure Hunt fixtures, old map SVGs, and update stale documentation after the other packages. |
 
 Release validation: `node scripts/sync-release.cjs --check`, `node --test tests/*.test.cjs`, plus the next-version dry-run in GitHub Actions.
