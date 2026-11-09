@@ -483,12 +483,25 @@
   object-position:center;
 }
 
-/* DEV 1.5.58: the 852×1846 WebP slices must keep their original ratio
-   on tablets. Percentage-based route, nodes and Haiko scale with each slice.
-   Phone maps keep their approved 1300px-high illustrated sections. */
+/* DEV 1.5.59: keep Coral Coast artwork at its original 852:1846
+   proportions without cropping or upscaling past its native width.
+   Phone maps retain their approved 1300px sections. */
 @media (min-width:600px){
+  #thV2AreaCanvas.th-v2-area-canvas{
+    width:min(100%,852px);
+    max-width:852px;
+    margin-inline:auto;
+  }
   #thV2Area .th-v2-area-section{
     height:auto;
     aspect-ratio:852 / 1846;
+  }
+  #thV2Area .th-v2-area-section .th-v2-art-base{
+    background-size:100% 100%;
+    background-position:center;
+  }
+  #thV2Area .th-v2-art-base > .th-v2-map-art-img[src*="coral-coast-section-"]{
+    object-fit:contain;
+    object-position:center;
   }
 }
