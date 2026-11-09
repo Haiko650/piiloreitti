@@ -24,7 +24,7 @@ jobs:
       - name: Check JavaScript syntax
         run: |
           node --check scripts/sync-release.cjs
-          for file in js/*.js; do
+          for file in js/*.js tests/browser/*.test.cjs; do
             node --check "$file"
           done
       - name: Run Pathle regression tests
