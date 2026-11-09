@@ -447,7 +447,7 @@ test('returning home and checking updates always request a fresh index document'
  assert.match(html,/class="th-back" href="index\.html\?pathle-update=1\.5\.52"/);
  assert.match(js,/headerBack\?\.getAttribute\?\.\('href'\)\|\|'index\.html'/);
  assert.match(js,/root\.location\.assign\(home\+separator\+'fresh='\+Date\.now\(\)\)/);
- assert.match(home,/js\/version\.js\?v=3788cd7864fe/);
+ assert.match(home,/js\/version\.js\?v=d6c7e4987900/);
  assert.match(home,/id="playTreasure" href="treasure-hunt\.html\?v=1\.5\.52"/);
  assert.match(read('js/version.js'),/url\.searchParams\.set\('fresh',String\(Date\.now\(\)\)\)/);
 });
