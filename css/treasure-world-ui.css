@@ -556,22 +556,15 @@ body.th-page:has(#thV2Area:not([hidden])) .th-header :is(.th-back):focus-visible
   scroll-padding-bottom:82px;
   overscroll-behavior-y:contain;
 }
-/* The last Coral Coast level is high on its single 1300px section. A small
-   illustrated ocean run-up lets the shark clear the two floating headings
-   even at scrollTop = 0. The existing SVG remains the only map artwork. */
+/* DEV 1.5.50: the six-section Coral Coast map now starts immediately
+   below the upper edge. The old 260px ocean run-up was a visible empty band.
+   Floating headings already collapse while exploring away from Haiko. */
 #thV2AreaCanvas.th-v2-area-canvas{
-  padding-top:260px;
+  padding-top:24px;
   padding-bottom:110px;
 }
 #thV2AreaCanvas.th-v2-area-canvas::before{
-  content:"";
-  position:absolute;
-  top:0;
-  left:0;
-  right:0;
-  height:260px;
-  pointer-events:none;
-  background:linear-gradient(180deg,transparent 50%,#7ae9ec 100%);
+  display:none;
 }
 /* DEV 1.5.38: Haiko always remains in the map layer while scrolling.
    No scroll-dependent opacity/visibility switch is applied to the sprite. */
