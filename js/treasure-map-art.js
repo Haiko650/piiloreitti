@@ -11,7 +11,7 @@
   const CORAL_COAST_ART_REV='2eba2b0cd091';
   // Combined fingerprint of the six illustrated, independently replaceable
   // playable Coral Coast sections (synchronized by scripts/sync-release.cjs).
-  const CORAL_COAST_SECTIONS_REV='267ecb7a0bd7';
+  const CORAL_COAST_SECTIONS_REV='74a8c24067af';
   const COAST_IMAGE_PREFIX=BASE+'coral-coast/coral-coast-section-';
   // Shared upright transparent Haiko sprite for Water World and area progress maps.
   const HAIKO_IMAGE='images/haiko-map-upright.webp';
