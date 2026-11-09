@@ -5,7 +5,7 @@
 The main menu shows a compact **tappable** build label at the top center,
 between Settings and the DEV toggle:
 
-**DEV · v1.5.49**
+**DEV · v1.5.50**
 
 **The sole release-version source is `version.json`.** The installed
 `js/version.js` constant, the main-menu fallback label, versioned
@@ -265,3 +265,10 @@ mode never writes files; it explains which files need synchronization.
 - When scrolling away from Haiko, large fixed title text collapses so it does not cover other numbered markers. The back/World controls stay available.
 - No changes to published puzzle identities, 4 playable levels, Coming soon placeholders through level 60, progress storage, scoring or main branch.
 - Automated Node regression tests and release checks should be run for this release; visual Android review is still recommended.
+
+## Coral Coast upper edge trim — DEV v1.5.50
+
+- Removed the old 260 px empty ocean lead-in at the top of the Coral Coast area map. The map now starts after a compact 24 px top padding.
+- Disabled the `#thV2AreaCanvas::before` placeholder gradient without touching other map or World UI layers.
+- Kept the 110 px bottom padding, all six illustrated map sections, route and 60 markers, existing Haiko/current-level positioning logic, and all saved scores unchanged.
+- Updated mobile-layout regressions to verify the 24 px padding and the absence of the former gradient strip.
