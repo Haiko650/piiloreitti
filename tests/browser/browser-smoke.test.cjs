@@ -381,3 +381,145 @@ test('record diagnostic browser resource and Coral Coast paint metrics',{timeout
     console.log('[Pathle performance diagnostics] '+JSON.stringify(metrics));
   }finally{await context.close();}
 });
+
+
+test('Android-like browser Back traverses level, area and World without skipping screens',{timeout:90000},async()=>{
+  const {page,context,exceptions}=await mobilePage(360,740);
+  try{
+    await page.goto(origin+'/treasure-hunt.html',{waitUntil:'load'});
+    await page.locator('#thV2Tutorial:not([hidden])').waitFor();
+    await seedTutorialCompletion(page);
+    await page.reload({waitUntil:'load'});
+    await page.locator('#thV2World:not([hidden])').waitFor();
+    await page.locator('.th-v2-world-pin.is-current').click();
+    await page.locator('#thV2Area:not([hidden])').waitFor();
+    assert.equal(await page.evaluate(()=>window.PathleTreasureCampaign.getView()),'area');
+    await page.goBack();
+    await page.locator('#thV2World:not([hidden])').waitFor();
+    assert.equal(await page.evaluate(()=>window.PathleTreasureCampaign.getView()),'world');
+    await page.locator('.th-v2-world-pin.is-current').click();
+    await page.locator('#thV2Area:not([hidden])').waitFor();
+    const first=page.locator('#thV2AreaCanvas .th-v2-node.is-next');
+    assert.equal(await first.count(),1);
+    await first.click();
+    await page.locator('.th-panel:not([hidden])').waitFor();
+    assert.equal(await page.evaluate(()=>window.PathleTreasureCampaign.getView()),'level');
+    await page.goBack();
+    await page.locator('#thV2Area:not([hidden])').waitFor();
+    assert.equal(await page.evaluate(()=>window.PathleTreasureCampaign.getView()),'area');
+    await page.locator('#thV2AreaWorld').click();
+    await page.locator('#thV2World:not([hidden])').waitFor();
+    assert.equal(await page.evaluate(()=>window.PathleTreasureCampaign.getView()),'world');
+    assert.deepEqual(exceptions,[],'Browser Back triggered a JavaScript exception');
+  }finally{await context.close();}
+});
+
+test('Treasure Hunt progress and unrelated preferences survive reload and app-like page switching',{timeout:90000},async()=>{
+  const {page,context,exceptions}=await mobilePage(390,844);
+  try{
+    await page.goto(origin+'/treasure-hunt.html',{waitUntil:'load'});
+    await page.locator('#thV2Tutorial:not([hidden])').waitFor();
+    await seedTutorialCompletion(page);
+    await page.reload({waitUntil:'load'});
+    await page.locator('#thV2World:not([hidden])').waitFor();
+    const saved=await page.evaluate(async()=>{
+      const storage=window.PathleStorage;
+      const release=window.PathleTreasureReleaseV2;
+      const solver=window.PathleTreasureSolver;
+      const grading=window.PathleTreasureGrading;
+      const api=window.PathleTreasureSaveV2;
+      const levelId=release.catalog.areas.find(a=>a.id==='coral-coast').levelIds[0];
+      const optimum=solver.solve(release.getById(levelId)).optimalMoves;
+      const getFins=(id,moves)=>grading.rateMoves(
+        moves,solver.solve(release.getById(id)).optimalMoves).fins;
+      const committed=await api.commitBest(storage,release.catalog,levelId,
+        optimum,optimum,getFins);
+      if(!committed.firstClear)throw Error('Expected first clear in fresh browser profile');
+      await storage.update(draft=>{
+        draft.settings.sound=false;
+        draft.extensions.acceptanceProbe={value:'keep'};
+        return draft;
+      });
+      const snapshot=await storage.load();
+      return {id:levelId,optimum,revision:snapshot.revision,
+        record:snapshot.data.extensions.treasureHuntV2.records[levelId].bestMoves};
+    });
+    await page.goto(origin+'/index.html',{waitUntil:'load'});
+    await page.locator('#welcomeScreen:not([hidden])').waitFor();
+    const second=await context.newPage(); // Simulate switching to another tab/app.
+    await second.goto(origin+'/index.html',{waitUntil:'load'});
+    await second.close();
+    await page.goto(origin+'/treasure-hunt.html',{waitUntil:'load'});
+    await page.locator('#thV2World:not([hidden])').waitFor();
+    const restored=await page.evaluate(async()=>{
+      const snapshot=await window.PathleStorage.load();
+      return {revision:snapshot.revision,sound:snapshot.data.settings.sound,
+        probe:snapshot.data.extensions.acceptanceProbe,
+        records:snapshot.data.extensions.treasureHuntV2.records};
+    });
+    assert.equal(restored.revision,saved.revision,'Opening a new screen modified the save');
+    assert.equal(restored.sound,false,'Unrelated preferences were lost');
+    assert.equal(restored.probe.value,'keep','Other save extensions were overwritten');
+    assert.equal(restored.records[saved.id].bestMoves,saved.record);
+    await page.locator('.th-v2-world-pin.is-current').click();
+    await page.locator('#thV2Area:not([hidden])').waitFor();
+    assert.equal(await page.locator('#thV2AreaCanvas .th-v2-node.is-complete').count(),1);
+    assert.equal(await page.locator('#thV2AreaCanvas .th-v2-node.is-next').count(),1);
+    await screenshot(page,'coral-coast-saved-progress-390');
+    assert.deepEqual(exceptions,[],'Navigation/reload triggered a browser exception');
+  }finally{await context.close();}
+});
+
+test('six Coral Coast illustrations join without section gaps at phone/tablet sizes',{timeout:120000},async()=>{
+  const measurements=[];
+  for(const width of [320,390,768]){
+    const {page,context,exceptions}=await mobilePage(width,844);
+    try{
+      await page.goto(origin+'/treasure-hunt.html',{waitUntil:'load'});
+      await page.locator('#thV2Tutorial:not([hidden])').waitFor();
+      await seedTutorialCompletion(page);
+      await page.reload({waitUntil:'load'});
+      await page.locator('#thV2World:not([hidden])').waitFor();
+      await page.locator('.th-v2-world-pin.is-current').click();
+      await page.locator('#thV2Area:not([hidden])').waitFor();
+      await page.locator('#thV2AreaCanvas .th-v2-art-base img').evaluateAll(images=>{
+        for(const image of images)image.loading='eager';
+      });
+      await page.waitForFunction(()=>{
+        const all=[...document.querySelectorAll('#thV2AreaCanvas .th-v2-art-base img')];
+        return all.length===6&&all.every(img=>img.complete&&img.naturalWidth>0);
+      },null,{timeout:20000});
+      const geometry=await page.evaluate(()=>{
+        const sections=[...document.querySelectorAll('#thV2AreaCanvas .th-v2-area-section')];
+        const map=document.getElementById('thCampaignMap');
+        const rects=sections.map(el=>el.getBoundingClientRect());
+        return {
+          widths:rects.map(r=>r.width),
+          seams:rects.slice(1).map((r,i)=>Math.round((r.top-rects[i].bottom)*10)/10),
+          scrollWidth:map.scrollWidth,
+          clientWidth:map.clientWidth,
+          scrollHeight:map.scrollHeight,
+          clientHeight:map.clientHeight,
+          markers:document.querySelectorAll('#thV2AreaCanvas .th-v2-node').length,
+          markupSummary:document.querySelectorAll('.th-v2-map-explain').length
+        };
+      });
+      measurements.push({width,...geometry});
+      assert.equal(geometry.markers,60);
+      assert.equal(geometry.markupSummary,0,'Retired footer explanation has returned');
+      assert.equal(geometry.seams.length,5);
+      assert.ok(geometry.seams.every(gap=>Math.abs(gap)<=2),
+        'Illustrated sections have a visible layout gap at '+width+': '+geometry.seams);
+      assert.ok(geometry.scrollHeight>geometry.clientHeight*2);
+      const scroller=page.locator('#thCampaignMap');
+      await scroller.evaluate(el=>{el.scrollTop=0;el.dispatchEvent(new Event('scroll'));});
+      await screenshot(page,'coral-coast-final-top-'+width);
+      await scroller.evaluate(el=>{el.scrollTop=el.scrollHeight;el.dispatchEvent(new Event('scroll'));});
+      await screenshot(page,'coral-coast-final-bottom-'+width);
+      assert.deepEqual(exceptions,[],'JavaScript error during map scroll at '+width);
+    }finally{await context.close();}
+  }
+  fs.writeFileSync(path.join(output,'coral-coast-layout-audit.json'),
+    JSON.stringify(measurements,null,2)+'\n');
+  console.log('[Pathle layout audit] '+JSON.stringify(measurements));
+});
