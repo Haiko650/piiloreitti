@@ -9,7 +9,7 @@ test('Water World presentation uses a dedicated final-loaded ocean skin',()=>{
  const html=read('treasure-hunt.html');
  const ui=read('css/treasure-world-ui.css');
  const world=html.slice(html.indexOf('id="thV2World"'),html.indexOf('id="thV2Area"'));
- assert.ok(html.indexOf('css/treasure-world-ui.css?v=169a367d5c13')>
+ assert.ok(html.indexOf('css/treasure-world-ui.css?v=cd7a646dc2ae')>
            html.indexOf('css/treasure-world-v2.css?v=c51ed6001229'));
  assert.doesNotMatch(world,/th-v2-world-hero|th-v2-world-brand|th-v2-world-emblem/);
  assert.doesNotMatch(world,/thV2WorldTitle|thV2WorldStatus|Choose an area to explore/);
@@ -142,7 +142,7 @@ test('Haiko is smaller and floats entirely above the destination marker on both 
  const css=read('css/treasure-world-ui.css');
  const html=read('treasure-hunt.html');
  const geometry=read('css/treasure-world-v2.css');
- assert.match(html,/css\/treasure-world-ui\.css\?v=169a367d5c13/);
+ assert.match(html,/css\/treasure-world-ui\.css\?v=cd7a646dc2ae/);
  assert.match(css,/transform:translate\(-50%,calc\(-100% - 48px\)\)/);
  assert.match(css,/width:96px;\s*height:126px;\s*border:0;/);
  assert.match(css,/@media\(max-width:350px\)[\s\S]*?width:80px;\s*height:110px;/);
@@ -192,7 +192,7 @@ test('Water World header panel is transparent but the three header controls rema
  assert.match(css,/body\.th-page:has\(#thV2World:not\(\[hidden\]\)\) \.th-test-badge\{/);
  assert.match(html,/class="th-heading"><small>HAIKO’S ADVENTURE<\/small><h1>Treasure Hunt<\/h1>/);
  assert.match(html,/class="th-test-badge" id="thMapTotal"/);
- assert.match(html,/css\/treasure-world-ui\.css\?v=169a367d5c13/);
+ assert.match(html,/css\/treasure-world-ui\.css\?v=cd7a646dc2ae/);
 });
 
 test('the World geographic image starts behind three independent floating header elements',()=>{
@@ -295,7 +295,7 @@ test('Coral Coast fills the screen behind independently floating headers',()=>{
  assert.match(geometry,/\.th-v2-area-canvas\{[\s\S]*?position:relative;/);
  assert.match(geometry,/\.th-v2-map-section\{/);
  assert.ok(html.indexOf('id="thV2AreaTitle"')<html.indexOf('id="thV2AreaCanvas"'));
- assert.match(html,/css\/treasure-world-ui\.css\?v=169a367d5c13/);
+ assert.match(html,/css\/treasure-world-ui\.css\?v=cd7a646dc2ae/);
 });
 
 test('scrolling and tapping Coral Coast remain controlled by the same map',()=>{
@@ -326,8 +326,8 @@ test('Coral Coast foreground map has a geographic fallthrough behind the floatin
  assert.match(declarations,/background-size:100% 1300px;/);
  assert.match(declarations,/overflow-y:auto;/);
  assert.match(art,/<svg xmlns="http:\/\/www.w3.org\/2000\/svg"/);
- assert.match(html,/css\/treasure-world-ui\.css\?v=169a367d5c13/);
- assert.match(home,/id="playTreasure" href="treasure-hunt\.html\?v=1\.5\.49"/);
+ assert.match(html,/css\/treasure-world-ui\.css\?v=cd7a646dc2ae/);
+ assert.match(home,/id="playTreasure" href="treasure-hunt\.html\?v=1\.5\.50"/);
 });
 
 test('Haiko is centered in safe space instead of beneath floating text',()=>{
@@ -378,17 +378,17 @@ test('approved Water World logo replaces only the overview labels',()=>{
  assert.match(css,/body\.th-page:has\(#thV2World:not\(\[hidden\]\)\) \.th-header \.th-water-world-logo\{\s*display:block;/);
  assert.match(css,/width:min\(64vw,260px\)/);
  assert.match(css,/max-width:calc\(100% - 80px\)/);
- assert.match(html,/class="th-back" href="index.html\?pathle-update=1\.5\.49"/);
+ assert.match(html,/class="th-back" href="index.html\?pathle-update=1\.5\.50"/);
  assert.match(html,/<section id="thV2Area" class="th-v2-area"/);
  assert.doesNotMatch(css,/body\.th-page:has\(#thV2Area:not\(\[hidden\]\)\) \.th-heading,\s*body\.th-page:has\(#thV2Area:not\(\[hidden\]\)\) \.th-test-badge\{\s*display:none/);
- assert.match(html,/css\/treasure-world-ui\.css\?v=169a367d5c13/);
+ assert.match(html,/css\/treasure-world-ui\.css\?v=cd7a646dc2ae/);
 });
 
 test('Water World and Coral Coast share the same home button and navigation',()=>{
  const html=read('treasure-hunt.html');
  const css=read('css/treasure-world-ui.css');
  const js=read('js/treasure-campaign-v2.js');
- assert.ok(html.includes('<a class="th-back" href="index.html?pathle-update=1.5.49"'));
+ assert.ok(html.includes('<a class="th-back" href="index.html?pathle-update=1.5.50"'));
  assert.ok(html.includes('class="th-back-home-icon"'));
  assert.ok(html.includes('class="th-back-arrow"'));
  const world='body.th-page:has(#thV2World:not([hidden]))';
@@ -411,11 +411,11 @@ test('returning home and checking updates always request a fresh index document'
  const html=read('treasure-hunt.html');
  const js=read('js/treasure-campaign-v2.js');
  const home=read('index.html');
- assert.match(html,/class="th-back" href="index\.html\?pathle-update=1\.5\.49"/);
+ assert.match(html,/class="th-back" href="index\.html\?pathle-update=1\.5\.50"/);
  assert.match(js,/headerBack\?\.getAttribute\?\.\('href'\)\|\|'index\.html'/);
  assert.match(js,/root\.location\.assign\(home\+separator\+'fresh='\+Date\.now\(\)\)/);
- assert.match(home,/js\/version\.js\?v=4661e7bf563c/);
- assert.match(home,/id="playTreasure" href="treasure-hunt\.html\?v=1\.5\.49"/);
+ assert.match(home,/js\/version\.js\?v=bf35390c60e0/);
+ assert.match(home,/id="playTreasure" href="treasure-hunt\.html\?v=1\.5\.50"/);
  assert.match(read('js/version.js'),/url\.searchParams\.set\('fresh',String\(Date\.now\(\)\)\)/);
 });
 
