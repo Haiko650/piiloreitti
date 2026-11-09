@@ -624,3 +624,21 @@ body.th-page:has(#thV2Area:not([hidden])) .th-back .th-back-home-icon{
     height:20px;
   }
 }
+
+/* DEV v1.5.49 — the fixed headings should not cover distant level markers.
+   Keep both navigation controls functional and Haiko visible on the map. */
+body.th-page:has(#thV2Area.is-exploring:not([hidden])) .th-header .th-heading,
+body.th-page:has(#thV2Area.is-exploring:not([hidden])) .th-header .th-test-badge,
+#thV2Area.is-exploring .th-v2-map-heading > div{
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+}
+body.th-page:has(#thV2Area.is-exploring:not([hidden])) .th-header .th-heading,
+body.th-page:has(#thV2Area.is-exploring:not([hidden])) .th-header .th-test-badge,
+#thV2Area .th-v2-map-heading > div{
+  transition:opacity .18s ease;
+}
+@media(prefers-reduced-motion:reduce){
+  #thV2Area .th-v2-map-heading > div{transition:none;}
+}
