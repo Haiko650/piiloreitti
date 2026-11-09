@@ -270,7 +270,7 @@ test('six Coral Coast images are real WebP assets with versioned source URLs',()
     assert.equal(image.toString('ascii',8,12),'WEBP');
     assert.ok(image.length>70_000&&image.length<400_000,'Invalid map file size: '+file);
     const digest=require('node:crypto').createHash('sha1')
-      .update('blob '+image.length+'\\0').update(image)
+      .update('blob '+image.length+String.fromCharCode(0)).update(image)
       .digest('hex').slice(0,12);
     hash.update(digest);
   }
