@@ -106,6 +106,10 @@
   });
   document.addEventListener('pathle:treasure-complete', openDialog);
   document.addEventListener('pathle:treasure-level-change', closeDialog);
+  // Failsafe for Android's system Back and browser history transitions.
+  if(typeof root.addEventListener==='function')
+    root.addEventListener('popstate',()=>{if(!dialog.hidden)closeDialog();});
+  root.PathleTreasureVictory=Object.freeze({dismiss:closeDialog});
   document.addEventListener('keydown', event => {
     if (dialog.hidden) return;
     if (event.key === 'Escape') {
