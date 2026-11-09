@@ -5,7 +5,7 @@
 The main menu shows a compact **tappable** build label at the top center,
 between Settings and the DEV toggle:
 
-**DEV · v1.5.54**
+**DEV · v1.5.55**
 
 **The sole release-version source is `version.json`.** The installed
 `js/version.js` constant, the main-menu fallback label, versioned
@@ -300,3 +300,10 @@ mode never writes files; it explains which files need synchronization.
 - The stylesheet shrinks from 396,296 to 71,357 characters (~82%) without changing selectors, dimensions, image pixels, style declarations, game rules or save data. CSS background URLs point to the byte-identical artwork.
 - The WP2 release synchronizer automatically fingerprints all extracted relative image URLs; tests check content integrity, CSS and HTML asset revisions.
 - This improves stylesheet transfer and caching but real-device first-paint and memory comparisons remain to be measured before claiming a speedup.
+
+## Haiko map marker cascade cleanup — DEV v1.5.55
+
+- Consolidated the approved upright Haiko marker's winning CSS properties into one canonical rule in `css/treasure-world-ui.css`. Removed earlier overwritten 2.5D bubble-marker sizes, border/background and redundant z-index/visibility blocks; kept a separate 320px/350px compact override, World vertical offset and reduced-motion rule.
+- Merged two adjacent `#playDaily` rules in `css/menu-capsules.css` without changing cascade precedence or actual declarations.
+- Added real Chromium computed-style checks at standard and narrow mobile viewports to prevent future marker-size regressions, on top of existing navigation and screenshots.
+- Changes are cosmetic/stylesheet-only; no player data, game rules, progress records or production branch changes.

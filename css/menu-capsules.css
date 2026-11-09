@@ -135,12 +135,12 @@
   text-shadow:0 2px 1px var(--capsule-ink)!important;
 }
 /* Approved colors and dark title outlines. */
+/* Upper action: Daily gameplay; the parent owns the capsule outline and shine.
+   Canonical ink and border are defined alongside its layout rather than
+   in an identical preceding selector. */
 #welcomeScreen #playDaily{
   --capsule-ink:#783008;
   border-color:#fff5b8!important;
-}
-/* Upper action: Daily gameplay; the parent owns the capsule outline and shine. */
-#welcomeScreen #playDaily{
   box-sizing:border-box!important;
   flex:0 0 auto!important;
   width:100%!important;

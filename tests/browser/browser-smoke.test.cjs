@@ -166,6 +166,16 @@ test('Coral Coast renders 60 markers, disabled previews and Return to Haiko',{ti
     assert.equal(await worldPin.count(),1);
     await worldPin.click();
     await page.locator('#thV2Area:not([hidden])').waitFor();
+    const areaMarker=page.locator('#thV2Area .th-v2-map-haiko.th-v2-area-haiko');
+    await areaMarker.waitFor();
+    const markerStyle=await areaMarker.evaluate(el=>{
+      const s=getComputedStyle(el);
+      return {width:s.width,height:s.height,zIndex:s.zIndex,border:s.borderTopWidth,
+        pointerEvents:s.pointerEvents,display:s.display};
+    });
+    assert.deepEqual(markerStyle,{width:'96px',height:'126px',zIndex:'24',
+      border:'0px',pointerEvents:'none',display:'block'},
+      'Upright Haiko must retain its approved dimensions and layer priority');
     const sections=page.locator('#thV2AreaCanvas .th-v2-area-section');
     assert.equal(await sections.count(),6);
     assert.equal(await page.locator('#thV2AreaCanvas .th-v2-node').count(),60);
@@ -183,6 +193,15 @@ test('Coral Coast renders 60 markers, disabled previews and Return to Haiko',{ti
     assert.equal(new Set(imageSources).size,6,'Each section needs distinct artwork');
     assert.ok(imageSources.every(name=>name.endsWith('.webp')));
     await screenshot(page,'coral-coast-current-390');
+    await page.setViewportSize({width:320,height:740});
+    const compactStyle=await areaMarker.evaluate(el=>{
+      const s=getComputedStyle(el);
+      return {width:s.width,height:s.height,zIndex:s.zIndex};
+    });
+    assert.deepEqual(compactStyle,{width:'80px',height:'110px',zIndex:'24'},
+      'Small-screen map Haiko must remain unobstructed');
+    await screenshot(page,'coral-coast-compact-320');
+    await page.setViewportSize({width:390,height:844});
     const map=page.locator('#thCampaignMap');
     await map.evaluate(el=>{el.scrollTop=0;el.dispatchEvent(new Event('scroll'));});
     // A screenshot captured immediately after jumping six sections can be
