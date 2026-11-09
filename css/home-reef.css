@@ -261,3 +261,22 @@
     width:min(84%,48dvh,470px)!important;
   }
 }
+
+/* DEV 1.5.59: the home reef fills tablet screens while its action
+   column remains centered. The Daily game keeps its narrow board. */
+@media (min-width:600px){
+  body:not(.game-active) main:has(#welcomeScreen:not([hidden])){
+    width:100vw;
+    max-width:none;
+    margin:0;
+    padding:0;
+  }
+  body:not(.game-active) #welcomeScreen:not([hidden]){
+    box-sizing:border-box;
+    width:100vw;
+    min-width:0;
+    max-width:none;
+    margin-left:calc(50% - 50vw);
+    margin-right:calc(50% - 50vw);
+  }
+}
