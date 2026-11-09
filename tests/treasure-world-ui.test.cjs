@@ -342,7 +342,8 @@ test('Haiko is centered in safe space instead of beneath floating text',()=>{
  assert.match(js,/map\.scrollTo\(\{top:Math\.round\(target\),behavior\}\)/);
  assert.match(js,/focusHaiko\('world',currentWorldPin,currentWorldMarker,'smooth'\)/);
  assert.match(js,/focusHaiko\('area',currentAreaNode,currentAreaMarker,'smooth'\)/);
- assert.match(css,/#thV2AreaCanvas\.th-v2-area-canvas\{\s*padding-top:260px;\s*padding-bottom:110px;/);
+ assert.match(css,/#thV2AreaCanvas\.th-v2-area-canvas\{\s*padding-top:24px;\s*padding-bottom:110px;/);
+ assert.match(css,/#thV2AreaCanvas\.th-v2-area-canvas::before\{\s*display:none;/);
  assert.match(css,/scroll-padding-top:calc\(190px \+ env\(safe-area-inset-top,0px\)\)/);
  assert.match(css,/scroll-padding-top:calc\(105px \+ env\(safe-area-inset-top,0px\)\)/);
  assert.match(html,/js\/treasure-campaign-v2\.js\?v=3024bea6170d/);
