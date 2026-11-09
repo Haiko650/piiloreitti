@@ -5,7 +5,7 @@
 The main menu shows a compact **tappable** build label at the top center,
 between Settings and the DEV toggle:
 
-**DEV · v1.5.57**
+**DEV · v1.5.58**
 
 **The sole release-version source is `version.json`.** The installed
 `js/version.js` constant, the main-menu fallback label, versioned
@@ -321,3 +321,10 @@ mode never writes files; it explains which files need synchronization.
 - Removed the duplicate CSS background-image assignment for Coral Coast's playable illustrated sections: actual WebP <img> layers remain the only image source, with existing water gradient fallbacks underneath. The real map images, node locations, Haiko marker, scroll behavior and save data are unchanged.
 - Chromium diagnostics previously recorded twelve WebP resource entries (six initiated by CSS, six by img) for six map sections. New browser and Node regression tests require only six img entries while preserving all six decodes.
 - Retired cosmetic records continue to be read safely without writing or migrating localStorage values. A full user-data migration to IndexedDB remains deferred pending a defined active cosmetics catalog and recovery testing.
+
+## Android-reported navigation and tablet layout corrections — DEV v1.5.58
+
+- When the Android/system browser Back gesture leaves a completed Treasure Hunt level, the campaign controller first dismisses the victory result popup and restores interactivity before rendering the parent map. The result remains saved, and the existing Next/Replay/Map choices are unchanged.
+- On screens 600px wide and up, Coral Coast section height follows the original 852×1846 art ratio instead of cropping its WebP vertically inside the fixed 1300px section. Phone dimensions and 60 normalized node/route positions remain unchanged.
+- On tablets, the home reef background fills the viewport instead of being clipped to the legacy 500px main column; the logo, Haiko and main action buttons receive tablet-appropriate sizes while retaining their original mobile dimensions.
+- Chromium regressions verify completed-run Back navigation, tablet full-bleed home and six seamlessly joined map sections across 320px, 390px and 768px widths. Real tablet confirmation remains a manual acceptance step.

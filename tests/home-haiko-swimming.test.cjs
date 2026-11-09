@@ -23,7 +23,7 @@ test('menu shark image is independent of coral reef and styles avoid clipping',(
  assert.match(css,/animation:haikoHomeBob/);
  assert.match(css,/home-reef-background\.webp/);
  const html=read('index.html');
- assert.match(html,/css\/home-reef\.css\?v=509cb544ef44/);
+ assert.match(html,/css\/home-reef\.css\?v=c4179679521f/);
 });
 test('new image is a valid transparent WebP in the repository',()=>{
  const data=fs.readFileSync(path.join(__dirname,'..','images/haiko-swimming-menu.webp'));

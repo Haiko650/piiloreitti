@@ -129,6 +129,18 @@ test('main menu buttons stay inside narrow and tablet viewports',{timeout:60000}
           if(img.naturalWidth===0)throw Error('Unloaded menu image');
         });
       }
+      if(width>=600){
+        const fullBleed=await page.evaluate(()=>{
+          const main=document.querySelector('main');
+          const welcome=document.getElementById('welcomeScreen');
+          return {mainWidth:main.getBoundingClientRect().width,
+            welcomeWidth:welcome.getBoundingClientRect().width};
+        });
+        assert.ok(fullBleed.mainWidth>=width-2,
+          'Tablet home is still restricted to a narrow 500px column');
+        assert.ok(fullBleed.welcomeWidth>=width-2,
+          'Tablet reef background does not fill the viewport');
+      }
       const rects=await page.evaluate(()=>{
         const ids=['playDaily','playTreasure','openHideout'];
         return ids.map(id=>{
@@ -495,6 +507,7 @@ test('six Coral Coast illustrations join without section gaps at phone/tablet si
         const rects=sections.map(el=>el.getBoundingClientRect());
         return {
           widths:rects.map(r=>r.width),
+          heights:rects.map(r=>r.height),
           seams:rects.slice(1).map((r,i)=>Math.round((r.top-rects[i].bottom)*10)/10),
           scrollWidth:map.scrollWidth,
           clientWidth:map.clientWidth,
@@ -508,6 +521,14 @@ test('six Coral Coast illustrations join without section gaps at phone/tablet si
       assert.equal(geometry.markers,60);
       assert.equal(geometry.markupSummary,0,'Retired footer explanation has returned');
       assert.equal(geometry.seams.length,5);
+      if(width>=600){
+        const expected=width*1846/852;
+        assert.ok(geometry.heights.every(h=>Math.abs(h-expected)<2),
+          'Tablet map artwork has been cropped or distorted: '+JSON.stringify(geometry.heights));
+      }else{
+        assert.ok(geometry.heights.every(h=>Math.abs(h-1300)<1),
+          'Phone map geometry has changed from the approved 1300px sections');
+      }
       assert.ok(geometry.seams.every(gap=>Math.abs(gap)<=2),
         'Illustrated sections have a visible layout gap at '+width+': '+geometry.seams);
       assert.ok(geometry.scrollHeight>geometry.clientHeight*2);
@@ -531,4 +552,47 @@ test('six Coral Coast illustrations join without section gaps at phone/tablet si
   fs.writeFileSync(path.join(output,'coral-coast-layout-audit.json'),
     JSON.stringify(measurements,null,2)+'\n');
   console.log('[Pathle layout audit] '+JSON.stringify(measurements));
+});
+
+
+test('Android Back dismisses the completed Treasure Hunt result before returning to Coral Coast',{timeout:90000},async()=>{
+  const {page,context,exceptions}=await mobilePage(390,844);
+  try{
+    await page.goto(origin+'/treasure-hunt.html',{waitUntil:'load'});
+    await page.locator('#thV2Tutorial:not([hidden])').waitFor();
+    await seedTutorialCompletion(page);
+    await page.reload({waitUntil:'load'});
+    await page.locator('#thV2World:not([hidden])').waitFor();
+    await page.locator('.th-v2-world-pin.is-current').click();
+    await page.locator('#thV2Area:not([hidden])').waitFor();
+    await page.locator('#thV2AreaCanvas .th-v2-node.is-next').click();
+    await page.locator('.th-panel:not([hidden])').waitFor();
+    await page.evaluate(()=>{
+      const release=window.PathleTreasureReleaseV2;
+      const solver=window.PathleTreasureSolver;
+      const engine=window.PathleTreasureEngine;
+      const index=3; // First Coral Coast level, after the three tutorials.
+      const level=release.levels[index];
+      let run=engine.createRun(level);
+      for(const to of solver.solve(level).path.slice(1)){
+        const step=engine.applyAction(level,run,{type:'move',to});
+        if(!step.accepted)throw Error('Solver generated an invalid step');
+        run=step.state;
+      }
+      if(!run.completed)throw Error('Could not complete the test puzzle');
+      document.dispatchEvent(new CustomEvent('pathle:treasure-complete',{
+        detail:{level,run,levelIndex:index}
+      }));
+    });
+    await page.locator('#thVictory:not([hidden])').waitFor();
+    assert.equal(await page.locator('.th-shell').evaluate(el=>el.inert),true);
+    await page.goBack();
+    await page.locator('#thV2Area:not([hidden])').waitFor();
+    await page.locator('#thVictory').waitFor({state:'hidden'});
+    assert.equal(await page.locator('.th-shell').evaluate(el=>el.inert),false,
+      'A stale victory backdrop still blocks the map');
+    assert.equal(await page.locator('#thV2AreaCanvas .th-v2-node.is-complete').count(),1);
+    assert.equal(await page.evaluate(()=>window.PathleTreasureCampaign.getView()),'area');
+    assert.deepEqual(exceptions,[],'Back from the result raised a JavaScript error');
+  }finally{await context.close();}
 });

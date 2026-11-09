@@ -372,3 +372,11 @@
 @media(max-height:520px){
   #welcomeScreen{--home-capsule-top:-20px;}
 }
+
+/* DEV 1.5.58: tablets use a comfortable central action column while
+   the reef artwork and main-screen shell fill the entire display. */
+@media (min-width:600px){
+  #welcomeScreen{
+    --home-capsule-width:min(64vw,460px);
+  }
+}

@@ -482,3 +482,13 @@
   object-fit:cover;
   object-position:center;
 }
+
+/* DEV 1.5.58: the 852×1846 WebP slices must keep their original ratio
+   on tablets. Percentage-based route, nodes and Haiko scale with each slice.
+   Phone maps keep their approved 1300px-high illustrated sections. */
+@media (min-width:600px){
+  #thV2Area .th-v2-area-section{
+    height:auto;
+    aspect-ratio:852 / 1846;
+  }
+}

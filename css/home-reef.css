@@ -243,3 +243,21 @@
     width:clamp(220px,80vw,330px);
   }
 }
+
+/* DEV 1.5.58: tablet home is an edge-to-edge ocean, not a 500px card.
+   Only the visible main menu opts out of the legacy game-board max-width. */
+@media (min-width:600px){
+  body:not(.game-active) main:has(#welcomeScreen:not([hidden])){
+    width:100%;
+    max-width:none;
+    margin:0;
+    padding:0;
+  }
+  #welcomeScreen{width:100%;}
+  #welcomeScreen .homeBrand .pathleHomeLogoHeading{
+    width:clamp(375px,57vw,500px);
+  }
+  #welcomeScreen .illustratedHero .homeStage > .home-haiko{
+    width:min(84%,48dvh,470px)!important;
+  }
+}

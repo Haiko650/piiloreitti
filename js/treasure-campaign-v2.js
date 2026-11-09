@@ -576,6 +576,12 @@
       restoreCurrentHistory();dismissLeave();return;
     }
     if(view==='level'){
+      // The Android Back gesture already popped the level history entry.
+      // Dismiss the completed-run dialog before showing the parent map;
+      // otherwise the backdrop remains above the newly rendered screen.
+      // Do not dismiss it during an active save (guarded by busy above).
+      if(!$('thVictory').hidden)
+        document.dispatchEvent(new Event('pathle:treasure-level-change'));
       if(!approvedBoardExit&&ui.hasUnfinishedProgress()){
         restoreCurrentHistory();
         leaveDialog.hidden=false;shell.inert=true;leaveStay.focus();return;

@@ -30,3 +30,10 @@ The user-approved goal is to preserve all visible game behavior and player saves
 ## Final automated acceptance review — 2026-11-09
 
 Outcome: **PASS for technical CI and Chromium coverage; real Android device verification remains pending.** The checked commit added no gameplay, visuals or player-save migrations. Latest tests: **203/203 Node**, **9/9 Chromium**, GitHub Pages success. See [technical acceptance report](TECHNICAL-ACCEPTANCE-2026-11-09.md) and the user-device checklist in [Android testing](ANDROID-TESTING.md).
+
+## Android-reported usability fixes — DEV v1.5.58
+
+- Result-overlay Back: campaign history navigation now dismisses a completed, already-saved victory dialog before restoring the area map, including keyboard focus and shell inert state.
+- Coral Coast tablet: the six 852×1846 illustrated WebP sections preserve their natural aspect ratio at widths ≥600px; phone layouts keep their former 1300px section heights. Routes and stops use normalized coordinates and resize with sections.
+- Tablet home: the visible initial menu leaves the former 500px main-column limit and the reef fills the viewport. Buttons stay in a centered touch-friendly column.
+- Chromium browser regression: completion → result modal → browser Back; responsive home bounds; six map-section widths, heights and seams for 320/390/768px. Physical Android/tablet verification remains open.
