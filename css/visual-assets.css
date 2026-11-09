@@ -60,3 +60,20 @@
 @media(prefers-reduced-motion:reduce){
   .pa-wave,.pa-idle-haiko{animation:none !important;}
 }
+
+/* Haiko's shared blue 2.5D dorsal fin; the water ripple is part of the art. */
+.pa-board .tile > .pa-sprite-fin{
+  position:absolute;
+  inset:0;
+  width:96%;
+  height:96%;
+  object-fit:contain;
+  margin:auto;
+}
+.pa-board .th-fin > .pa-sprite-fin{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+}
+.pa-board .th-fin:has(> .pa-sprite-fin)::after{display:none;}

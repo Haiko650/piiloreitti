@@ -10,7 +10,7 @@
   const ART=Object.freeze({
     shared:Object.freeze({
       water:null,coral:null,beach:null,forest:null,current:null,rock:null,
-      wave:null,fin:null,start:null,goal:null,pearl:null,treasure:null,haikoPeek:null
+      wave:null,fin:'images/skins/haiko-fin.webp',start:null,goal:null,pearl:null,treasure:null,haikoPeek:null
     }),
     environments:Object.freeze({
       'coral-reef':Object.freeze({}),

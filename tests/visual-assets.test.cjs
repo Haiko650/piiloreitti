@@ -10,7 +10,7 @@ const file=p=>fs.readFileSync(path.join(__dirname,'..',p),'utf8');
 test('all required artwork slots are centralized and themes do not modify rules',()=>{
   for(const slot of ['water','coral','beach','forest','current','rock','wave','fin','start','goal','pearl','treasure','haikoPeek']){
     assert.ok(visuals.ASSET_KEYS.includes(slot),'missing '+slot);
-    assert.equal(visuals.getAsset(slot,'coast'),null);
+    assert.equal(visuals.getAsset(slot,'coast'),slot==='fin'?'images/skins/haiko-fin.webp':null);
   }
   for(const theme of ['coral-reef','coast','ocean','river','forest'])assert.ok(visuals.ART.environments[theme]);
   assert.equal(visuals.getAsset('invalid-key','ocean'),null);
@@ -27,8 +27,13 @@ test('cosmetic terrain cannot silently change blocked cell rules',()=>{
   assert.equal(visuals.terrainFor({visualTerrain:{4:'INVALID'}},4,true),'coral');
 });
 
-test('null art leaves the accepted fallback SVGs and CSS intact',()=>{
-  assert.equal(visuals.sprite('fin','coral-reef','<svg>fin</svg>'),'<svg>fin</svg>');
+test('shared Haiko fin replaces the fallback while other absent artwork retains SVG/CSS',()=>{
+  for(const theme of ['coral-reef','coast','ocean']) {
+    assert.match(visuals.sprite('fin',theme,'<svg>fin</svg>'),/images\/skins\/haiko-fin\.webp/);
+  }
+  const image=file('images/skins/haiko-fin.webp');
+  assert.equal(image.toString('ascii',0,4),'RIFF');
+  assert.equal(image.toString('ascii',8,12),'WEBP');
   assert.equal(visuals.sprite('treasure','coast','<svg>pearl</svg>'),'<svg>pearl</svg>');
   const classes=new Set();
   const board={classList:{add(x){classes.add(x);},toggle(x,enabled){if(enabled)classes.add(x);else classes.delete(x);}},
@@ -36,9 +41,9 @@ test('null art leaves the accepted fallback SVGs and CSS intact',()=>{
   visuals.applyBoard(board,'ocean');
   assert.equal(board.dataset.artEnvironment,'ocean');
   assert.equal(board.style.props['--pa-water'],'none');
-  assert.equal(board.style.props['--pa-fin'],'none');
+  assert.equal(board.style.props['--pa-fin'],'url("images/skins/haiko-fin.webp")');
   assert.ok(classes.has('pa-board'));
-  assert.ok(!classes.has('pa-has-fin'));
+  assert.ok(classes.has('pa-has-fin'));
 });
 
 test('tile decoration records visual terrain separately from gameplay',()=>{
