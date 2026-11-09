@@ -383,9 +383,9 @@ body.th-page:has(#thV2Area:not([hidden])) .th-header :is(.th-back):focus-visible
 #thV2Area .th-v2-haiko-return-icon{
   display:grid;
   place-items:center;
-  flex:0 0 35px;
-  width:35px;
-  height:35px;
+  flex:0 0 42px;
+  width:42px;
+  height:42px;
   border:2px solid #fff!important;
   border-radius:50%;
   background:linear-gradient(150deg,#abfcff,#42d9ee 60%,#16add5);
@@ -393,6 +393,19 @@ body.th-page:has(#thV2Area:not([hidden])) .th-header :is(.th-back):focus-visible
   font-size:21px;
   line-height:1;
   text-shadow:none;
+  overflow:hidden;
+}
+/* DEV 1.5.52: real, approved lost-looking Haiko portrait in both
+   Return to Haiko buttons; the SVG/emoji prototype is no longer used. */
+#thV2World .th-v2-haiko-return-icon .th-v2-return-haiko-img,
+#thV2Area .th-v2-haiko-return-icon .th-v2-return-haiko-img{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  object-position:center;
+  pointer-events:none;
+  user-select:none;
 }
 #thV2World #thV2WorldBack.th-v2-haiko-return:active,
 #thV2Area #thV2AreaHere.th-v2-haiko-return:active{
@@ -413,7 +426,7 @@ body.th-page:has(#thV2Area:not([hidden])) .th-header :is(.th-back):focus-visible
   }
   #thV2World .th-v2-haiko-return-icon,
   #thV2Area .th-v2-haiko-return-icon{
-    flex-basis:31px;width:31px;height:31px;font-size:19px;
+    flex-basis:38px;width:38px;height:38px;
   }
 }
 @media(max-height:550px){
