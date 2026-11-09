@@ -230,8 +230,9 @@ test('three tutorial finishes unlock Water World and first Coral Coast stage',as
   assert.equal(previews.length,56);
   assert.ok(previews.every(x=>x.disabled&&x.children[1].textContent==='Coming soon'));
   assert.equal(sections.at(-1).children.filter(x=>x.classList.contains('th-v2-node')).length,4);
-  assert.ok(sections.at(-1).properties['--th-base-art'].includes('coral-coast-section-01-lagoon.webp'));
-  assert.equal(sections.at(-1).properties['--th-detail-art'],'none');
+  // The real <img> now owns the WebP; no redundant CSS background requests.
+  assert.equal(sections.at(-1).properties['--th-base-art'],undefined);
+  assert.equal(sections.at(-1).properties['--th-detail-art'],undefined);
   const expectedSections=['06-gate','05-rocky','04-shipwreck','03-seagrass','02-gardens','01-lagoon'];
   for(const [i,section] of sections.entries()){
     const scene=art.forSection('coral-coast',section.dataset.sectionId);
