@@ -62,8 +62,30 @@ if(fs.existsSync(path.join(root,worldArtFile))){
   const oldArt=read(p);
   if(!/const CORAL_COAST_ART_REV='[0-9a-f]{12}'/.test(oldArt))
     throw Error('Missing Coral Coast cache-revision marker');
-  const newArt=oldArt.replace(/const CORAL_COAST_ART_REV='[0-9a-f]{12}'/,
+  let newArt=oldArt.replace(/const CORAL_COAST_ART_REV='[0-9a-f]{12}'/,
     "const CORAL_COAST_ART_REV='"+sha(worldArtFile)+"'");
+  // Six playable Coral Coast illustrations are real binary WebP assets,
+  // independent from the separate Water World overview artwork.
+  // Any changed section bumps this combined map revision automatically.
+  const areaAssets=[
+    'coral-coast-section-01-lagoon.webp',
+    'coral-coast-section-02-gardens.webp',
+    'coral-coast-section-03-seagrass.webp',
+    'coral-coast-section-04-shipwreck.webp',
+    'coral-coast-section-05-rocky.webp',
+    'coral-coast-section-06-gate.webp'
+  ];
+  const mapRevision=crypto.createHash('sha1');
+  for(const name of areaAssets){
+    const file='images/maps/water-world/coral-coast/'+name;
+    if(!fs.existsSync(path.join(root,file)))
+      throw Error('Missing illustrated Coral Coast map section: '+file);
+    mapRevision.update(sha(file));
+  }
+  if(!/const CORAL_COAST_SECTIONS_REV='[0-9a-f]{12}'/.test(newArt))
+    throw Error('Missing Coral Coast section cache-revision marker');
+  newArt=newArt.replace(/const CORAL_COAST_SECTIONS_REV='[0-9a-f]{12}'/,
+    "const CORAL_COAST_SECTIONS_REV='"+mapRevision.digest('hex').slice(0,12)+"'");
   stage(p,newArt);
   const bytes=Buffer.from(newArt);
   overrideHash[p]=crypto.createHash('sha1')
