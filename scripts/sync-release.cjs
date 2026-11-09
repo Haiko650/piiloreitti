@@ -157,7 +157,7 @@ function updateVersionLink(s,p,queryKey){
       let at=0;
       while((at=s.indexOf(key,at))!==-1){
         const start=at+key.length;
-        const current=/^[a-zA-Z0-9.\\_-]+/.exec(s.slice(start))?.[0];
+        const current=/^\d+(?:\\?\.\d+){2}/.exec(s.slice(start))?.[0];
         if(!current){at=start;continue;}
         const value=divider==='\\?'?escaped(ver):ver;
         s=s.slice(0,start)+value+s.slice(start+current.length);
