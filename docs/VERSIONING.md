@@ -5,7 +5,7 @@
 The main menu shows a compact **tappable** build label at the top center,
 between Settings and the DEV toggle:
 
-**DEV · v1.5.53**
+**DEV · v1.5.54**
 
 **The sole release-version source is `version.json`.** The installed
 `js/version.js` constant, the main-menu fallback label, versioned
@@ -293,3 +293,10 @@ mode never writes files; it explains which files need synchronization.
 - `scripts/sync-release.cjs` now fingerprints relative `../images/...` paths in CSS stylesheets. A changed image gets a new `?v=<Git blob SHA>` inside CSS, and the stylesheet's own fingerprint in HTML is updated as well.
 - No visual, game logic, score or save migrations. All CSS background assets remain in their previous paths and dimensions.
 - Tests assert that CSS image references match the corresponding asset bytes and that HTML links match generated CSS bytes.
+
+## CSS asset extraction — DEV v1.5.54
+
+- Extracted eleven embedded CSS data-image occurrences (seven unique payloads) from `css/styles.css` into separately cached media files. Six new immutable assets live under `images/css-art/`; the previously identical ambient-ocean payload reuses `images/home-background.webp`.
+- The stylesheet shrinks from 396,296 to 71,357 characters (~82%) without changing selectors, dimensions, image pixels, style declarations, game rules or save data. CSS background URLs point to the byte-identical artwork.
+- The WP2 release synchronizer automatically fingerprints all extracted relative image URLs; tests check content integrity, CSS and HTML asset revisions.
+- This improves stylesheet transfer and caching but real-device first-paint and memory comparisons remain to be measured before claiming a speedup.

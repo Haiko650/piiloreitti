@@ -30,3 +30,28 @@ test('CSS image URLs and enclosing CSS links follow the referenced asset fingerp
       'Page did not receive CSS content hash for '+item.css);
   }
 });
+
+test('legacy CSS art is extracted without changing image bytes or duplicate backgrounds',()=>{
+  const css=read('css/styles.css').toString('utf8');
+  assert.doesNotMatch(css,/data:image\/(?:webp|svg\+xml);base64,/);
+  const images=[
+    ['images/css-art/haiko-shades-purple.webp',1],
+    ['images/css-art/haiko-shades-gold.webp',1],
+    ['images/css-art/captains-chair.svg',1],
+    ['images/css-art/reef-decoration-a.webp',2],
+    ['images/css-art/reef-decoration-b.webp',2],
+    ['images/css-art/hideout-scene.webp',1],
+    ['images/home-background.webp',4]
+  ];
+  for(const [filename,expectedCount] of images){
+    const image=read(filename);
+    const url='../'+filename+'?v='+sha(image);
+    assert.equal(css.split(url).length-1,expectedCount,'Wrong CSS image references for '+filename);
+    if(filename.endsWith('.webp')){
+      assert.equal(image.toString('ascii',0,4),'RIFF');
+      assert.equal(image.toString('ascii',8,12),'WEBP');
+    }else{
+      assert.match(image.toString('utf8'),/<svg[\s>]/);
+    }
+  }
+});
