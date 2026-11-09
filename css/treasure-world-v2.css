@@ -472,3 +472,13 @@
 #thV2Area .th-v2-area-section{
   background-color:#27bccc;
 }
+/* DEV 1.5.49: all six WebP maps are cut from a single continuous
+   852x11076 master. The fallback and <img> use identical cropping. */
+#thV2Area .th-v2-area-section .th-v2-art-base{
+  background-size:cover;
+  background-position:center;
+}
+#thV2Area .th-v2-art-base > .th-v2-map-art-img[src*="coral-coast-section-"]{
+  object-fit:cover;
+  object-position:center;
+}
