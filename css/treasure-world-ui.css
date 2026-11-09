@@ -559,9 +559,10 @@ body.th-page:has(#thV2Area:not([hidden])) .th-header :is(.th-back):focus-visible
 /* DEV 1.5.50: the six-section Coral Coast map now starts immediately
    below the upper edge. The old 260px ocean run-up was a visible empty band.
    Floating headings already collapse while exploring away from Haiko. */
+/* DEV 1.5.51: remove the empty footer underneath the illustrated coast. */
 #thV2AreaCanvas.th-v2-area-canvas{
   padding-top:24px;
-  padding-bottom:110px;
+  padding-bottom:24px;
 }
 #thV2AreaCanvas.th-v2-area-canvas::before{
   display:none;
