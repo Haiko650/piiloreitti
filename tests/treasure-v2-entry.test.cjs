@@ -230,14 +230,22 @@ test('three tutorial finishes unlock Water World and first Coral Coast stage',as
   assert.equal(previews.length,56);
   assert.ok(previews.every(x=>x.disabled&&x.children[1].textContent==='Coming soon'));
   assert.equal(sections.at(-1).children.filter(x=>x.classList.contains('th-v2-node')).length,4);
-  assert.ok(sections.at(-1).properties['--th-base-art'].includes('section-01-base.svg'));
-  assert.ok(sections.at(-1).properties['--th-detail-art'].includes('section-01-details.svg'));
-  for(const className of ['th-v2-art-base','th-v2-art-details']){
-    const artwork=sections.at(-1).children.find(x=>x.classList.contains(className));
-    assert.ok(artwork,'Missing '+className);
+  assert.ok(sections.at(-1).properties['--th-base-art'].includes('coral-coast-section-01-lagoon.webp'));
+  assert.equal(sections.at(-1).properties['--th-detail-art'],'none');
+  const expectedSections=['06-gate','05-rocky','04-shipwreck','03-seagrass','02-gardens','01-lagoon'];
+  for(const [i,section] of sections.entries()){
+    const scene=art.forSection('coral-coast',section.dataset.sectionId);
+    assert.ok(scene,'Missing registered artwork for '+section.dataset.sectionId);
+    assert.ok(scene.base.includes('coral-coast-section-'+expectedSections[i]+'.webp'));
+    const artwork=section.children.find(x=>x.classList.contains('th-v2-art-base'));
+    assert.ok(artwork,'Missing Coral Coast artwork container');
     assert.equal(artwork.children.length,1);
     assert.equal(artwork.children[0].className,'th-v2-map-art-img');
-    assert.match(artwork.children[0].src,/^data:image\/svg\+xml;charset=UTF-8,/);
+    assert.equal(artwork.children[0].src,art.imageSource(scene.base));
+    assert.equal(artwork.children[0].loading,'lazy');
+    assert.equal(artwork.children[0].decoding,'async');
+    const details=section.children.find(x=>x.classList.contains('th-v2-art-details'));
+    assert.equal(details.children.length,0,'No baked decorative foreground over map nodes');
   }
   assert.equal(sections.at(-1).children.filter(x=>x.classList.contains('th-v2-map-haiko')).length,1);
   const haiko=sections.at(-1).children.find(x=>x.classList.contains('th-v2-area-haiko'));
