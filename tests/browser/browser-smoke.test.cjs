@@ -363,6 +363,12 @@ test('record diagnostic browser resource and Coral Coast paint metrics',{timeout
     });
     assert.equal(coast.sections,6);
     assert.equal(coast.decodedSectionImages,6);
+    // One WebP resource entry per section: the former CSS + img duplication
+    // created 12 entries for six unique landscapes in Chromium.
+    assert.equal(coast.imageResourceCount,6,'Duplicate map artwork requests');
+    assert.equal(coast.uniqueImageResourceUrls,6);
+    assert.ok(coast.cssBackdrops.every(active=>active===false),
+      'A CSS image layer still duplicates the real map artwork');
     assert.ok(coast.mapContentHeightPx>coast.mapViewportHeightPx);
     assert.deepEqual(exceptions,[]);
     const metrics={kind:'CI diagnostics, not device performance benchmark',

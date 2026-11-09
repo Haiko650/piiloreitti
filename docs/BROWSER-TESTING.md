@@ -46,3 +46,7 @@ player's session.
 The browser suite also tests malformed, retired `localStorage` cosmetics against an otherwise valid IndexedDB player save. It must boot without modifying those raw keys or losing other save data.
 
 The CI screenshot artifact additionally includes `browser-performance-metrics.json`. It records one unthrottled Chromium run on localhost: navigation timings, resource counts, transferred bytes, decoded map images and sampled animation frame intervals. Treat this as a regression investigation aid only, not a real-device FPS, battery, network-compression or memory benchmark. Avoid hard pass/fail thresholds for variable CI timings. Compare multiple comparable runs before taking action.
+
+## Map image resource duplication (DEV 1.5.57)
+
+Coral Coast has six actual WebP <img> elements over a water-gradient fallback. Prior to this patch the same six WebPs were also CSS backgrounds, producing twelve resource entries (six `css`, six `img`) in test Chromium. The map now draws from the image elements only; the fallback stays a gradient on missing images. Browser diagnostics assert six unique map-image entries, six decoded map images and no duplicate CSS image background. Metrics are from a local test runner rather than a physical device.

@@ -393,8 +393,9 @@
       if(section.nodes.some(node=>node.preview))
         sectionElement.classList.add('has-coming-soon');
       sectionElement.setAttribute('aria-label',area.title+' map section '+(sectionIndex+1));
-      art.applyLayer(sectionElement,'--th-base-art',images?.base);
-      art.applyLayer(sectionElement,'--th-detail-art',images?.details);
+      // Real <img> elements own the illustrated map. Duplicating the same
+      // image as a CSS background caused six redundant CSS resource entries.
+      // The section's water gradient remains if an image is unavailable.
       const base=document.createElement('div');
       base.className='th-v2-art-base';base.setAttribute('aria-hidden','true');
       const detail=document.createElement('div');

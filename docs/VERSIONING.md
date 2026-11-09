@@ -5,7 +5,7 @@
 The main menu shows a compact **tappable** build label at the top center,
 between Settings and the DEV toggle:
 
-**DEV · v1.5.56**
+**DEV · v1.5.57**
 
 **The sole release-version source is `version.json`.** The installed
 `js/version.js` constant, the main-menu fallback label, versioned
@@ -315,3 +315,9 @@ mode never writes files; it explains which files need synchronization.
 - Added browser performance diagnostics in CI, with resource count, transfer size, image decode, DOM map size, and frame timing. The results are illustrative CI measurements rather than real Android-device benchmarks.
 - Removed eight duplicate HTML5 DOCTYPE prefixes from `index.html`, leaving one standards-mode doctype; a new Node test covers both entry pages.
 - The existing cosmetic localStorage keys are intentionally retained until a future user-data migration is designed and tested. Do not delete them automatically.
+
+## Coral Coast single-image rendering — DEV v1.5.57
+
+- Removed the duplicate CSS background-image assignment for Coral Coast's playable illustrated sections: actual WebP <img> layers remain the only image source, with existing water gradient fallbacks underneath. The real map images, node locations, Haiko marker, scroll behavior and save data are unchanged.
+- Chromium diagnostics previously recorded twelve WebP resource entries (six initiated by CSS, six by img) for six map sections. New browser and Node regression tests require only six img entries while preserving all six decodes.
+- Retired cosmetic records continue to be read safely without writing or migrating localStorage values. A full user-data migration to IndexedDB remains deferred pending a defined active cosmetics catalog and recovery testing.

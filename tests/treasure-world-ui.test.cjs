@@ -143,7 +143,7 @@ test('approved Haiko artwork is the single reusable progress cursor on both maps
  assert.match(art,/HAIKO_IMAGE='images\/haiko-map-upright\.webp'/);
  assert.match(art,/haiko:HAIKO_IMAGE/);
  assert.match(html,/js\/treasure-map-art\.js\?v=ac3222a2b534/);
- assert.match(html,/js\/treasure-campaign-v2\.js\?v=3024bea6170d/);
+ assert.match(html,/js\/treasure-campaign-v2\.js\?v=275057d9ecee/);
  assert.match(script,/function makeHaikoMarker\(areaId,description\)/);
  assert.match(script,/picture\.className='th-v2-haiko-sprite'/);
  assert.match(script,/picture\.src=art\.HAIKO_SPRITE_DATA/);
@@ -335,6 +335,15 @@ test('scrolling and tapping Coral Coast remain controlled by the same map',()=>{
  assert.match(html,/id="thV2AreaCanvas"/);
 });
 
+test('Coral Coast avoids duplicate CSS map textures and retains gradient fallback',()=>{
+ const source=read('js/treasure-campaign-v2.js');
+ const css=read('css/treasure-world-v2.css');
+ assert.doesNotMatch(source,/art\.applyLayer\(sectionElement,'--th-(?:base|detail)-art'/);
+ assert.match(source,/mountMapArtwork\(base,images\?\.base\)/);
+ assert.match(source,/mountMapArtwork\(detail,images\?\.details\)/);
+ assert.match(css,/\.th-v2-map-section\{[\s\S]*?background:linear-gradient/);
+});
+
 test('Coral Coast foreground map has a geographic fallthrough behind the floating controls',()=>{
  const ui=read('css/treasure-world-ui.css');
  const html=read('treasure-hunt.html');
@@ -352,7 +361,7 @@ test('Coral Coast foreground map has a geographic fallthrough behind the floatin
  assert.match(declarations,/overflow-y:auto;/);
  assert.match(art,/<svg xmlns="http:\/\/www.w3.org\/2000\/svg"/);
  assert.match(html,/css\/treasure-world-ui\.css\?v=9b25f2b8a892/);
- assert.match(home,/id="playTreasure" href="treasure-hunt\.html\?v=1\.5\.56"/);
+ assert.match(home,/id="playTreasure" href="treasure-hunt\.html\?v=1\.5\.57"/);
 });
 
 test('Coral Coast map footer has no instructional text or oversized empty padding',()=>{
@@ -380,7 +389,7 @@ test('Haiko is centered in safe space instead of beneath floating text',()=>{
  assert.match(css,/#thV2AreaCanvas\.th-v2-area-canvas::before\{\s*display:none;/);
  assert.match(css,/scroll-padding-top:calc\(190px \+ env\(safe-area-inset-top,0px\)\)/);
  assert.match(css,/scroll-padding-top:calc\(105px \+ env\(safe-area-inset-top,0px\)\)/);
- assert.match(html,/js\/treasure-campaign-v2\.js\?v=3024bea6170d/);
+ assert.match(html,/js\/treasure-campaign-v2\.js\?v=275057d9ecee/);
 });
 
 test('Haiko stays rendered at its map coordinates during scrolling',()=>{
@@ -412,7 +421,7 @@ test('approved Water World logo replaces only the overview labels',()=>{
  assert.match(css,/body\.th-page:has\(#thV2World:not\(\[hidden\]\)\) \.th-header \.th-water-world-logo\{\s*display:block;/);
  assert.match(css,/width:min\(64vw,260px\)/);
  assert.match(css,/max-width:calc\(100% - 80px\)/);
- assert.match(html,/class="th-back" href="index.html\?pathle-update=1\.5\.56"/);
+ assert.match(html,/class="th-back" href="index.html\?pathle-update=1\.5\.57"/);
  assert.match(html,/<section id="thV2Area" class="th-v2-area"/);
  assert.doesNotMatch(css,/body\.th-page:has\(#thV2Area:not\(\[hidden\]\)\) \.th-heading,\s*body\.th-page:has\(#thV2Area:not\(\[hidden\]\)\) \.th-test-badge\{\s*display:none/);
  assert.match(html,/css\/treasure-world-ui\.css\?v=9b25f2b8a892/);
@@ -422,7 +431,7 @@ test('Water World and Coral Coast share the same home button and navigation',()=
  const html=read('treasure-hunt.html');
  const css=read('css/treasure-world-ui.css');
  const js=read('js/treasure-campaign-v2.js');
- assert.ok(html.includes('<a class="th-back" href="index.html?pathle-update=1.5.56"'));
+ assert.ok(html.includes('<a class="th-back" href="index.html?pathle-update=1.5.57"'));
  assert.ok(html.includes('class="th-back-home-icon"'));
  assert.ok(html.includes('class="th-back-arrow"'));
  const world='body.th-page:has(#thV2World:not([hidden]))';
@@ -438,18 +447,18 @@ test('Water World and Coral Coast share the same home button and navigation',()=
  assert.ok(js.includes("root.location.assign(home+separator+'fresh='+Date.now())"));
  assert.ok(js.includes("$('thV2AreaWorld').addEventListener('click',goBackOneStep)"),
    'Separate World button still returns to Water World');
- assert.ok(html.includes('js/treasure-campaign-v2.js?v=3024bea6170d'));
+ assert.ok(html.includes('js/treasure-campaign-v2.js?v=275057d9ecee'));
 });
 
 test('returning home and checking updates always request a fresh index document',()=>{
  const html=read('treasure-hunt.html');
  const js=read('js/treasure-campaign-v2.js');
  const home=read('index.html');
- assert.match(html,/class="th-back" href="index\.html\?pathle-update=1\.5\.56"/);
+ assert.match(html,/class="th-back" href="index\.html\?pathle-update=1\.5\.57"/);
  assert.match(js,/headerBack\?\.getAttribute\?\.\('href'\)\|\|'index\.html'/);
  assert.match(js,/root\.location\.assign\(home\+separator\+'fresh='\+Date\.now\(\)\)/);
- assert.match(home,/js\/version\.js\?v=e710bebd7099/);
- assert.match(home,/id="playTreasure" href="treasure-hunt\.html\?v=1\.5\.56"/);
+ assert.match(home,/js\/version\.js\?v=935fef973f59/);
+ assert.match(home,/id="playTreasure" href="treasure-hunt\.html\?v=1\.5\.57"/);
  assert.match(read('js/version.js'),/url\.searchParams\.set\('fresh',String\(Date\.now\(\)\)\)/);
 });
 
