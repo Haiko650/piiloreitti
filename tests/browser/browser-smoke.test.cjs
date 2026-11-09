@@ -87,6 +87,20 @@ test('mobile home boots, displays artwork and can enter/exit Daily Challenge',{t
     await logo.evaluate(img=>img.decode());
     assert.ok((await logo.boundingBox()).width>50,'Pathle logo is unexpectedly clipped');
     await screenshot(page,'home-mobile-390');
+    await page.locator('#homeSettings').click();
+    await page.locator('#settingsModal:not([hidden])').waitFor();
+    for(const id of ['soundSwitch','musicSwitch','ambientSwitch']){
+      assert.equal(await page.locator('#'+id).count(),1,'Missing settings toggle '+id);
+    }
+    await screenshot(page,'settings-mobile-390');
+    await page.locator('#doneSettings').click();
+    await page.locator('#settingsModal').waitFor({state:'hidden'});
+    await page.locator('#openHideout').click();
+    await page.locator('#hideoutScreen:not([hidden])').waitFor();
+    assert.ok(await page.locator('#hideoutCounter').count()>0);
+    await screenshot(page,'hideout-mobile-390');
+    await page.locator('#hideoutBack').click();
+    await page.locator('#welcomeScreen:not([hidden])').waitFor();
     await page.locator('#playDaily').click();
     await page.locator('#gameScreen:not([hidden])').waitFor();
     assert.ok(await page.locator('#board').locator('*').count()>0,
@@ -98,6 +112,28 @@ test('mobile home boots, displays artwork and can enter/exit Daily Challenge',{t
     await page.locator('#welcomeScreen:not([hidden])').waitFor();
     assert.deepEqual(exceptions,[],'Uncaught browser JavaScript errors');
   }finally{await context.close();}
+});
+
+test('main menu buttons stay inside narrow and tablet viewports',{timeout:60000},async()=>{
+  for(const width of [360,768]){
+    const {page,context,exceptions}=await mobilePage(width,850);
+    try{
+      await page.goto(origin+'/index.html',{waitUntil:'load'});
+      await page.locator('#welcomeScreen:not([hidden])').waitFor();
+      await page.waitForFunction(()=>!document.querySelector('#welcomeScreen').inert);
+      const rects=await page.evaluate(()=>{
+        const ids=['playDaily','playTreasure','openHideout'];
+        return ids.map(id=>{
+          const rect=document.getElementById(id).getBoundingClientRect();
+          return {id,left:rect.left,right:rect.right,width:rect.width,height:rect.height};
+        });
+      });
+      assert.ok(rects.every(rect=>rect.width>100&&rect.height>36&&
+        rect.left>=-2&&rect.right<=width+2),'Menu button clipped: '+JSON.stringify(rects));
+      await screenshot(page,'home-responsive-'+width);
+      assert.deepEqual(exceptions,[],'Uncaught browser JavaScript errors');
+    }finally{await context.close();}
+  }
 });
 
 test('Treasure Hunt opens its genuine first-run tutorial',{timeout:45000},async()=>{
