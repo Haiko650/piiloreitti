@@ -5,7 +5,7 @@
 The main menu shows a compact **tappable** build label at the top center,
 between Settings and the DEV toggle:
 
-**DEV · v1.5.51**
+**DEV · v1.5.52**
 
 **The sole release-version source is `version.json`.** The installed
 `js/version.js` constant, the main-menu fallback label, versioned
@@ -279,3 +279,10 @@ mode never writes files; it explains which files need synchronization.
 - Reduced `#thV2AreaCanvas` bottom padding from 110px to 24px to eliminate the dark unused band underneath the beach artwork, matching the 24px top padding.
 - Preserved Return to Haiko, all six illustrated sections, all 60 map nodes, the top summary, progress storage, and back-navigation.
 - Added a regression asserting no footer text and verifying 24px bottom padding.
+
+## Return to Haiko portrait — DEV v1.5.52
+
+- Replaced the placeholder shark emoji in the floating Return to Haiko action on both Water World and Coral Coast with the newly approved, lost-looking Haiko illustration.
+- The art was cropped and optimized to a transparent, 256 × 256 WebP (`images/haiko-return-lost.webp`). The same image file is reused by both buttons, with Git blob fingerprinting for browser cache safety.
+- Increased the circular mascot slot slightly to 42px (38px on small phones) so the confused expression and question marks remain visible.
+- The button label, positioning, floating appearance, visibility and click behavior are unchanged. No gameplay/save changes; `main` remains untouched.
