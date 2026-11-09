@@ -216,7 +216,15 @@
     }
     update();
   }
+  function dismissVictory(){
+    const result=$('thVictory');
+    if(result.hidden)return;
+    if(root.PathleTreasureVictory&&typeof root.PathleTreasureVictory.dismiss==='function')
+      root.PathleTreasureVictory.dismiss();
+    else{result.hidden=true;shell.inert=false;}
+  }
   function showSection(which){
+    dismissVictory();
     stopHaikoWatch();
     areaView.classList.remove('is-exploring');
     view=which;
@@ -514,6 +522,7 @@
   }
   function openLevel(index){
     if(!canEnter(index))return;
+    dismissVictory();
     hideError();
     boardIndex=index;
     const level=levels[index],stage=worlds.getStage(catalog,level.id);
@@ -534,6 +543,7 @@
   }
   function returnToMap(){
     if(ui.leaveLevel()===false)return;
+    dismissVictory();
     const stage=boardIndex>=0?worlds.getStage(catalog,levels[boardIndex].id):null;
     // For a board opened from an area map, Back consumes its history entry.
     // The tutorial can contain successive boards, so it returns to its guide.
@@ -575,13 +585,10 @@
     if(!leaveDialog.hidden){
       restoreCurrentHistory();dismissLeave();return;
     }
+    // The result overlay must follow Android Back even when the already
+    // rendered underlying view is no longer the board.
+    dismissVictory();
     if(view==='level'){
-      // The Android Back gesture already popped the level history entry.
-      // Dismiss the completed-run dialog before showing the parent map;
-      // otherwise the backdrop remains above the newly rendered screen.
-      // Do not dismiss it during an active save (guarded by busy above).
-      if(!$('thVictory').hidden)
-        document.dispatchEvent(new Event('pathle:treasure-level-change'));
       if(!approvedBoardExit&&ui.hasUnfinishedProgress()){
         restoreCurrentHistory();
         leaveDialog.hidden=false;shell.inert=true;leaveStay.focus();return;
