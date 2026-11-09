@@ -101,8 +101,8 @@ test('Both Return to Haiko buttons show the optimized lost-looking Haiko sprite'
    assert.match(button,/class="th-v2-return-haiko-img"/);
    assert.doesNotMatch(button,/🦈/,'Old emoji must not be inside '+id);
  }
- assert.match(css,/#thV2World \\.th-v2-haiko-return-icon \\.th-v2-return-haiko-img,/);
- assert.match(css,/#thV2Area \\.th-v2-haiko-return-icon \\.th-v2-return-haiko-img\\{/);
+ assert.ok(css.includes('#thV2World .th-v2-haiko-return-icon .th-v2-return-haiko-img,'));
+ assert.ok(css.includes('#thV2Area .th-v2-haiko-return-icon .th-v2-return-haiko-img{'));
  assert.match(css,/object-fit:contain;/);
 });
 
