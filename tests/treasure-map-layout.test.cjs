@@ -47,12 +47,12 @@ test('art assets are independent of stable level IDs and allow replacement image
   assert.ok(segments.slice(0,2).every(item=>item.base.endsWith('.svg')));
   assert.equal(segments[2].base,'images/maps/water-world/coral-coast-overview.webp');
   assert.ok(segments.every(item=>fs.existsSync(path.join(__dirname,'..',item.base))));
-  // Old SVG sections stay embedded; the approved Coral Coast WebP is a
-  // separate asset in Water World (not a replacement for level-map art).
+  // The previous SVG files stay available for rollback, while the
+  // playable six-section Coral Coast map uses real, optimized WebP artwork.
   const files=[
     ...segments.slice(0,2).map(item=>item.base),
-    art.forSection('coral-coast','coral-shallows-01').base,
-    art.forSection('coral-coast','coral-shallows-01').details
+    'images/maps/water-world/coral-coast/section-01-base.svg',
+    'images/maps/water-world/coral-coast/section-01-details.svg'
   ];
   assert.equal(files.length,4);
   for(const file of files){
@@ -245,4 +245,42 @@ test('Coral Coast preview route has exactly 60 map stops, without publishing the
   assert.equal(release.levels.length,7,'No new playable stages are generated');
   assert.equal(worldsForPreview().levelIds.length,4);
   function worldsForPreview(){return release.catalog.areas[0];}
+});
+
+test('six Coral Coast images are real WebP assets with versioned source URLs',()=>{
+  const ordered=[
+    ['coral-shallows-01','coral-coast-section-01-lagoon.webp'],
+    ['coral-coast-section-02','coral-coast-section-02-gardens.webp'],
+    ['coral-coast-section-03','coral-coast-section-03-seagrass.webp'],
+    ['coral-coast-section-04','coral-coast-section-04-shipwreck.webp'],
+    ['coral-coast-section-05','coral-coast-section-05-rocky.webp'],
+    ['coral-coast-section-06','coral-coast-section-06-gate.webp']
+  ];
+  const hash=require('node:crypto').createHash('sha1');
+  const preview=layout.getPreviewDisplaySections(release.catalog.areas[0]);
+  assert.deepEqual(preview.map(item=>item.id),ordered.slice().reverse().map(item=>item[0]));
+  for(const [id,file] of ordered){
+    const scene=art.forSection('coral-coast',id);
+    assert.ok(scene,'Missing artwork for '+id);
+    const expected='images/maps/water-world/coral-coast/'+file;
+    assert.equal(scene.base,expected);
+    assert.equal(scene.details,null);
+    const image=fs.readFileSync(path.join(__dirname,'..',expected));
+    assert.equal(image.toString('ascii',0,4),'RIFF');
+    assert.equal(image.toString('ascii',8,12),'WEBP');
+    assert.ok(image.length>70_000&&image.length<400_000,'Invalid map file size: '+file);
+    const digest=require('node:crypto').createHash('sha1')
+      .update('blob '+image.length+'\\0').update(image)
+      .digest('hex').slice(0,12);
+    hash.update(digest);
+  }
+  const expectedRevision=hash.digest('hex').slice(0,12);
+  for(const [id] of ordered){
+    const image=art.forSection('coral-coast',id).base;
+    assert.equal(art.imageSource(image),image+'?v='+expectedRevision);
+    const calls=[];
+    art.applyLayer({style:{setProperty:(name,val)=>calls.push([name,val])}},
+      '--th-base-art',image);
+    assert.equal(calls.at(-1)[1],'url("'+image+'?v='+expectedRevision+'")');
+  }
 });
