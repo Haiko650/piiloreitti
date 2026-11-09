@@ -121,8 +121,13 @@
       result+=' C'+a.x+' '+mid+' '+b.x+' '+mid+' '+b.x+' '+b.y;
     }
     if(hasUpperSection){
-      const last=coords[coords.length-1],mid=last.y/2;
-      result+=' C'+last.x+' '+mid+' 500 '+mid+' 500 0';
+      const last=coords[coords.length-1];
+      // Two bends instead of a long, nearly straight run to the next
+      // section. The shared exit/entry remains x=500, so SVG paths join.
+      const turn=Math.max(280,Math.min(720,last.x+(last.x>=500?-160:160)));
+      result+=' C'+last.x+' '+(last.y*.78)+' '+turn+' '+(last.y*.72)+
+        ' '+turn+' '+(last.y*.49);
+      result+=' C'+turn+' '+(last.y*.25)+' 500 '+(last.y*.20)+' 500 0';
     }
     return result;
   }
