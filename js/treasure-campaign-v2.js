@@ -193,6 +193,12 @@
          shark.right>safe.left&&shark.left<safe.right
         :intersecting;
       button.hidden=clear;
+      // When exploring far from Haiko, collapse decorative fixed titles.
+      // This keeps level numbers and Coming soon labels unobstructed.
+      if(kind==='area'){
+        if(clear)areaView.classList.remove('is-exploring');
+        else areaView.classList.add('is-exploring');
+      }
     };
     haikoFallback=update;
     map.addEventListener?.('scroll',update,{passive:true});
@@ -212,6 +218,7 @@
   }
   function showSection(which){
     stopHaikoWatch();
+    areaView.classList.remove('is-exploring');
     view=which;
     if(headerBack)headerBack.setAttribute('aria-label',
       (which==='world'||which==='area')?'Go to main menu':'Go back one screen');
