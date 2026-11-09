@@ -348,6 +348,13 @@ test('record diagnostic browser resource and Coral Coast paint metrics',{timeout
         imageResourceCount:mapped.length,
         uniqueImageResourceUrls:byUrl.size,
         maximumDuplicateResourceEntries:Math.max(0,...byUrl.values()),
+        imageResources:mapped.map(entry=>({
+          file:new URL(entry.name).pathname.split('/').pop(),
+          initiator:entry.initiatorType,
+          query:new URL(entry.name).search,
+          bytes:entry.transferSize
+        })),
+        cssBackdrops:panels.map(panel=>getComputedStyle(panel.querySelector('.th-v2-art-base')).backgroundImage!=='none'),
         mapContentHeightPx:totalHeight,
         mapViewportHeightPx:visibleHeight,
         meanFrameIntervalMs:Math.round(averageFrameMs*10)/10,
