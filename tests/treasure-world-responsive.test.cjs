@@ -91,7 +91,7 @@ test('Water World area signs match the approved home Treasure capsule look',()=>
   const css=read('css/treasure-world-v2.css');
   const html=read('treasure-hunt.html');
   const js=read('js/treasure-campaign-v2.js');
-  assert.match(html,/css\/treasure-world-v2\.css\?v=e5bf856f3f15/);
+  assert.match(html,/css\/treasure-world-v2\.css\?v=c51ed6001229/);
   assert.match(menu,/#welcomeScreen #playTreasure\{/);
   assert.match(menu,/linear-gradient\(180deg,#b9ffff 0%,#44f6ed 22%,#06dacb 69%,#00adbd 100%\)/);
   assert.match(css,/linear-gradient\(180deg,#b9ffff 0%,#44f6ed 22%,#06dacb 69%,#00adbd 100%\)/);
