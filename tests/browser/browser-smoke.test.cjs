@@ -149,6 +149,12 @@ test('Coral Coast renders 60 markers, disabled previews and Return to Haiko',{ti
     await screenshot(page,'coral-coast-current-390');
     const map=page.locator('#thCampaignMap');
     await map.evaluate(el=>{el.scrollTop=0;el.dispatchEvent(new Event('scroll'));});
+    // A screenshot captured immediately after jumping six sections can be
+    // taken before the uppermost lazy image has finished decoding.
+    const topArtwork=sections.first().locator('.th-v2-art-base img');
+    await topArtwork.evaluate(img=>img.decode());
+    assert.ok(await topArtwork.evaluate(img=>img.naturalWidth>=600),
+      'Top Coral Coast artwork never decoded after scrolling into view');
     await page.locator('#thV2AreaHere:not([hidden])').waitFor();
     const image=page.locator('#thV2AreaHere .th-v2-return-haiko-img');
     await image.evaluate(img=>img.decode());
