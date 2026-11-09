@@ -5,7 +5,7 @@
 The main menu shows a compact **tappable** build label at the top center,
 between Settings and the DEV toggle:
 
-**DEV · v1.5.47**
+**DEV · v1.5.48**
 
 **The sole release-version source is `version.json`.** The installed
 `js/version.js` constant, the main-menu fallback label, versioned
@@ -241,3 +241,18 @@ mode never writes files; it explains which files need synchronization.
 - Placeholder stops are map-only synthetic presentation nodes; they never enter the playable release catalog, progress save format, fin calculation or unlock rules.
 - Future sections temporarily reuse the existing illustrated Coral Coast map background; their art assets can be swapped independently later. Haiko remains over the first unfinished real puzzle.
 - The area and Water World completion counters continue to reflect four genuinely released levels (not 60 placeholders).
+
+## Six illustrated Coral Coast area-map scenes (DEV v1.5.48)
+
+- All six existing playable-map sections now load their own full-color 2.5D WebP:
+  1. Turquoise Lagoon, levels 1–4
+  2. Coral Gardens, levels 5–16
+  3. Seagrass Bay, levels 17–28
+  4. Shipwreck Reef, levels 29–40
+  5. Rocky Passage, levels 41–52
+  6. Current Gate, levels 53–60
+- Artwork lives in `images/maps/water-world/coral-coast/` and is referenced by section ID in `js/treasure-map-art.js`. The Water World overview is a separate image and is not touched.
+- Each background is an optimized 852 × 1846 WebP loaded lazily; aspect ratio is preserved with `object-fit:cover` on narrow screens. The painted map has no baked routes, numbers, Haiko or buttons.
+- The six-artwork cache revision is calculated from their Git blob fingerprints by `scripts/sync-release.cjs`, so later swaps get fresh browser URLs.
+- Existing SVG originals remain in the repository for rollback. All level positions, playable content (four actual levels), disabled Coming soon nodes, Haiko position, save IDs and fin scores remain unchanged.
+- Because the illustrations were generated separately, a final visual pass on Android is recommended for transitions at section boundaries and overlay alignment.
