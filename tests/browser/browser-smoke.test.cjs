@@ -317,7 +317,7 @@ test('record diagnostic browser resource and Coral Coast paint metrics',{timeout
       const images=[...document.querySelectorAll('#thV2AreaCanvas .th-v2-art-base img')];
       return images.length===6&&images.every(img=>img.complete&&img.naturalWidth>0);
     },null,{timeout:20000});
-    const coast=await page.evaluate(()=>{
+    const coast=await page.evaluate(async()=>{
       const panels=[...document.querySelectorAll('#thV2AreaCanvas .th-v2-area-section')];
       const artworks=panels.map(panel=>panel.querySelector('.th-v2-art-base img'));
       const entries=performance.getEntriesByType('resource');
