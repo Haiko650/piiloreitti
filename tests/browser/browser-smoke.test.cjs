@@ -121,6 +121,14 @@ test('main menu buttons stay inside narrow and tablet viewports',{timeout:60000}
       await page.goto(origin+'/index.html',{waitUntil:'load'});
       await page.locator('#welcomeScreen:not([hidden])').waitFor();
       await page.waitForFunction(()=>!document.querySelector('#welcomeScreen').inert);
+      // The menu logo and animated Haiko load asynchronously. Wait for
+      // decoded pixels before recording a deterministic visual baseline.
+      for(const selector of ['.pathleHomeLogoImage','.home-swimming-art']){
+        await page.locator(selector).evaluate(async img=>{
+          await img.decode();
+          if(img.naturalWidth===0)throw Error('Unloaded menu image');
+        });
+      }
       const rects=await page.evaluate(()=>{
         const ids=['playDaily','playTreasure','openHideout'];
         return ids.map(id=>{
