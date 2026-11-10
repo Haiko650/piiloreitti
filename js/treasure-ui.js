@@ -125,7 +125,7 @@
     fin=document.createElement('div');
     fin.className='th-fin th-fin-initial';
     fin.setAttribute('aria-hidden','true');
-    fin.innerHTML=visualAssets.sprite('fin',level.environment,FIN_SVG);
+    visualAssets.setFinFacing(fin,'right',level.environment,FIN_SVG);
     board.append(fin);
     fitBoard();
     // Do not animate in from (0,0) when starting or restarting a level.
@@ -196,7 +196,10 @@
       pendingMoves = [];
       return;
     }
+    const from=state.position;
     state = result.state;
+    visualAssets.setFinFacing(fin,visualAssets.finDirection(from,to,level.width),
+      level.environment,FIN_SVG);
     update();
     if (state.completed) {
       idlePeek.cancel();

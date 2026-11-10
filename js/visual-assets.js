@@ -5,12 +5,12 @@
  */
 (function(root){
   'use strict';
-  const ASSET_KEYS=Object.freeze(['water','coral','beach','forest','current','rock','wave','fin','start','goal','pearl','treasure','haikoPeek']);
+  const ASSET_KEYS=Object.freeze(['water','coral','beach','forest','current','rock','wave','fin','finRear','start','goal','pearl','treasure','haikoPeek']);
   const TERRAINS=Object.freeze(['water','coral','beach','forest','current','rock']);
   const ART=Object.freeze({
     shared:Object.freeze({
       water:null,coral:null,beach:null,forest:null,current:null,rock:null,
-      wave:null,fin:'images/skins/haiko-fin.webp',start:null,goal:null,pearl:null,treasure:null,haikoPeek:null
+      wave:null,fin:'images/skins/haiko-fin.webp',finRear:'images/skins/haiko-fin-rear.webp',start:null,goal:null,pearl:null,treasure:null,haikoPeek:null
     }),
     environments:Object.freeze({
       'coral-reef':Object.freeze({}),
@@ -62,6 +62,32 @@
     if(!path)return fallbackMarkup;
     return '<img class="pa-sprite pa-sprite-'+key+'" src="'+path+'" alt="" draggable="false">';
   }
+  // Facing is computed from actual adjacent movement, never the tile's
+  // absolute index alone (which would mistake row wraps for horizontal moves).
+  function finDirection(from,to,width){
+    if(!Number.isInteger(from)||!Number.isInteger(to)||!Number.isInteger(width)||
+      width<1||from<0||to<0)return null;
+    const dx=to%width-from%width;
+    const dy=Math.floor(to/width)-Math.floor(from/width);
+    if(dx===1&&dy===0)return 'right';
+    if(dx===-1&&dy===0)return 'left';
+    if(dx===0&&dy===-1)return 'up';
+    if(dx===0&&dy===1)return 'down';
+    return null;
+  }
+  // One side asset handles right/left; the approved rear view handles both
+  // vertical directions. Replace image markup only when the art changes,
+  // not on every animation frame; flip only the image, never the moving box.
+  function setFinFacing(container,direction,environment,fallbackMarkup){
+    if(!container)return;
+    const facing=['right','left','up','down'].includes(direction)?direction:'right';
+    const key=facing==='up'||facing==='down'?'finRear':'fin';
+    if(container.dataset.finArt!==key){
+      container.innerHTML=sprite(key,environment,fallbackMarkup);
+      container.dataset.finArt=key;
+    }
+    container.dataset.finFacing=facing;
+  }
   function createIdlePeek(options){
     const getTheme=options.theme;
     const anchor=options.anchor;
@@ -105,7 +131,7 @@
     function dispose(){cancel();disposed=true;if(typeof document!=='undefined')document.removeEventListener('visibilitychange',visibility);}
     return Object.freeze({reset,cancel,dispose});
   }
-  const api=Object.freeze({ART,ASSET_KEYS,TERRAINS,getAsset,applyBoard,terrainFor,decorateTile,sprite,createIdlePeek});
+  const api=Object.freeze({ART,ASSET_KEYS,TERRAINS,getAsset,applyBoard,terrainFor,decorateTile,sprite,finDirection,setFinFacing,createIdlePeek});
   if(root)root.PathleVisualAssets=api;
   if(typeof module==='object'&&module.exports)module.exports=api;
 })(typeof window!=='undefined'?window:null);

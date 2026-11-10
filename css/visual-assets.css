@@ -70,10 +70,15 @@
   object-fit:contain;
   margin:auto;
 }
-.pa-board .th-fin > .pa-sprite-fin{
+.pa-board .th-fin > :is(.pa-sprite-fin,.pa-sprite-finRear){
   display:block;
   width:100%;
   height:100%;
   object-fit:contain;
 }
-.pa-board .th-fin:has(> .pa-sprite-fin)::after{display:none;}
+.pa-board .th-fin:has(> .pa-sprite-fin,> .pa-sprite-finRear)::after{display:none;}
+/* Flip the side view only for leftward travel; the rear view serves
+   both up and down, without stretching, rotating or reversing the wake. */
+[data-fin-facing="left"] > .pa-sprite-fin{transform:scaleX(-1);}
+/* The original starting fin must disappear during Daily's finish dash. */
+.tile.fin-departed > .pa-sprite-fin{visibility:hidden;}

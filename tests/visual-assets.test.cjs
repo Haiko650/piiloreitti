@@ -8,9 +8,9 @@ const visuals=require('../js/visual-assets.js');
 const file=p=>fs.readFileSync(path.join(__dirname,'..',p),'utf8');
 
 test('all required artwork slots are centralized and themes do not modify rules',()=>{
-  for(const slot of ['water','coral','beach','forest','current','rock','wave','fin','start','goal','pearl','treasure','haikoPeek']){
+  for(const slot of ['water','coral','beach','forest','current','rock','wave','fin','finRear','start','goal','pearl','treasure','haikoPeek']){
     assert.ok(visuals.ASSET_KEYS.includes(slot),'missing '+slot);
-    assert.equal(visuals.getAsset(slot,'coast'),slot==='fin'?'images/skins/haiko-fin.webp':null);
+    assert.equal(visuals.getAsset(slot,'coast'),slot==='fin'?'images/skins/haiko-fin.webp':slot==='finRear'?'images/skins/haiko-fin-rear.webp':null);
   }
   for(const theme of ['coral-reef','coast','ocean','river','forest'])assert.ok(visuals.ART.environments[theme]);
   assert.equal(visuals.getAsset('invalid-key','ocean'),null);
@@ -32,6 +32,9 @@ test('shared Haiko fin replaces the fallback while other absent artwork retains 
     assert.match(visuals.sprite('fin',theme,'<svg>fin</svg>'),/images\/skins\/haiko-fin\.webp/);
   }
   const image=fs.readFileSync(path.join(__dirname,'..','images/skins/haiko-fin.webp'));
+  const rear=fs.readFileSync(path.join(__dirname,'..','images/skins/haiko-fin-rear.webp'));
+  assert.equal(rear.toString('ascii',0,4),'RIFF');
+  assert.equal(rear.toString('ascii',8,12),'WEBP');
   assert.equal(image.toString('ascii',0,4),'RIFF');
   assert.equal(image.toString('ascii',8,12),'WEBP');
   assert.equal(visuals.sprite('treasure','coast','<svg>pearl</svg>'),'<svg>pearl</svg>');
@@ -44,6 +47,7 @@ test('shared Haiko fin replaces the fallback while other absent artwork retains 
   assert.equal(board.style.props['--pa-fin'],'url("images/skins/haiko-fin.webp")');
   assert.ok(classes.has('pa-board'));
   assert.ok(classes.has('pa-has-fin'));
+  assert.ok(classes.has('pa-has-finRear'));
 });
 
 test('tile decoration records visual terrain separately from gameplay',()=>{
@@ -121,4 +125,30 @@ test('idle peek is cancelled by hidden tabs, and does not outlive level cleanup'
   h.idle.dispose();
   assert.equal(h.timers.size,0);
   assert.equal(h.listeners.size,0);
+});
+
+test('shared fin facing maps only adjacent moves and keeps art stable while reversing',()=>{
+  const directions={right:[21,22],left:[22,21],up:[21,13],down:[21,29]};
+  for(const [direction,[from,to]] of Object.entries(directions))
+    assert.equal(visuals.finDirection(from,to,8),direction);
+  for(const [from,to] of [[7,8],[8,7],[3,3],[0,20],[-1,0],[0,1.5]])
+    assert.equal(visuals.finDirection(from,to,8),null);
+  const element={dataset:{},innerHTML:''};
+  visuals.setFinFacing(element,'right','coast','fallback');
+  assert.equal(element.dataset.finFacing,'right');
+  assert.match(element.innerHTML,/haiko-fin\.webp/);
+  const markup=element.innerHTML;
+  visuals.setFinFacing(element,'left','coast','fallback');
+  assert.equal(element.innerHTML,markup,'left turns only mirror the existing sprite');
+  assert.equal(element.dataset.finFacing,'left');
+  visuals.setFinFacing(element,'up','coast','fallback');
+  assert.match(element.innerHTML,/haiko-fin-rear\.webp/);
+  const rearMarkup=element.innerHTML;
+  visuals.setFinFacing(element,'down','coast','fallback');
+  assert.equal(element.innerHTML,rearMarkup,'both vertical directions share the rear artwork');
+  assert.equal(element.dataset.finFacing,'down');
+  const css=file('css/visual-assets.css');
+  assert.match(css,/\[data-fin-facing="left"\] > \.pa-sprite-fin\{transform:scaleX\(-1\)/);
+  assert.match(file('js/treasure-ui.js'),/visualAssets\.setFinFacing\(fin,visualAssets\.finDirection\(from,to,level\.width\)/);
+  assert.match(file('js/game.js'),/visualAssets\.finDirection\(path\[idx\],path\[idx\+1\],CONFIG\[data\.level\]\.size\)/);
 });
