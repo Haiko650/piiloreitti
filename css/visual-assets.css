@@ -2,9 +2,16 @@
    Artwork absent -> the current accepted water and obstacle designs remain. */
 .pa-board.pa-has-water :is(.tile,.th-tile)[data-terrain="water"] {
   background-image:var(--pa-water) !important;
-  background-size:cover !important;
+  /* Fill the grid cell with the approved rounded 2.5D aqua tile.
+     Slight overscan clips the transparent export margins, not the art. */
+  background-size:108% 108% !important;
   background-repeat:no-repeat !important;
   background-position:center !important;
+}
+.pa-board.pa-has-water .th-tile[data-terrain="water"]::before{
+  /* The older animated CSS hatch obscures the water image and restarts
+     after board redraws; do not stack it on the approved texture. */
+  display:none;
 }
 .pa-board.pa-has-coral :is(.tile,.th-tile)[data-terrain="coral"],
 .pa-board.pa-has-beach :is(.tile,.th-tile)[data-terrain="beach"],

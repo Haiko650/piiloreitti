@@ -7,17 +7,22 @@
   'use strict';
   const ASSET_KEYS=Object.freeze(['water','coral','beach','forest','current','rock','wave','fin','finRear','start','goal','pearl','treasure','haikoPeek']);
   const TERRAINS=Object.freeze(['water','coral','beach','forest','current','rock']);
+  // One shared approved Water World tile. Future chapters (e.g. space)
+  // select their own art via environment overrides, with no rule changes.
+  const WATER_TILE='images/skins/pathle-water-tile.webp';
   const ART=Object.freeze({
     shared:Object.freeze({
       water:null,coral:null,beach:null,forest:null,current:null,rock:null,
       wave:null,fin:'images/skins/haiko-fin.webp',finRear:'images/skins/haiko-fin-rear.webp',start:null,goal:null,pearl:null,treasure:null,haikoPeek:null
     }),
     environments:Object.freeze({
-      'coral-reef':Object.freeze({}),
-      coast:Object.freeze({}),
-      ocean:Object.freeze({}),
-      river:Object.freeze({}),
-      forest:Object.freeze({})
+      'coral-reef':Object.freeze({water:WATER_TILE}),
+      coast:Object.freeze({water:WATER_TILE}),
+      ocean:Object.freeze({water:WATER_TILE}),
+      river:Object.freeze({water:WATER_TILE}),
+      forest:Object.freeze({water:WATER_TILE}),
+      // Deliberate placeholder: Space Adventure gets its own artwork.
+      space:Object.freeze({water:null})
     })
   });
   const validPath=value=>typeof value==='string'&&/^images\/(?:[a-z0-9_-]+\/)*[a-z0-9_-]+\.(?:webp|png|svg|avif)$/i.test(value);

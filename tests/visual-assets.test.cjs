@@ -10,9 +10,12 @@ const file=p=>fs.readFileSync(path.join(__dirname,'..',p),'utf8');
 test('all required artwork slots are centralized and themes do not modify rules',()=>{
   for(const slot of ['water','coral','beach','forest','current','rock','wave','fin','finRear','start','goal','pearl','treasure','haikoPeek']){
     assert.ok(visuals.ASSET_KEYS.includes(slot),'missing '+slot);
-    assert.equal(visuals.getAsset(slot,'coast'),slot==='fin'?'images/skins/haiko-fin.webp':slot==='finRear'?'images/skins/haiko-fin-rear.webp':null);
+    const expected=slot==='water'?'images/skins/pathle-water-tile.webp':
+      slot==='fin'?'images/skins/haiko-fin.webp':
+      slot==='finRear'?'images/skins/haiko-fin-rear.webp':null;
+    assert.equal(visuals.getAsset(slot,'coast'),expected);
   }
-  for(const theme of ['coral-reef','coast','ocean','river','forest'])assert.ok(visuals.ART.environments[theme]);
+  for(const theme of ['coral-reef','coast','ocean','river','forest','space'])assert.ok(visuals.ART.environments[theme]);
   assert.equal(visuals.getAsset('invalid-key','ocean'),null);
 });
 
@@ -43,9 +46,10 @@ test('shared Haiko fin replaces the fallback while other absent artwork retains 
     dataset:{},style:{props:{},setProperty(k,v){this.props[k]=v;}}};
   visuals.applyBoard(board,'ocean');
   assert.equal(board.dataset.artEnvironment,'ocean');
-  assert.equal(board.style.props['--pa-water'],'none');
+  assert.equal(board.style.props['--pa-water'],'url("images/skins/pathle-water-tile.webp")');
   assert.equal(board.style.props['--pa-fin'],'url("images/skins/haiko-fin.webp")');
   assert.ok(classes.has('pa-board'));
+  assert.ok(classes.has('pa-has-water'));
   assert.ok(classes.has('pa-has-fin'));
   assert.ok(classes.has('pa-has-finRear'));
 });
@@ -151,4 +155,26 @@ test('shared fin facing maps only adjacent moves and keeps art stable while reve
   assert.match(css,/\[data-fin-facing="left"\] > \.pa-sprite-fin\{transform:scaleX\(-1\)/);
   assert.match(file('js/treasure-ui.js'),/visualAssets\.setFinFacing\(fin,visualAssets\.finDirection\(from,to,level\.width\)/);
   assert.match(file('js/game.js'),/visualAssets\.finDirection\(path\[idx\],path\[idx\+1\],CONFIG\[data\.level\]\.size\)/);
+});
+
+test('approved water artwork is shared across Daily and Treasure, but Space may replace it',()=>{
+  const water='images/skins/pathle-water-tile.webp';
+  for(const environment of ['coral-reef','coast','ocean','river','forest'])
+    assert.equal(visuals.getAsset('water',environment),water);
+  assert.equal(visuals.getAsset('water','space'),null,
+    'Space Adventure must not inherit Water World artwork');
+
+  const pixels=fs.readFileSync(path.join(__dirname,'..',water));
+  assert.equal(pixels.toString('ascii',0,4),'RIFF');
+  assert.equal(pixels.toString('ascii',8,12),'WEBP');
+  assert.ok(pixels.byteLength<30000,'tile should be lightweight for Android grids');
+
+  const css=file('css/visual-assets.css');
+  assert.match(css,/\.pa-board\.pa-has-water :is\(\.tile,\.th-tile\)\[data-terrain="water"\]/);
+  assert.match(css,/background-image:var\(--pa-water\) !important;/);
+  assert.match(css,/\.pa-board\.pa-has-water \.th-tile\[data-terrain="water"\]::before/);
+  // Existing game renderers both assign their art environment through
+  // the same shared applyBoard path; the tile is not duplicated per mode.
+  assert.match(file('js/game.js'),/visualAssets\.applyBoard\(board,'coral-reef'\)/);
+  assert.match(file('js/treasure-ui.js'),/visualAssets\.applyBoard\(board,level\.environment\)/);
 });
