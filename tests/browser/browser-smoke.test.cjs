@@ -181,7 +181,7 @@ test('illustrated gameplay fits a phone and uses the approved graphic language',
           guideDisplay:getComputedStyle(guide).display,
           reef:getComputedStyle(screen.querySelector('.gameOcean')).backgroundImage,
           border:getComputedStyle(document.getElementById('board')).borderTopStyle,
-          buttons:[...screen.querySelectorAll('.actions button')].map(b=>({width:b.getBoundingClientRect().width}))
+          buttons:[...screen.querySelectorAll('#playPanel .actions button')].map(b=>({width:b.getBoundingClientRect().width}))
         };
       });
       assert.ok(layout.logoNaturalWidth>500,'Missing original Pathle logo');
