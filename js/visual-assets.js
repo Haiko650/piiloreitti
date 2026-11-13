@@ -34,14 +34,25 @@
     if(!validPath(value))throw new Error('Invalid Pathle artwork path for '+key+': '+String(value));
     return value;
   }
+  // CSS custom-property url(...) values are consumed by an external
+  // stylesheet (css/visual-assets.css). Relative paths there can resolve
+  // against /css/ instead of the page, giving /css/images/... (404).
+  // Always anchor CSS image URLs to the document's absolute base URI.
+  // Keep catalog paths relative so <img> sprites and future themes work.
+  function cssImage(path,baseURI){
+    if(!path)return 'none';
+    const resolved=baseURI?new URL(path,baseURI).href:path;
+    return 'url("'+resolved+'")';
+  }
   function applyBoard(board,environment){
     if(!board)return;
     board.classList.add('pa-board');
     board.dataset.artEnvironment=environment||'coral-reef';
+    const baseURI=typeof document!=='undefined'?document.baseURI:null;
     for(const key of ASSET_KEYS){
       const path=getAsset(key,environment);
       board.classList.toggle('pa-has-'+key,!!path);
-      board.style.setProperty('--pa-'+key,path?'url("'+path+'")':'none');
+      board.style.setProperty('--pa-'+key,cssImage(path,baseURI));
     }
   }
   function terrainFor(level,id,blocked){
@@ -136,7 +147,7 @@
     function dispose(){cancel();disposed=true;if(typeof document!=='undefined')document.removeEventListener('visibilitychange',visibility);}
     return Object.freeze({reset,cancel,dispose});
   }
-  const api=Object.freeze({ART,ASSET_KEYS,TERRAINS,getAsset,applyBoard,terrainFor,decorateTile,sprite,finDirection,setFinFacing,createIdlePeek});
+  const api=Object.freeze({ART,ASSET_KEYS,TERRAINS,getAsset,cssImage,applyBoard,terrainFor,decorateTile,sprite,finDirection,setFinFacing,createIdlePeek});
   if(root)root.PathleVisualAssets=api;
   if(typeof module==='object'&&module.exports)module.exports=api;
 })(typeof window!=='undefined'?window:null);

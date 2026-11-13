@@ -178,3 +178,20 @@ test('approved water artwork is shared across Daily and Treasure, but Space may 
   assert.match(file('js/game.js'),/visualAssets\.applyBoard\(board,'coral-reef'\)/);
   assert.match(file('js/treasure-ui.js'),/visualAssets\.applyBoard\(board,level\.environment\)/);
 });
+
+
+test('water tile CSS URL resolves to page origin rather than the CSS directory',()=>{
+  const path='images/skins/pathle-water-tile.webp';
+  const expected='url("https://haiko650.github.io/piiloreitti/'+path+'")';
+  for(const page of ['index.html','treasure-hunt.html']){
+    const base='https://haiko650.github.io/piiloreitti/'+page;
+    assert.equal(visuals.cssImage(path,base),expected);
+    assert.ok(!visuals.cssImage(path,base).includes('/css/images/'),
+      'Background URLs must not resolve beneath the stylesheet folder');
+  }
+  assert.equal(visuals.cssImage(null,'https://example.org/piiloreitti/'),'none');
+  // The public catalog remains path-based so Space Adventure can replace
+  // its theme independently without hardcoding a GitHub Pages hostname.
+  assert.equal(visuals.getAsset('water','coast'),path);
+  assert.match(file('js/visual-assets.js'),/cssImage\(path,baseURI\)/);
+});

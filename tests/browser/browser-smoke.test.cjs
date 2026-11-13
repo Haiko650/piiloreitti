@@ -172,6 +172,45 @@ test('Treasure Hunt opens its genuine first-run tutorial',{timeout:45000},async(
   }finally{await context.close();}
 });
 
+test('shared water tiles load their textured WebP in both real game boards',{timeout:65000},async()=>{
+  const {page,context,exceptions}=await mobilePage(390,844);
+  const expected=origin+'/images/skins/pathle-water-tile.webp';
+  async function assertWater(boardSelector,tileSelector,shotName){
+    const tile=page.locator(boardSelector+' '+tileSelector+'[data-terrain="water"]').first();
+    await tile.waitFor();
+    const result=await tile.evaluate(async element=>{
+      const css=getComputedStyle(element).backgroundImage;
+      const urls=[...css.matchAll(/url\(["']?([^"')]+)["']?\)/g)].map(match=>match[1]);
+      const url=urls.find(value=>value.includes('pathle-water-tile.webp'));
+      if(!url)return {css,url:null,naturalWidth:0,naturalHeight:0};
+      const image=new Image();
+      image.src=url;
+      try{await image.decode();}
+      catch{return {css,url,naturalWidth:0,naturalHeight:0};}
+      return {css,url,naturalWidth:image.naturalWidth,naturalHeight:image.naturalHeight};
+    });
+    assert.equal(result.url,expected,
+      'Water background resolves incorrectly; it should NOT load from /css/images/');
+    assert.ok(result.naturalWidth>=128&&result.naturalHeight>=128,
+      'Water WebP failed to decode; only the fallback flat color will show');
+    await screenshot(page,shotName);
+  }
+  try{
+    await page.goto(origin+'/index.html',{waitUntil:'load'});
+    await page.waitForFunction(()=>!document.querySelector('#welcomeScreen').inert);
+    await page.locator('#playDaily').click();
+    await page.locator('#gameScreen:not([hidden])').waitFor();
+    if(await page.locator('#storyModal').isVisible())await page.locator('#storySkip').click();
+    await assertWater('#board','.tile','water-tiles-daily-390');
+    await page.goto(origin+'/treasure-hunt.html',{waitUntil:'load'});
+    await page.locator('#thV2Tutorial:not([hidden])').waitFor();
+    await page.locator('#thV2TutorialStart').click();
+    await page.locator('.th-panel:not([hidden])').waitFor();
+    await assertWater('#thBoard','.th-tile','water-tiles-treasure-390');
+    assert.deepEqual(exceptions,[],'Uncaught errors while rendering water textures');
+  }finally{await context.close();}
+});
+
 test('Coral Coast renders 60 markers, disabled previews and Return to Haiko',{timeout:90000},async()=>{
   const {page,context,exceptions}=await mobilePage(390,844);
   try{
