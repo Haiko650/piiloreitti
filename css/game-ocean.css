@@ -1,0 +1,400 @@
+/* Pathle DEV 1.5.64 — illustrated game view.
+   Presentation only: do not reveal Daily's hidden route, modify scoring,
+   alter clicks, or merge neighboring coral/shore tiles (later milestone).
+   Daily and Treasure Hunt share the established 2.5D water art. */
+
+/* Daily Challenge — the same cheerful coral reef as the menu. */
+body.game-active{
+  background:
+    linear-gradient(180deg,#0329632e,#04204c60 68%,#03214a74),
+    url("../images/home-reef-background.webp?v=e225b06888c1") center/cover fixed no-repeat,
+    #07649b;
+}
+body.game-active main{
+  box-sizing:border-box;
+  width:100%;
+  max-width:560px;
+  margin-inline:auto;
+}
+body.game-active #gameScreen{
+  position:relative;
+  isolation:isolate;
+  gap:0;
+}
+body.game-active #gameScreen .gameOcean{
+  opacity:1!important;
+  filter:none!important;
+  background-image:
+    linear-gradient(180deg,#008fc01c 0%,#062c6269 42%,#061d4e40 100%),
+    url("../images/home-reef-background.webp?v=e225b06888c1")!important;
+  background-position:center!important;
+  background-size:cover!important;
+}
+body.game-active #gameScreen .gameOcean .oceanPlant{display:none;}
+body.game-active #gameScreen .gameOcean .sunRays{opacity:.28;}
+body.game-active #gameScreen .gameOcean::after{opacity:.28;}
+body.game-active #gameScreen .gameHeader{flex:0 0 auto;padding:0 3px 3px;}
+body.game-active #gameScreen .gameTop{
+  height:clamp(51px,8.2dvh,72px);
+  gap:6px;
+}
+body.game-active #gameScreen .gameTop .brand{
+  display:flex;
+  flex:1;
+  min-width:0;
+  align-items:center;
+  justify-content:center;
+  height:100%;
+  gap:0;
+}
+body.game-active #gameScreen .gameTop .brand-haiko{display:none;}
+body.game-active #gameScreen .gameTop .brand h1{
+  position:absolute;
+  width:1px;
+  height:1px;
+  clip-path:inset(50%);
+  overflow:hidden;
+  white-space:nowrap;
+}
+body.game-active #gameScreen .pathle-game-logo{
+  display:block;
+  width:min(56vw,240px);
+  height:100%;
+  max-height:72px;
+  object-fit:contain;
+  filter:drop-shadow(0 3px 3px #034579c9) drop-shadow(0 0 6px #baf8ff55);
+}
+body.game-active #gameScreen .gameTop :is(.navIcon,.gear){
+  display:grid;
+  place-items:center;
+  width:clamp(36px,10vw,45px);
+  height:clamp(36px,10vw,45px);
+  min-width:clamp(36px,10vw,45px);
+  border:2px solid #b6ffff;
+  border-radius:15px;
+  background:linear-gradient(180deg,#31d8f6 0%,#0472bb 19%,#073c91 69%,#042362 100%);
+  color:#fff;
+  box-shadow:inset 0 2px 0 #ffffffa6,inset 0 -3px 0 #06285b,0 4px 9px #001b4fa0,0 0 13px #53eaff80;
+  text-shadow:0 2px 3px #002f63;
+}
+body.game-active #gameScreen .gameTop .gear svg{width:21px;height:21px;stroke:#fff;}
+body.game-active #gameScreen .gameHeadSub{
+  width:max-content;
+  max-width:100%;
+  min-height:32px;
+  margin:0 auto 5px;
+  padding:6px 12px;
+  text-align:center;
+  font:900 clamp(10px,2.7vw,13px)/1.2 system-ui,sans-serif;
+  letter-spacing:.02em;
+  color:#fff;
+  border:2px solid #a7faff;
+  border-radius:999px;
+  background:linear-gradient(180deg,#247ec4,#074c9b 62%,#063574);
+  box-shadow:inset 0 2px #ffffff70,0 3px 0 #074077,0 5px 12px #001c4ba3;
+  text-shadow:0 1px 3px #072b65;
+}
+
+body.game-active #playPanel{
+  padding:7px 7px 9px;
+  margin:2px 0 0;
+  gap:0;
+  border:2px solid #5ce2f6!important;
+  border-radius:23px!important;
+  background:linear-gradient(170deg,#063a70c9,#063369c9 64%,#04275ac9)!important;
+  box-shadow:inset 0 2px #b4fbff75,0 4px 0 #003c72a0,0 10px 24px #00143da8!important;
+  backdrop-filter:none;
+}
+body.game-active #playPanel #puzzleHeading{
+  box-sizing:border-box;
+  flex:0 0 auto;
+  align-self:center;
+  display:block;
+  max-width:98%;
+  min-width:0;
+  margin:0 auto 5px;
+  padding:5px 17px;
+  font:950 clamp(12px,3.4vw,17px)/1.2 system-ui,sans-serif;
+  color:#07386d;
+  text-align:center;
+  border:2px solid #fff4bc;
+  border-radius:999px;
+  background:linear-gradient(180deg,#fff9c8 0%,#ffe36b 39%,#ffba2d 78%,#e48b12 100%);
+  box-shadow:inset 0 2px #ffffffba,0 3px 0 #ab650e,0 5px 12px #001b4a7c;
+  text-shadow:0 1px #fff6ce;
+}
+body.game-active #playPanel .tabs{
+  flex:0 0 auto;
+  gap:5px;
+  margin:0 0 5px;
+}
+body.game-active #playPanel .tabs button{
+  min-height:31px;
+  padding:6px 4px;
+  font-size:clamp(10px,2.7vw,13px);
+  line-height:1.12;
+  color:#e0f9ff;
+  border:1px solid #80e7f7;
+  border-radius:13px;
+  background:linear-gradient(180deg,#1c82b3,#07569a 60%,#063a7a);
+  box-shadow:inset 0 1px #c8ffff80,0 2px 3px #001c4d8f;
+  text-shadow:0 1px 2px #062953;
+}
+body.game-active #playPanel .tabs button.active:disabled{
+  color:#12487d;
+  background:linear-gradient(180deg,#fffaac,#ffd64d 60%,#f0a21a);
+  border:2px solid #fff3b5;
+  box-shadow:inset 0 2px #fff9d8,0 3px 0 #a9681f,0 4px 10px #ffdb6791;
+  text-shadow:0 1px #fff3b9;
+}
+body.game-active #playPanel .tabs button.finished{
+  border-color:#7af4da;
+  color:#dcfff5;
+  background:linear-gradient(180deg,#29bdb1,#0d827e);
+}
+body.game-active #playPanel .stats{
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  flex:0 0 auto;
+  gap:5px;
+  margin:2px 0 6px;
+}
+body.game-active #playPanel .stat{
+  min-height:42px;
+  padding:4px 3px 3px;
+  border:1px solid #83e7f8;
+  border-radius:12px;
+  background:linear-gradient(180deg,#0c65a6d9,#073b84e8);
+  box-shadow:inset 0 2px #d6ffff65,0 3px 5px #0029539b;
+}
+body.game-active #playPanel .stat b{
+  font-size:clamp(15px,4vw,21px);
+  color:#fff4bf;
+  line-height:1.1;
+  text-shadow:0 2px 2px #003d69;
+}
+body.game-active #playPanel .stat span{
+  font-size:clamp(7px,1.9vw,10px);
+  color:#c6faff;
+  line-height:1.1;
+  letter-spacing:0;
+  font-weight:800;
+}
+/* The board keeps the original mobile-fit sizing and all game hit areas. */
+body.game-active #playPanel #board.board{
+  flex:0 0 auto;
+  align-self:center;
+  min-height:0;
+  max-width:100%;
+  padding:clamp(3px,.9vw,7px);
+  margin:0 auto!important;
+  border:3px solid #8affff;
+  border-radius:clamp(15px,4vw,23px);
+  background:linear-gradient(150deg,#12aada 0%,#037eb6 35%,#05548f 100%);
+  box-shadow:inset 0 2px 0 #e6ffffb8,inset 0 -4px 0 #064e8b,0 0 0 2px #006eaa,0 0 21px #4dfbff77,0 7px 16px #002858ad;
+  gap:clamp(1px,.38vw,3px);
+  overflow:hidden;
+}
+body.game-active #board .tile{
+  border:1px solid #62e5f5;
+  border-bottom:2px solid #0874a6;
+  border-radius:clamp(3px,1vw,9px);
+  box-shadow:inset 0 1px #ffffff78,0 1px 3px #0142757a;
+  overflow:hidden;
+}
+body.game-active #board .tile.current{
+  outline:2px solid #fff6b5;
+  outline-offset:-2px;
+  box-shadow:0 0 0 1px #ffe28c,0 0 10px #effffb,0 0 14px #ffdf67;
+  z-index:2;
+}
+body.game-active #board .tile.visited:not(.goal):not(.obstacle){
+  border-color:#70ffd6;
+  box-shadow:inset 0 0 0 2px #77ffc57a,0 0 8px #35f7b776;
+  color:#fff;
+  text-shadow:0 1px 3px #064672;
+}
+body.game-active #board .tile.wrong{
+  border-color:#ffc0cb;
+  background-color:#e64f79;
+  box-shadow:inset 0 0 0 2px #ff64977a,0 0 9px #ff7ba1ae;
+}
+body.game-active #board .tile.obstacle{
+  border:1px solid #85e3f5;
+  border-bottom:2px solid #1b6e9e;
+  background:radial-gradient(ellipse at 50% 92%,#8cb4a9 0 24%,#487c95 45%,#06496b 100%);
+  box-shadow:inset 0 2px #c7fdff7a,0 2px 5px #003f687e;
+}
+body.game-active #board .tile.obstacle .coral-icon{
+  width:100%;
+  height:100%;
+  filter:drop-shadow(0 2px 3px #052f5f9a);
+}
+body.game-active #board .tile.goal{
+  border:2px solid #ffe89d;
+  background-color:#19a8c6;
+  box-shadow:inset 0 0 4px #ffdf79,0 0 11px #ffd65ba9;
+}
+body.game-active #board .tile.goal .treasure-icon{
+  display:block;
+  width:108%;
+  height:108%;
+  max-width:none;
+  margin:-4%;
+  filter:drop-shadow(0 2px 2px #214e698e);
+}
+body.game-active #board .tile.goal.visited{
+  box-shadow:inset 0 0 4px #fff5ab,0 0 17px #ffe09e;
+}
+
+/* Haiko is a separate, replaceable illustration, not part of the background. */
+body.game-active #playPanel .gameOceanGuide{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 auto;
+  min-height:52px;
+  margin:6px 2px 3px;
+  gap:7px;
+  pointer-events:none;
+}
+body.game-active #playPanel .gameOceanGuide img{
+  display:block;
+  flex:0 0 auto;
+  width:clamp(78px,24vw,120px);
+  height:clamp(44px,7dvh,60px);
+  object-fit:contain;
+  filter:drop-shadow(0 4px 5px #012857a6);
+}
+body.game-active #playPanel .gameOceanGuide p{
+  margin:0;
+  flex:1 1 auto;
+  max-width:280px;
+  min-width:0;
+  padding:7px 11px;
+  font:800 clamp(11px,2.9vw,14px)/1.2 system-ui,sans-serif;
+  color:#153a76;
+  text-align:center;
+  background:linear-gradient(180deg,#fff,#e5f9ff);
+  border:2px solid #a1f6ff;
+  border-radius:18px;
+  box-shadow:0 3px 0 #007ca3,0 4px 10px #001d466b;
+}
+body.game-active #playPanel .attempt-info{
+  display:block;
+  flex:0 0 auto;
+  margin:3px 0;
+  padding:6px 12px;
+  text-align:center;
+  min-height:28px;
+  font-size:clamp(10px,2.8vw,13px);
+  line-height:1.2;
+  color:#fffbe0;
+  border:2px solid #8df8ff;
+  border-radius:999px;
+  background:linear-gradient(180deg,#0c65ab,#073977 85%);
+  box-shadow:inset 0 2px #b0ffff80,0 3px 5px #001e50a8;
+}
+body.game-active #playPanel .actions{
+  flex:0 0 auto;
+  display:flex;
+  gap:8px;
+  margin:6px 0 0;
+}
+body.game-active #playPanel .actions button{
+  flex:1 1 0;
+  min-width:0;
+  min-height:43px;
+  border:2px solid #b2f9ff;
+  border-radius:999px;
+  padding:7px 9px;
+  font-size:clamp(13px,3.5vw,17px);
+  line-height:1.15;
+  color:#fff;
+  background:linear-gradient(180deg,#36cafa,#0787e2 52%,#054b9e);
+  box-shadow:inset 0 2px #ffffffb8,inset 0 -3px #014b83,0 4px 0 #003f86,0 6px 11px #001b478a;
+  text-shadow:0 2px 2px #02476c;
+}
+body.game-active #playPanel .actions button.primary{
+  color:#fff;
+  background:linear-gradient(180deg,#b0f96c,#30c943 44%,#0b962e 100%);
+  border-color:#e4ffb3;
+  box-shadow:inset 0 2px #ffffffab,inset 0 -3px #047b2b,0 4px 0 #075a37,0 6px 11px #001b478a;
+  text-shadow:0 2px 2px #09672c;
+}
+body.game-active #playPanel .actions button:disabled{
+  opacity:.63;
+  filter:saturate(.58);
+  box-shadow:inset 0 1px #ffffff6c,0 2px 0 #06446b;
+}
+body.game-active #playPanel :is(.actions button,.tabs button,.navIcon,.gear):focus-visible{
+  outline:3px solid #ffe27f;
+  outline-offset:3px;
+}
+
+/* Space for the Hard 10x10 puzzle always wins over decorative extras. */
+@media(max-height:780px){
+  body.game-active #playPanel .gameOceanGuide{display:none;}
+}
+@media(max-height:655px){
+  body.game-active #gameScreen .gameTop{height:42px;}
+  body.game-active #gameScreen .pathle-game-logo{max-height:42px;}
+  body.game-active #gameScreen .gameHeadSub{padding:4px 9px;min-height:26px;margin-bottom:3px;}
+  body.game-active #playPanel{padding:4px;}
+  body.game-active #playPanel #puzzleHeading{margin-bottom:3px;padding:3px 11px;}
+  body.game-active #playPanel .tabs{margin-bottom:3px;}
+  body.game-active #playPanel .tabs button{min-height:27px;padding:4px 2px;}
+  body.game-active #playPanel .stats{margin:1px 0 3px;gap:3px;}
+  body.game-active #playPanel .stat{min-height:33px;padding:2px;}
+  body.game-active #playPanel .stat b{font-size:14px;}
+  body.game-active #playPanel .stat span{font-size:8px;}
+  body.game-active #playPanel .attempt-info{padding:4px 7px;min-height:24px;}
+  body.game-active #playPanel .actions{margin-top:3px;}
+  body.game-active #playPanel .actions button{min-height:34px;padding:5px 6px;}
+}
+@media(max-width:350px){
+  body.game-active #gameScreen .pathle-game-logo{width:min(47vw,180px);}
+  body.game-active #playPanel .stat span{font-size:7px;}
+}
+
+/* Treasure Hunt receives the same frame, HUD and button language.
+   This rule applies ONLY when the playable level is visible, not on maps. */
+body.th-page:has(.th-panel:not([hidden])){
+  background:
+    linear-gradient(180deg,#053b6b33,#041e4d77),
+    url("../images/home-reef-background.webp?v=e225b06888c1") center/cover fixed no-repeat,#076ca1;
+}
+body.th-page .th-panel:not([hidden]){
+  border:2px solid #77f5ff;
+  border-radius:22px;
+  background:linear-gradient(180deg,#064b80e6,#06305fe6);
+  box-shadow:inset 0 2px #d1ffff85,0 7px 20px #0024539c;
+}
+body.th-page .th-panel:not([hidden]) .th-stats>div{
+  border:1px solid #8bf7ff;
+  background:linear-gradient(180deg,#137bb4,#093f80);
+  box-shadow:inset 0 1px #ffffff7d,0 2px 4px #001a478c;
+  border-radius:13px;
+}
+body.th-page .th-panel:not([hidden]) .th-stats small{color:#c8faff;}
+body.th-page .th-panel:not([hidden]) .th-stats strong{color:#fff1b9;}
+body.th-page .th-panel:not([hidden]) .th-board{
+  border:3px solid #86fbff;
+  border-radius:18px;
+  background:linear-gradient(135deg,#0ea8d1,#065a9b);
+  box-shadow:inset 0 2px #ffffffbd,0 0 19px #31e8fc82,0 6px 17px #00265398;
+}
+body.th-page .th-panel:not([hidden]) .th-actions button{
+  min-height:43px;
+  border:2px solid #b6fbff;
+  border-radius:999px;
+  background:linear-gradient(180deg,#42c9f0,#087bbd 52%,#07447d);
+  color:#fff;
+  box-shadow:inset 0 2px #ffffffa8,0 3px 0 #054576;
+}
+body.th-page .th-panel:not([hidden]) .th-v2-level-guide{
+  color:#fff5ca;
+  text-shadow:0 1px 3px #003b73;
+}
+@media(prefers-reduced-motion:reduce){
+  body.game-active #gameScreen .gameOcean .sunRays{animation:none!important;}
+}

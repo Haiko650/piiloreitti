@@ -156,6 +156,47 @@ test('main menu buttons stay inside narrow and tablet viewports',{timeout:60000}
   }
 });
 
+test('illustrated gameplay fits a phone and uses the approved graphic language',{timeout:95000},async()=>{
+  for(const [width,height] of [[390,844],[320,600]]){
+    const {page,context,exceptions}=await mobilePage(width,height);
+    try{
+      await page.goto(origin+'/index.html',{waitUntil:'load'});
+      await page.locator('#welcomeScreen:not([hidden])').waitFor();
+      await page.waitForFunction(()=>!document.querySelector('#welcomeScreen').inert);
+      await page.locator('#playDaily').click();
+      await page.locator('#gameScreen:not([hidden])').waitFor();
+      if(await page.locator('#storyModal').isVisible())
+        await page.locator('#storySkip').click();
+      const logo=page.locator('.pathle-game-logo');
+      await logo.evaluate(async img=>{await img.decode();});
+      const layout=await page.evaluate(()=>{
+        const board=document.getElementById('board').getBoundingClientRect();
+        const logo=document.querySelector('.pathle-game-logo');
+        const guide=document.querySelector('.gameOceanGuide');
+        const screen=document.getElementById('gameScreen');
+        return {
+          board:{width:board.width,height:board.height,left:board.left,right:board.right,
+            top:board.top,bottom:board.bottom},
+          logoNaturalWidth:logo.naturalWidth,
+          guideDisplay:getComputedStyle(guide).display,
+          reef:getComputedStyle(screen.querySelector('.gameOcean')).backgroundImage,
+          border:getComputedStyle(document.getElementById('board')).borderTopStyle,
+          buttons:[...screen.querySelectorAll('.actions button')].map(b=>({width:b.getBoundingClientRect().width}))
+        };
+      });
+      assert.ok(layout.logoNaturalWidth>500,'Missing original Pathle logo');
+      assert.ok(layout.reef.includes('home-reef-background.webp'),'Old purple game background shown');
+      assert.equal(layout.border,'solid');
+      assert.ok(layout.board.width>=180&&layout.board.height>=180,'Board too small');
+      assert.ok(layout.board.left>=-1&&layout.board.right<=width+1,'Board clipped horizontally');
+      assert.ok(layout.board.bottom<=height+2,'Board clipped under controls');
+      assert.ok(layout.buttons.every(b=>b.width>80),'Action buttons have collapsed');
+      await screenshot(page,'daily-ocean-theme-'+width);
+      assert.deepEqual(exceptions,[]);
+    }finally{await context.close();}
+  }
+});
+
 test('Treasure Hunt opens its genuine first-run tutorial',{timeout:45000},async()=>{
   const {page,context,exceptions}=await mobilePage(360,740);
   try{
